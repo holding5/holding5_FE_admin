@@ -26,6 +26,8 @@ const Sidebar = () => {
         flexShrink: 0,
         "& .MuiDrawer-paper": {
           width: 220,
+          marginTop: "100px", // ✅ 헤더 높이만큼 아래로 내림
+          height: "calc(100% - 100px)", // ✅ 남은 높이만큼
           boxSizing: "border-box",
           backgroundColor: "#0c2340",
           color: "white",
