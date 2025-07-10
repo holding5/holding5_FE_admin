@@ -8,8 +8,7 @@ function App() {
       <Header />
       <div style={{ display: "flex" }}>
         <Sidebar />
-        <main style={{ marginLeft: 220, flexGrow: 1, padding: 20 }}>
-          {/* 이 영역이 잘려서 안보이던 콘텐츠를 옮겨줌 */}
+        <main style={{ marginTop: "100px", marginLeft: "10px", padding: "20px" }}>
           <h1>메인 콘텐츠</h1>
         </main>
       </div>

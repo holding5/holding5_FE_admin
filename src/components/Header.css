@@ -3,17 +3,17 @@
     padding: 10px 10px;
     justify-content: space-between;
 
-    /* ✅ 상단 고정 */
+    /* 상단 고정 */
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
 
-    /* ✅ 배경색 및 겹침 방지 */
+    /* 배경색 및 겹침 방지 */
     background-color: white;
     z-index: 1000;
 
-    /* ✅ 높이 지정 (Sidebar와 Main 기준이 됨) */
+    /* 높이 지정 */
     height: 80px;
 
     border-bottom: 1px solid #ccc;
