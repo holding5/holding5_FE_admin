@@ -1,4 +1,3 @@
-import "./Searchbar.css";
 import { useState } from "react";
 import {
   Paper,
