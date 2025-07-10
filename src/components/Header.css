@@ -1,14 +1,23 @@
 .Header{
     display: flex;
-
+    padding: 20px 20px;
+    justify-content: space-between;
 }
 
-.Header .icon_section{
+.Header > .left_group, .right_group{
+    display: flex;
 }
 
-
-.Header .text_section{
+.Header .left_group{
+    gap: 15px;
 }
 
-.Header .mypage_section{
+.Header .right_group{
+    align-items: center;
+    gap: 15px;
+}
+
+.Header .right_group .mypage{
+    text-align: center;
+    cursor: pointer;
 }

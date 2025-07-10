@@ -21,10 +21,10 @@ const Searchbar = () => {
     <Paper
       component="form"
       sx={{
-        p: "2px 4px",
+        p: "0px 20px",
         display: "flex",
         alignItems: "center",
-        width: 400,
+        width: 800,
         borderRadius: "20px",
         border: "1px solid #ccc",
         boxShadow: "none",
