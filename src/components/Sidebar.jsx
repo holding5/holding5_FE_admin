@@ -19,22 +19,17 @@ const Sidebar = () => {
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
 
   return (
-    <Drawer
+    <Box
       variant="permanent"
       sx={{
         width: 220,
         flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: 220,
-          boxSizing: "border-box",
-          backgroundColor: "#0c2340",
-          color: "white",
-        },
+        backgroundColor: "#27374D",
+        color: "white",
       }}
     >
       <Box sx={{ mt: 2 }}>
         <List>
-          {/* 회원관리 */}
           <ListItemButton onClick={() => setOpenMember(!openMember)}>
             <ListItemText primary="회원관리" />
             {openMember ? <ExpandLess /> : <ExpandMore />}
@@ -55,7 +50,6 @@ const Sidebar = () => {
             ))}
           </Collapse>
 
-          {/* 게시물 관리 */}
           <ListItemButton onClick={() => setOpenPost(!openPost)}>
             <ListItemText primary="게시물 관리" />
             {openPost ? <ExpandLess /> : <ExpandMore />}
@@ -78,71 +72,56 @@ const Sidebar = () => {
             ))}
           </Collapse>
 
-          {/* 돛단배 */}  
           <ListItemButton onClick={() => setOpenBoat(!openBoat)}>
             <ListItemText primary="돛단배" />
             {openBoat ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openBoat} timeout="auto" unmountOnExit>
-            {[
-              "돛단배 리스트",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4}}>
+            {["돛단배 리스트"].map((item) => (
+              <ListItemButton key={item} sx={{ pl: 4 }}>
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
           </Collapse>
 
-          {/* 홀파 상담실 */}  
           <ListItemButton onClick={() => setOpenCounsel(!openCounsel)}>
             <ListItemText primary="홀파 상담실" />
             {openCounsel ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openCounsel} timeout="auto" unmountOnExit>
-            {[
-              "홀파상담실 리스트",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4}}>
+            {["홀파상담실 리스트"].map((item) => (
+              <ListItemButton key={item} sx={{ pl: 4 }}>
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
           </Collapse>
 
-          {/* 이벤트 관리 */}  
           <ListItemButton onClick={() => setOpenEvent(!openEvent)}>
             <ListItemText primary="이벤트 관리" />
             {openEvent ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openEvent} timeout="auto" unmountOnExit>
-            {[
-              "전체",
-              "가입 환영인사",
-              "생일 축하인사",
-              "시험격려",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4}}>
-                <ListItemText primary={item} />
-              </ListItemButton>
-            ))}
+            {["전체", "가입 환영인사", "생일 축하인사", "시험격려"].map(
+              (item) => (
+                <ListItemButton key={item} sx={{ pl: 4 }}>
+                  <ListItemText primary={item} />
+                </ListItemButton>
+              )
+            )}
           </Collapse>
 
-          {/* 메시지 발송 */}  
           <ListItemButton onClick={() => setOpenMessage(!openMessage)}>
             <ListItemText primary="메시지 발송" />
             {openMessage ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMessage} timeout="auto" unmountOnExit>
-            {[
-              "메시지 리스트",
-              "메시지 발송",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4}}>
+            {["메시지 리스트", "메시지 발송"].map((item) => (
+              <ListItemButton key={item} sx={{ pl: 4 }}>
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
           </Collapse>
 
-          {/* 시스템 관리 */}  
           <ListItemButton onClick={() => setOpenSystem(!openSystem)}>
             <ListItemText primary="시스템 관리" />
             {openSystem ? <ExpandLess /> : <ExpandMore />}
@@ -157,16 +136,14 @@ const Sidebar = () => {
               "생명살림집계",
               "관리자 관리",
             ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4}}>
+              <ListItemButton key={item} sx={{ pl: 4 }}>
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
           </Collapse>
-
-          
         </List>
       </Box>
-    </Drawer>
+    </Box>
   );
 };
 

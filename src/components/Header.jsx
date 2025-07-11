@@ -1,4 +1,4 @@
-import Searchbar from "./Searchbar";
+import HeaderSearchbar from "./HeaderSearchbar";
 import logoImage from "../assets/holding5.png";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { Stack, Typography, Box } from "@mui/material";
@@ -11,12 +11,18 @@ const Header = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        p: "10px 20px",
+        p: "10px 10px",
+        borderBottom: "1px solid #ccc",
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={2}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={2}
+        sx={{ paddingLeft: "20px" }}
+      >
         <Box component="img" src={logoImage} sx={{ height: 40 }} />
-        <Searchbar />
+        <HeaderSearchbar />
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={3}>

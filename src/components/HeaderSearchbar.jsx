@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-const Searchbar = () => {
+const HeaderSearchbar = () => {
   const [searchCategory, setSearchCategory] = useState("integrated");
 
   const handleCategoryChange = (event) => {
@@ -56,4 +56,4 @@ const Searchbar = () => {
   );
 };
 
-export default Searchbar;
+export default HeaderSearchbar;

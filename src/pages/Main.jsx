@@ -1,5 +1,6 @@
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import HappyManageImg from "../components/HappyManageImg";
 import { Box } from "@mui/material";
 const Main = () => {
   return (
@@ -10,6 +11,7 @@ const Main = () => {
       <Header />
       <Box sx={{ display: "flex", flexGrow: 1 }}>
         <Sidebar />
+        <HappyManageImg />
       </Box>
     </Box>
   );
