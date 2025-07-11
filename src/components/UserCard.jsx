@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-const UserCard = ({ img, name, nickName }) => {
+const UserCard = ({ id, img, name, nickName }) => {
   return (
     <Box
       sx={{
