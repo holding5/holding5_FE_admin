@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   FormControl,
@@ -25,6 +25,20 @@ const FormRow = ({ label, children }) => (
 );
 
 const DetailSearch = () => {
+  const [gender, setGender ] = useState(""); // 성별
+  const [ageGroup, setAgeGroup ] = useState(""); // 나이 그룹
+  const [religion, setReligion ] = useState(""); // 종교
+  const [rank, setRank] = useState(""); // 홀파 등급
+  const [status, setStatus] = useState(""); // 상태
+  const [attendanceMin, setAttendanceMin] = useState(0); // 출석 최소
+  const [attendanceMax, setAttendanceMax] = useState(365); // 출석 최대
+  const [attendanceAvrgMin, setAttendanceAvrgMin] = useState(0); // 출석 월평균 최소
+  const [attendanceAvrgMax, setAttendanceAvrgMax] = useState(31); // 출석 월평균 최대
+  const [scoreMin, setScoreMin] = useState(0); // 홀파 스코어 최소
+  const [scoreMax, setScoreMax] = useState(1000); // 홀파 스코어 최대(최대값 모름)
+  const [joinDateStart, setJoinDateStart] = useState(""); // 가입일
+  const [joinDateEnd, setJoinDateEnd] = useState(""); // 가입일
+
   return (
     <Box
       sx={{
@@ -40,7 +54,7 @@ const DetailSearch = () => {
       <Box>
         <FormRow label="성별">
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select defaultValue="">
+            <Select value={gender} onChange={(e) => setGender(e.target.value)}>
               <MenuItem value="">전체</MenuItem>
               <MenuItem value="male">남</MenuItem>
               <MenuItem value="female">여</MenuItem>
@@ -50,7 +64,7 @@ const DetailSearch = () => {
 
         <FormRow label="구간구분">
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select defaultValue="">
+            <Select value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)}>
               <MenuItem value="">전체</MenuItem>
               <MenuItem value="age1">초등</MenuItem>
               <MenuItem value="age2">중등</MenuItem>
@@ -63,24 +77,25 @@ const DetailSearch = () => {
         </FormRow>
 
         <FormRow label="출첵누적">
-          <TextField size="small" type="number" sx={{ width: 80 }} defaultValue={0} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={attendanceMin} onChange={(e) => setAttendanceMin(e.target.value)} />
           <Typography>~</Typography>
-          <TextField size="small" type="number" sx={{ width: 80 }} defaultValue={365} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={attendanceMax} onChange={(e) => setAttendanceMax(e.target.value)} />
         </FormRow>
 
         <FormRow label="출첵 월평균">
-          <TextField size="small" type="number" sx={{ width: 80 }} defaultValue={0} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={attendanceAvrgMin} onChange={(e) => setAttendanceAvrgMin(e.target.value)} />
           <Typography>~</Typography>
-          <TextField size="small" type="number" sx={{ width: 80 }} defaultValue={31} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={attendanceAvrgMax} onChange={(e) => setAttendanceAvrgMax(e.target.value)} />
         </FormRow>
 
         <FormRow label="종교">
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select defaultValue="">
-              <MenuItem value="">전체</MenuItem>
+            <Select value={religion} onChange={(e) => setReligion(e.target.value)}>
+              <MenuItem value="">무교</MenuItem>
               <MenuItem value="religion1">불교</MenuItem>
               <MenuItem value="religion2">기독교</MenuItem>
-              <MenuItem value="religion3">무교</MenuItem>
+              <MenuItem value="religion3">천주교</MenuItem>
+              <MenuItem value="religion4">기타</MenuItem>
             </Select>
           </FormControl>
         </FormRow>
@@ -89,7 +104,7 @@ const DetailSearch = () => {
       <Box>
         <FormRow label="홀파등급">
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select defaultValue="">
+            <Select value={rank} onChange={(e) => setRank(e.target.value)}>
               <MenuItem value="">전체</MenuItem>
               <MenuItem value="rank1">브론즈</MenuItem>
               <MenuItem value="rank2">실버</MenuItem>
@@ -102,9 +117,9 @@ const DetailSearch = () => {
         </FormRow>
 
         <FormRow label="홀파스코어">
-          <TextField size="small" type="number" sx={{ width: 80 }} defaultValue={0} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={scoreMin} onChange={(e) => setScoreMin(e.target.value)} />
           <Typography>~</Typography>
-          <TextField size="small" type="number" sx={{ width: 80 }} />
+          <TextField size="small" type="number" sx={{ width: 80 }} value={scoreMax} onChange={(e) => setScoreMax(e.target.value)} />
         </FormRow>
 
         <FormRow label="가입일">
@@ -112,6 +127,8 @@ const DetailSearch = () => {
             size="small"
             type="date"
             sx={{ width: 150 }}
+            value={joinDateStart}
+            onChange={(e) => setJoinDateStart(e.target.value)}
             InputLabelProps={{ shrink: true }}
           />
           <Typography>~</Typography>
@@ -119,18 +136,20 @@ const DetailSearch = () => {
             size="small"
             type="date"
             sx={{ width: 150 }}
+            value={joinDateEnd}
+            onChange={(e) => setJoinDateEnd(e.target.value)}
             InputLabelProps={{ shrink: true }}
           />
         </FormRow>
 
         <FormRow label="현상태">
           <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select defaultValue="">
+            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
               <MenuItem value="">전체</MenuItem>
-              <MenuItem value="state1">활동중</MenuItem>
-              <MenuItem value="state2">휴면</MenuItem>
-              <MenuItem value="state3">일시정지</MenuItem>
-              <MenuItem value="state4">영구퇴출</MenuItem>
+              <MenuItem value="status1">활동중</MenuItem>
+              <MenuItem value="status2">휴면</MenuItem>
+              <MenuItem value="status3">일시정지</MenuItem>
+              <MenuItem value="status4">영구퇴출</MenuItem>
             </Select>
           </FormControl>
         </FormRow>
