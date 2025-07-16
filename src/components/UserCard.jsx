@@ -1,5 +1,11 @@
 import { Box, Typography } from "@mui/material";
-const UserCard = ({ img, name, nickName }) => {
+import { useNavigate } from "react-router-dom";
+const UserCard = ({ id, img, name, nickName }) => {
+  const nav = useNavigate();
+
+  const onClickDetail = () => {
+    nav(`/userdetail/${id}`);
+  };
   return (
     <Box
       sx={{
@@ -9,6 +15,7 @@ const UserCard = ({ img, name, nickName }) => {
         width: "20%",
         mb: "20px",
       }}
+      onClick={onClickDetail}
     >
       <Box
         component="img"

@@ -8,42 +8,8 @@ import {
   Box,
 } from "@mui/material";
 import { useState, useRef } from "react";
-import ContentSearchbar from "./ContentSearchbar";
-import UserGrid from "./UserGrid";
-
-const buttonData = [
-  {
-    id: "all",
-    text: "전체",
-    activeColor: "#a52a2a",
-    inactiveColor: "#1976d2",
-  },
-  {
-    id: "opinion",
-    text: "오피니언해피인",
-    activeColor: "#a52a2a",
-    inactiveColor: "#1976d2",
-  },
-  {
-    id: "normal",
-    text: "일반해피인",
-    activeColor: "#a52a2a",
-    inactiveColor: "#1976d2",
-  },
-  {
-    id: "group",
-    text: "그룹해피인",
-    activeColor: "#a52a2a",
-    inactiveColor: "#1976d2",
-  },
-  {
-    id: "etc",
-    text: "또래해피인",
-    activeColor: "#a52a2a",
-    inactiveColor: "#1976d2",
-  },
-];
-
+import ContentSearchbar from "../../components/ContentSearchbar";
+import UserGrid from "../../components/UserGrid";
 const filterData = [
   {
     id: "asc",
@@ -78,14 +44,9 @@ const filterData = [
 ];
 
 const HappyManageImg = () => {
-  const [activeButtonId, setActiveButtonId] = useState("all");
   const [filterActiveButtonId, setFilterActiveButtonId] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const memNum = useRef(25);
-
-  const onClickUser = (buttonId) => {
-    setActiveButtonId(buttonId);
-  };
 
   const onClickFilter = (buttonId) => {
     setFilterActiveButtonId(buttonId);
@@ -96,35 +57,6 @@ const HappyManageImg = () => {
   };
   return (
     <Box component="section" sx={{ flexGrow: 1 }}>
-      <Stack
-        direction="row"
-        sx={{
-          mt: 2,
-          mb: 2,
-          justifyContent: "space-between",
-          padding: "0px 10px",
-        }}
-      >
-        {buttonData.map((button) => (
-          <Button
-            key={button.id}
-            onClick={() => onClickUser(button.id)}
-            sx={{
-              backgroundColor:
-                activeButtonId === button.id
-                  ? button.activeColor
-                  : button.inactiveColor,
-              color: "white",
-              width: "200px",
-              height: "50px",
-              borderRadius: "30px",
-            }}
-          >
-            {button.text}
-          </Button>
-        ))}
-      </Stack>
-
       <Stack direction="row" spacing={6} marginLeft="60px" sx={{ gap: "65px" }}>
         <Button
           sx={{
