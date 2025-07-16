@@ -1,15 +1,15 @@
 import "./App.css";
-import Main from "./pages/Main";
 import { Box } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
-import HappyManageImg from "./components/HappyManageImg";
-import HappyUserDetail from "./components/HappyUserDetail";
+import HappyManageImg from "./usermanage/pages/HappyManageImg";
+import HappyUserDetailPage from "./usermanage/pages/HappyUserDetailPage";
+import Main from "./usermanage/pages/Main";
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Main />}>
         <Route index element={<HappyManageImg />}></Route>
-        <Route path="userdetail/:id" element={<HappyUserDetail />}></Route>
+        <Route path="userdetail/:id" element={<HappyUserDetailPage />}></Route>
       </Route>
     </Routes>
   );

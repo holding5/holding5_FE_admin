@@ -2,8 +2,12 @@ import HeaderSearchbar from "./HeaderSearchbar";
 import logoImage from "../assets/holding5.png";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { Stack, Typography, Box } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 const Header = () => {
+  const nav = useNavigate();
+  const onClickHome = () => {
+    nav("/");
+  };
   return (
     <Box
       component="header"
@@ -21,7 +25,12 @@ const Header = () => {
         spacing={2}
         sx={{ paddingLeft: "20px" }}
       >
-        <Box component="img" src={logoImage} sx={{ height: 40 }} />
+        <Box
+          component="img"
+          src={logoImage}
+          sx={{ height: 40 }}
+          onClick={onClickHome}
+        />
         <HeaderSearchbar />
       </Stack>
 
