@@ -28,7 +28,7 @@ const filterData = [
   },
 ];
 
-const HappyGroupDetailPage = () => {
+const HappyGroupDetailManage = () => {
   const nav = useNavigate();
   const { groupId } = useParams();
   const [filterActiveButtonId, setFilterActiveButtonId] = useState("");
@@ -88,19 +88,6 @@ const HappyGroupDetailPage = () => {
           })}
         </Box>
 
-        <Button
-          onClick={() => nav(`/happy-manage/group/detail/manage/${groupId}`)}
-          sx={{
-            backgroundColor: "#0aef15ff",
-            color: "white",
-            height: "40px",
-            borderRadius: "20px",
-            px: 8,
-          }}
-        >
-          관리하기
-        </Button>
-
         <FormControl>
           <Select
             value={itemsPerPage}
@@ -129,4 +116,4 @@ const HappyGroupDetailPage = () => {
   );
 };
 
-export default HappyGroupDetailPage;
+export default HappyGroupDetailManage;
