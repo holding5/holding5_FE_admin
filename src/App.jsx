@@ -4,6 +4,8 @@ import { Route, Routes } from "react-router-dom";
 import HappyManageImg from "./usermanage/pages/HappyManageImg";
 import HappyManageList from "./usermanage/pages/HappyManageList";
 import HappyUserDetailPage from "./usermanage/pages/HappyUserDetailPage";
+import HappyManageGroup from "./usermanage/pages/HappyManageGroup";
+import HappyGroupDetailPage from "./usermanage/pages/HappyGroupDetailPage";
 import Main from "./usermanage/pages/Main";
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
         <Route index element={<HappyManageImg />}></Route>
         <Route path="happy-manage/list" element={<HappyManageList />}></Route>
         <Route path="userdetail/:id" element={<HappyUserDetailPage />}></Route>
+        <Route path="happy-manage/group" element={<HappyManageGroup />}></Route>
+        <Route path="happy-manage/group/detail/:groupId" element={<HappyGroupDetailPage />}></Route>
       </Route>
     </Routes>
   );
