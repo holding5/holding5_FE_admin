@@ -6,6 +6,7 @@ import HappyManageList from "./usermanage/pages/HappyManageList";
 import HappyUserDetailPage from "./usermanage/pages/HappyUserDetailPage";
 import HappyManageGroup from "./usermanage/pages/HappyManageGroup";
 import HappyGroupDetailPage from "./usermanage/pages/HappyGroupDetailPage";
+import HappyGroupDetailManage from "./usermanage/pages/HappyGroupDetailManage";
 import Main from "./usermanage/pages/Main";
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="userdetail/:id" element={<HappyUserDetailPage />}></Route>
         <Route path="happy-manage/group" element={<HappyManageGroup />}></Route>
         <Route path="happy-manage/group/detail/:groupId" element={<HappyGroupDetailPage />}></Route>
+        <Route path="happy-manage/group/detail/manage/:groupId" element={<HappyGroupDetailManage />}></Route>
       </Route>
     </Routes>
   );
