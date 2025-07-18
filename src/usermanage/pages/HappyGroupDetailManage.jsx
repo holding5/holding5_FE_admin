@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import ContentSearchbar from "../../components/ContentSearchbar";
 import GroupMemberGrid from "../../components/GroupMemberGrid";
 import GroupInfo from "../../components/GroupInfo";
+import GroupDescription from "../../components/GroupDescription";
 const filterData = [
   {
     id: "asc",
@@ -48,8 +49,13 @@ const HappyGroupDetailManage = () => {
         <ContentSearchbar />
       </Stack>
 
-      <Box sx={{ width: "50%", ml: "20px", mt: 2 }}>
-        <GroupInfo groupId={groupId} />
+      <Box sx={{ display: "flex", flexDirection: "row", gap: 3, mt: 2, px: 3 }}>
+        <Box sx={{ flex: 0.9 }}>
+          <GroupInfo groupId={groupId} />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <GroupDescription groupId={groupId} />
+        </Box>
       </Box>
 
       <Stack

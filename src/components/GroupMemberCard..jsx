@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 
-const GroupMemberCard = ({ groupId, id, img, name, nickName }) => {
+const GroupMemberCard = ({ groupId, id, img, name, nickName, showCheckbox, checked, onCheck }) => {
   return (
     <Box
       sx={{
@@ -10,8 +11,17 @@ const GroupMemberCard = ({ groupId, id, img, name, nickName }) => {
         width: "20%",
         mb: "20px",
         cursor: "pointer",
+        position: "relative",
       }}
     >
+      {showCheckbox && (
+        <Checkbox
+          checked={checked}
+          onChange={() => onCheck(id)}
+          sx={{ alignSelf: "flex-start" }}
+        />
+      )}
+
       <Box
         component="img"
         src={img}

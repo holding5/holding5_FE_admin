@@ -2,8 +2,11 @@ import { useParams } from "react-router-dom";
 import GroupInfoData from "../modules/GroupInfoData";
 import GroupInfoCard from "../components/GroupInfoCard";
 import { Box, Typography } from "@mui/material";
+import { useLocation } from "react-router-dom";
 
 const GroupInfo = ({ groupId }) => {
+  const location = useLocation();
+  const isManagePage = location.pathname.includes("/manage/");
 
   const group = GroupInfoData.find((item) => item.groupId == String(groupId));
 
@@ -13,7 +16,7 @@ const GroupInfo = ({ groupId }) => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <GroupInfoCard {...group} />
+      <GroupInfoCard {...group} showGroupCode={isManagePage} />
     </Box>
   );
 };
