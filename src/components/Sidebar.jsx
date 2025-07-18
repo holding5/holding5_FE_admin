@@ -8,6 +8,7 @@ import {
   Box,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const [openMember, setOpenMember] = useState(false); // 회원 관리 열림
@@ -17,6 +18,8 @@ const Sidebar = () => {
   const [openEvent, setOpenEvent] = useState(false); // 이벤트 관리 열림
   const [openMessage, setOpenMessage] = useState(false); // 메세지 발송 열림
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
+
+  const nav = useNavigate(); 
 
   return (
     <Box
@@ -35,19 +38,27 @@ const Sidebar = () => {
             {openMember ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMember} timeout="auto" unmountOnExit>
-            {[
-              "해피인 관리",
-              "해피인 신청",
-              "드림인 관리",
-              "카운셀러 관리",
-              "등급관리",
-              "일시정지 회원관리",
-              "영구탈퇴 회원관리",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
-              </ListItemButton>
-            ))}
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}>
+              <ListItemText primary="해피인 관리" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}> 
+              <ListItemText primary="해피인 신청" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/dream-manage')} sx={{ pl: 4}}>
+              <ListItemText primary="드림인 관리" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}>
+              <ListItemText primary="카운셀러 관리" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}>
+              <ListItemText primary="등급 관리" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}>
+              <ListItemText primary="일시정지 회원 관리" />
+            </ListItemButton>
+            <ListItemButton onClick={() => nav('/')} sx={{ pl: 4}}>
+              <ListItemText primary="영구퇴출 회원 관리" />
+            </ListItemButton>
           </Collapse>
 
           <ListItemButton onClick={() => setOpenPost(!openPost)}>
