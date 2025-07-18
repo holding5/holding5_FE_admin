@@ -9,6 +9,8 @@ const GroupInfoCard = ({
   endDate,
   duration,
   leader,
+  groupCode,
+  showGroupCode,
 }) => {
   return (
     <Stack
@@ -20,7 +22,7 @@ const GroupInfoCard = ({
         p: 2,
         borderRadius: 2,
         width: "100%",
-        maxWidth: 700,
+        maxWidth: 600,
       }}
     >
       <Box
@@ -40,10 +42,16 @@ const GroupInfoCard = ({
           ["대표자", leader],
         ].map(([label, value]) => (
           <Stack key={label} direction="row" spacing={1} sx={{ mb: 0.5 }}>
-            <Box sx={{ width: "80px", fontWeight: 500 }}>{label} :</Box>
+            <Box sx={{ width: "110px", fontWeight: 500 }}>{label} :</Box>
             <Box>{value}</Box>
           </Stack>
         ))}
+        {showGroupCode && groupCode && (
+          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+            <Box sx={{ width: "110px", fontWeight: 500 }}>그룹코드명 :</Box>
+            <Box>{groupCode}</Box>
+          </Stack>
+        )}
       </Box>
     </Stack>
   );
