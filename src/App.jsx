@@ -25,10 +25,7 @@ function App() {
         <Route element={<HappyManageLayout />}>
           <Route index element={<HappyManageImg />}></Route>
           <Route path="happy-manage/list" element={<HappyManageList />}></Route>
-          <Route
-            path="userdetail/:id"
-            element={<HappyUserDetailPage />}
-          ></Route>
+          <Route path="userdetail/:id" element={<HappyUserDetailPage />}></Route>
         </Route>
         <Route path="signuplist" element={<HappyinSignupListPage />}></Route>
         <Route path="singupdetail/:id" element={<SignUpDetail />}></Route>
