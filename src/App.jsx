@@ -9,6 +9,8 @@ import HappyGroupDetailPage from "./usermanage/pages/HappyGroupDetailPage";
 import HappyGroupDetailManage from "./usermanage/pages/HappyGroupDetailManage";
 import HappyGroupCreate from "./usermanage/pages/HappyGroupCreate";
 import DreamManage from "./usermanage/pages/DreamManage";
+import DreamManageList from "./usermanage/pages/DreamManageList";
+import DreamUserDetailPage from "./usermanage/pages/DreamUserDetailPage";
 import Main from "./usermanage/pages/Main";
 function App() {
   return (
@@ -24,7 +26,8 @@ function App() {
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>
-      
+        <Route index element={<DreamManageList />}></Route>
+        <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
       </Route>
     </Routes>
   );
