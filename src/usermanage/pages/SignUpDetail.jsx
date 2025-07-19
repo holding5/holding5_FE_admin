@@ -1,5 +1,5 @@
 import SignUpUserData from "../../modules/SingupData";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, Box, Stack } from "@mui/material";
 import SignUpDetailButton from "../components/SignUpDetailButton";
 import { useState } from "react";
@@ -26,6 +26,14 @@ const sampleUserData = [
       { value: "mentoring", label: "해피인 > (일반) 해피인 > 멘토링" },
     ],
   },
+
+  {
+    id: 3,
+    label: "경력사항",
+    type: "readonly-textfield",
+    value:
+      "중고등학교에서 기간제 교사를 했습니다. 현재는 경기도교육청 안전학교 요원으로 일하고 있습니다",
+  },
   {
     id: 4,
     label: "활동계획",
@@ -47,29 +55,6 @@ const sampleUserData = [
     value:
       "학생들의 고충을 이해하고 함께 소통하며 진실된 마음으로 이야기를 들어주는 조금이나마 힘을 보탤 수 있는 대나무숲이 되어 주고 싶네요.",
   },
-
-  {
-    id: 8,
-    label: "직책/직분",
-    type: "position",
-    value: "한국대학교 총장",
-  },
-
-  {
-    id: 9,
-    label: "승인문장",
-    type: "accept",
-    value:
-      "해피인에 응모해 주셔서 감사드립니다.심사결과 귀하는 홀딩파이브 해피인에 적합한 것으로 판단되어 일반 해피인이 되셨습니다.더욱 책임감을 가지고 청소년들을 사랑해 주시기를 부탁드립니다. 해피인에 대한 자세한 내용은 별도공지를 통해 전달해 드리겠습니다. 감사합나다.",
-  },
-
-  {
-    id: 10,
-    label: "거절문장",
-    type: "refuse",
-    value:
-      "해피인에 응모해 주셔서 감사를 드립니다. 먼저 미안한 마음을 전합니다. 주신 자료와 홀파에서의 활동을 검토한 결과 아직 해피인으로 전환하기에는 어려움이 있었음을 전해 드립니다. 이번에 해피인이 되시지는 못하셨지만 청소년을 사랑하시는 마음은 충분히 이해했습니다. 거듭 송구한 말씀을 드립니다. 감사합니다.",
-  },
 ];
 
 const SignUpDetail = () => {
@@ -77,6 +62,7 @@ const SignUpDetail = () => {
   const userData = SignUpUserData.find(
     (item) => String(params.id) === String(item.id)
   );
+  const nav = useNavigate();
 
   const buttonColor = ["#d34204d0", "#1976d2"];
   const btnInfo = [
@@ -107,12 +93,18 @@ const SignUpDetail = () => {
           textTransform: "none",
           fontSize: "25px",
           borderRadius: "5px",
+          ml: "30px",
+          mb: "20px",
+          mt: "20px",
+        }}
+        onClick={() => {
+          nav(-1);
         }}
       >
         back
       </Button>
 
-      <Stack direction="row">
+      <Stack direction="row" sx={{ ml: "40px", gap: "20px" }}>
         {btnInfo.map((item) => (
           <SignUpDetailButton
             key={item.value}

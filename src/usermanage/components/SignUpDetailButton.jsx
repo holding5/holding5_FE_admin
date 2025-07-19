@@ -5,7 +5,7 @@ const SignUpDetailButton = ({ color, text, onClickChangeContent, value }) => {
     <Button
       value={value}
       onClick={onClickChangeContent}
-      sx={{ backgroundColor: color, color: "white" }}
+      sx={{ backgroundColor: color, color: "white", width: "120px" }}
     >
       {text}
     </Button>
