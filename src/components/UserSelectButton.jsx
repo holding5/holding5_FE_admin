@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Stack, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 const UserSelectButton = () => {
+  const nav = useNavigate();
+
   const buttonData = [
     {
       id: "all",
@@ -38,6 +42,11 @@ const UserSelectButton = () => {
 
   const onClickUser = (buttonId) => {
     setActiveButtonId(buttonId);
+
+    if(buttonId == "group") // 그룹해피인 이동
+    {
+      nav("/happy-manage/group");
+    }
   };
 
   return (
