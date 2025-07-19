@@ -49,7 +49,7 @@ const Sidebar = () => {
             {openMember ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMember} timeout="auto" unmountOnExit>
-            <ListItemButton onClick={() => nav("/")} sx={menuItemStyle("/happy-manage/list")}> 
+            <ListItemButton onClick={() => nav("/")} sx={menuItemStyle("/")}> 
               <ListItemText primary="해피인 관리" />
             </ListItemButton>
             <ListItemButton onClick={() => nav("/")} sx={menuItemStyle("/")}> 
