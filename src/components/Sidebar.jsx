@@ -8,8 +8,9 @@ import {
   Box,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-
+import { useNavigate } from "react-router-dom";
 const Sidebar = () => {
+  const nav = useNavigate();
   const [openMember, setOpenMember] = useState(false); // 회원 관리 열림
   const [openPost, setOpenPost] = useState(false); // 게시물 관리 열림
   const [openBoat, setOpenBoat] = useState(false); // 돛단배 열림
@@ -18,6 +19,15 @@ const Sidebar = () => {
   const [openMessage, setOpenMessage] = useState(false); // 메세지 발송 열림
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
 
+  const memberMenutItem = [
+    { text: "해피인 관리", path: "/" },
+    { text: "해피인 신청", path: "/signuplist" },
+    { text: "드림인 관리", path: "/" },
+    { text: "카운셀러 관리", path: "/" },
+    { text: "등급관리", path: "/" },
+    { text: "일시정지 회원관리", path: "/" },
+    { text: "영구탈퇴 회원관리", path: "/" },
+  ];
   return (
     <Box
       variant="permanent"
@@ -35,17 +45,15 @@ const Sidebar = () => {
             {openMember ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMember} timeout="auto" unmountOnExit>
-            {[
-              "해피인 관리",
-              "해피인 신청",
-              "드림인 관리",
-              "카운셀러 관리",
-              "등급관리",
-              "일시정지 회원관리",
-              "영구탈퇴 회원관리",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {memberMenutItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
           </Collapse>

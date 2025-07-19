@@ -17,7 +17,6 @@ const Main = () => {
           component="main"
           sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
         >
-          <UserSelectButton />
           <Outlet />
         </Box>
       </Box>
