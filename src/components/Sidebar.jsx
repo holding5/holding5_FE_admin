@@ -24,9 +24,9 @@ const Sidebar = () => {
     { text: "해피인 신청", path: "/signuplist" },
     { text: "드림인 관리", path: "/dream-manage" },
     { text: "카운셀러 관리", path: "/" },
-    { text: "등급관리", path: "/" },
-    { text: "일시정지 회원관리", path: "/" },
-    { text: "영구탈퇴 회원관리", path: "/" },
+    { text: "등급관리", path: "/rankmanage" },
+    { text: "일시정지 회원관리", path: "/pausedmanage" },
+    { text: "영구탈퇴 회원관리", path: "/banned-manage" },
   ];
   return (
     <Box
