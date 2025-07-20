@@ -2,10 +2,9 @@ import { Button, Box, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import userData from "../../modules/UserData";
 import { useState } from "react";
-import UserDetailCounseling from "../components/UserDetailCounseling";
 import UserDetailEvalutaion from "../components/UserDetailEvaluation";
-import UserDetailPosts from "../components/UserDetailPosts";
-import UserDetailProfile from "../components/UserDetailProfile";
+import DreamUserDetailPosts from "../../components/DreamUserDetailPosts";
+import DreamUserDetailProfile from "../../components/DreamUserDetailProfile";
 
 const DreamUserDetailPage = () => {
   const nav = useNavigate();
@@ -23,12 +22,9 @@ const DreamUserDetailPage = () => {
 
   const activeComponents = {
     profile: (
-      <UserDetailProfile userData={happyUserData} onChange={onChangeData} />
+      <DreamUserDetailProfile userData={happyUserData} onChange={onChangeData} />
     ),
-    posts: <UserDetailPosts userData={happyUserData} onChange={onChangeData} />,
-    counseling: (
-      <UserDetailCounseling userData={happyUserData} onChange={onChangeData} />
-    ),
+    posts: <DreamUserDetailPosts userData={happyUserData} onChange={onChangeData} />,
     eval: (
       <UserDetailEvalutaion userData={happyUserData} onChange={onChangeData} />
     ),
