@@ -18,8 +18,8 @@ import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
 
-import LifeMessage from "./usermanage/pages/LifeMessage";
-import LifeMessageList from "./usermanage/pages/LifeMessageList";
+import LifeMessage from "./postmanage/pages/LifeMessage";
+import LifeMessageList from "./postmanage/pages/LifeMessageList";
 
 import RankManagePage from "./usermanage/pages/RankManagePage";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
