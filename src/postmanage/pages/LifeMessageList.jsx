@@ -11,7 +11,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentSearchbar from "../../components/ContentSearchbar";
 import LifeMessageSelectButton from "../components/LifeMessageSelectButton";
-import LifeMessageTableAll from "../../components/LifeMessageTableAll";
+import LifeMessageTableAll from "../components/LifeMessageTableAll";
 
 const LifeMessageList = () => {
   const nav = useNavigate();
