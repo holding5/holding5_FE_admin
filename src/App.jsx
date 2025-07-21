@@ -16,6 +16,10 @@ import DreamUserDetailPage from "./usermanage/pages/DreamUserDetailPage";
 import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
+
+import LifeMessage from "./usermanage/pages/LifeMessage";
+import LifeMessageList from "./usermanage/pages/LifeMessageList";
+
 import { SingleBed } from "@mui/icons-material";
 
 function App() {
@@ -38,6 +42,11 @@ function App() {
       <Route path="dream-manage" element={<DreamManage />}>
         <Route index element={<DreamManageList />}></Route>
         <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
+      </Route>
+
+      <Route path="life-message" element={<LifeMessage />}>
+        <Route index element={<LifeMessageList />}></Route>
+      
       </Route>
     </Routes>
   );

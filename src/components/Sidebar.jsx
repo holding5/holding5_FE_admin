@@ -28,6 +28,19 @@ const Sidebar = () => {
     { text: "일시정지 회원관리", path: "/" },
     { text: "영구탈퇴 회원관리", path: "/" },
   ];
+
+  const postMenuItem = [
+    { text: "생명메시지", path: "/life-message" },
+    { text: "희망메시지", path: "/" },
+    { text: "축하메시지", path: "/" },
+    { text: "홀파담벼락", path: "/" },
+    { text: "캣츠아이 / 진실노트", path: "/" },
+    { text: "극복수기", path: "/" },
+    { text: "공지사항", path: "/" },
+    { text: "운영장에게 건의", path: "/" },
+    { text: "신고되 게시물 보기", path: "/" },
+  ]
+
   return (
     <Box
       variant="permanent"
@@ -63,19 +76,15 @@ const Sidebar = () => {
             {openPost ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openPost} timeout="auto" unmountOnExit>
-            {[
-              "생명메시지",
-              "희망메시지",
-              "축하메시지",
-              "홀파담벼락",
-              "캣츠아이/진실노트",
-              "극복수기",
-              "공지사항",
-              "운영자에게 건의",
-              "신고된 게시물 보기",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {postMenuItem.map((item) => (
+              <ListItemButton 
+                key={item.text} 
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
           </Collapse>
