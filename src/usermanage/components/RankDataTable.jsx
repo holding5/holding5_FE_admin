@@ -1,115 +1,114 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useState } from "react";
-import { Box, TextField, Button, Chip, Typography, Stack } from "@mui/material";
-
-const mockData = [
-  {
-    id: 55,
-    nickname: "이아름",
-    affiliation: "해피인",
-    ageGroup: "30대",
-    grade: "A",
-    gradeScore: 250,
-    totalScore: 3200,
-    startDate: "2023.01.02",
-    change: 23,
-    detailInfo: "코산의방",
-  },
-  {
-    id: 54,
-    nickname: "박달래",
-    affiliation: "해피인",
-    ageGroup: "40대이상",
-    grade: "B",
-    gradeScore: 200,
-    totalScore: 3560,
-    startDate: "2022.09.12",
-    change: 12,
-    detailInfo: "만돌래",
-  },
-  {
-    id: 53,
-    nickname: "난장이풀",
-    affiliation: "해피인",
-    ageGroup: "중학생",
-    grade: "C",
-    gradeScore: 150,
-    totalScore: 1200,
-    startDate: "2024.01.01",
-    change: 14,
-  },
-  {
-    id: 52,
-    nickname: "키다리풀",
-    affiliation: "드림원",
-    ageGroup: "초등학생",
-    grade: "실버3",
-    gradeScore: 158,
-    totalScore: 350,
-    startDate: "2024.01.01",
-    change: 18,
-  },
-  {
-    id: 51,
-    nickname: "능금아씨",
-    affiliation: "드림원",
-    ageGroup: "고등학생",
-    grade: "다이아몬드2",
-    gradeScore: 2400,
-    totalScore: 2400,
-    startDate: "2024.01.01",
-    change: 30,
-  },
-];
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box, // Box 추가
+  FormControl, // FormControl 추가
+  Select, // Select 추가
+  MenuItem, // MenuItem 추가
+  IconButton, // IconButton 추가
+  Typography, // Typography 추가
+  Pagination,
+} from "@mui/material";
+import { ArrowDropUp, ArrowDropDown } from "@mui/icons-material"; // 아이콘 추가
+import { useContext } from "react";
+import { RankPageData } from "../pages/RankManagePage"; // 경로는 실제 프로젝트에 맞게 확인해주세요
 
 const RankDataTable = () => {
-  const columns = [
-    { field: "id", headerName: "NO", width: 70 },
-    {
-      field: "nickname",
-      headerName: "닉네임",
-      width: 200,
-      renderCell: (params) => (
-        <Link
-          to={`/userdetail/${params.row.id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          {params.value} {params.row.detailInfo && `(${params.row.detailInfo})`}
-        </Link>
-      ),
-    },
-    { field: "affiliation", headerName: "소속분류", width: 130 },
-    { field: "ageGroup", headerName: "나이대", width: 130 },
-    { field: "grade", headerName: "등급", width: 130 },
-    {
-      field: "gradeScore",
-      headerName: "등급스코어",
-      type: "number",
-      width: 130,
-    },
-    {
-      field: "totalScore",
-      headerName: "통합누적스코어",
-      type: "number",
-      width: 150,
-    },
-    { field: "startDate", headerName: "시작일", width: 150 },
-    { field: "change", headerName: "증감", type: "number", width: 90 },
-  ];
+  const { userData, columns } = useContext(RankPageData);
 
   return (
-    <Box sx={{ height: 600, width: "100%", display: "flex" }}>
-      <DataGrid
-        rows={mockData}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
-        pageSizeOptions={[5, 10, 20]}
-        sx={{ flex: "1" }}
-      />
+    <Box>
+      <TableContainer component={Paper}>
+        <Table sx={{ tableLayout: "fixed" }}>
+          <TableHead>
+            <TableRow>
+              {columns.map((col) => (
+                <TableCell
+                  key={`${col.field}-filter`}
+                  sx={{ p: 1, borderBottom: "1px solid #e0e0e0" }}
+                >
+                  {col.filterable ? (
+                    <FormControl size="small" fullWidth>
+                      <Select displayEmpty value="전체">
+                        <MenuItem value="전체">{col.headerName}</MenuItem>
+                        {col.filterOptions.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  ) : null}
+                </TableCell>
+              ))}
+            </TableRow>
+
+            <TableRow sx={{ backgroundColor: "#4682B4" }}>
+              {columns.map((col) => (
+                <TableCell
+                  key={col.field}
+                  sx={{
+                    color: "white",
+                    fontWeight: "bold",
+                    borderRight: "1px solid #5a94c6",
+                    width: col.width,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: "inherit" }}>
+                      {col.headerName}
+                    </Typography>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <IconButton size="small" sx={{ p: 0, height: "12px" }}>
+                        <ArrowDropUp sx={{ color: "#95b9d3" }} />
+                      </IconButton>
+                      <IconButton size="small" sx={{ p: 0, height: "12px" }}>
+                        <ArrowDropDown sx={{ color: "#95b9d3" }} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {userData.map((row, idx) => (
+              <TableRow
+                key={row.id}
+                sx={{
+                  backgroundColor: idx % 2 === 0 ? " #f2f2f2" : "#ffffff",
+                }}
+              >
+                {columns.map((col) => (
+                  <TableCell key={col.field} align={col.headerAlign || "left"}>
+                    {col.renderCell
+                      ? col.renderCell({ row, value: row[col.field] })
+                      : row[col.field]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+        <Pagination
+          color="primary"
+          showFirstButton // '<<' 첫 페이지로 가는 버튼 표시
+          showLastButton // '>>' 마지막 페이지로 가는 버튼 표시
+        />
+      </Box>
     </Box>
   );
 };

@@ -20,6 +20,7 @@ const FooterBtn = ({
           color: "white",
           padding: "5px 30px",
         }}
+        onClick={leftClick}
       >
         {leftText}
       </Button>
@@ -29,6 +30,7 @@ const FooterBtn = ({
           color: "white",
           padding: "5px 30px",
         }}
+        onClick={midClick}
       >
         {midText}
       </Button>
