@@ -1,8 +1,9 @@
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
+import LifeMessageSelectButton from "../../components/LifeMessageSelectButton";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-const DreamManage = () => {
+const LifeMessage = () => {
   return (
     <Box
       component="section"
@@ -15,11 +16,11 @@ const DreamManage = () => {
           component="main"
           sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
         >
-          <Outlet />
+         <Outlet />
         </Box>
       </Box>
     </Box>
   );
 };
 
-export default DreamManage;
+export default LifeMessage;
