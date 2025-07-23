@@ -31,7 +31,7 @@ const Sidebar = () => {
 
   const postMenuItem = [
     { text: "생명메시지", path: "/life-message" },
-    { text: "희망메시지", path: "/" },
+    { text: "희망메시지", path: "/hope-message" },
     { text: "축하메시지", path: "/" },
     { text: "홀파담벼락", path: "/" },
     { text: "캣츠아이 / 진실노트", path: "/" },
@@ -39,7 +39,7 @@ const Sidebar = () => {
     { text: "공지사항", path: "/" },
     { text: "운영장에게 건의", path: "/" },
     { text: "신고되 게시물 보기", path: "/" },
-  ]
+  ];
 
   return (
     <Box
@@ -77,8 +77,8 @@ const Sidebar = () => {
           </ListItemButton>
           <Collapse in={openPost} timeout="auto" unmountOnExit>
             {postMenuItem.map((item) => (
-              <ListItemButton 
-                key={item.text} 
+              <ListItemButton
+                key={item.text}
                 sx={{ pl: 4 }}
                 onClick={() => {
                   nav(item.path);

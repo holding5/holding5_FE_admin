@@ -17,7 +17,6 @@ import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
-
 import LifeMessage from "./postmanage/pages/LifeMessage";
 import LifeMessageList from "./postmanage/pages/LifeMessageList";
 
@@ -30,7 +29,7 @@ import PauseUserListPage from "./usermanage/pages/PauseUserListPage";
 import BannedUserManagePage from "./usermanage/pages/BannedUserManagePage";
 import BannedUserDetailPage from "./usermanage/pages/BannedUserDetailPage";
 import BannedUserListPage from "./usermanage/pages/BannedUserListPage";
-
+import HopeMessageManagePage from "./postmanage/pages/HopeMessageManagePage";
 import { SingleBed } from "@mui/icons-material";
 
 function App() {
@@ -79,6 +78,8 @@ function App() {
           <Route index element={<BannedUserListPage />}></Route>
           <Route path="detail" element={<BannedUserDetailPage />}></Route>
         </Route>
+
+        <Route path="hope-message" element={<HopeMessageManagePage />}></Route>
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>
@@ -88,7 +89,6 @@ function App() {
 
       <Route path="life-message" element={<LifeMessage />}>
         <Route index element={<LifeMessageList />}></Route>
-      
       </Route>
     </Routes>
   );
