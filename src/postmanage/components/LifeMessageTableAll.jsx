@@ -4,6 +4,7 @@ import {
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { useNavigate } from "react-router-dom";
+import LifeMessageDetail from "./LifeMessageDetail";
 
 // 예시 데이터
 const sampleData = [
@@ -52,12 +53,24 @@ const LifeMessageTableAll = ({itemsPerPage}) => {
   const endIdx = startIdx + itemsPerPage;
   const visibleRows = sampleData.slice(startIdx, endIdx);
 
-  const nav = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  // Detail 팝오버 열기
+  const handleCellClick = (e, row) => {
+    setAnchorEl(e.currentTarget);
+    setSelectedRow(row);
+  };
+
+  // Detail 팝오버 닫기
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Paper>
       <TableContainer>
-        <Table size="small">
+        <Table size="small" sx={{tableLayout:"fixed"}}>
           <TableHead sx={{ backgroundColor: "#1976d2" }}>
             <TableRow>
               <TableCell align="center" sx={{ color: "#fff", width: "30px", border: "1px solid #ccc" }}>번호</TableCell>
@@ -79,7 +92,7 @@ const LifeMessageTableAll = ({itemsPerPage}) => {
           </TableHead>
           <TableBody>
             {visibleRows.map((row) => (
-              <TableRow key={row.id} hover sx={{cursor: "pointer"}} >
+              <TableRow key={row.id} hover sx={{cursor: "pointer"}} onClick={(e) => handleCellClick(e, row)}>
                 <TableCell sx={{ border: "1px solid #ccc" }}>{row.id}</TableCell>
                 <TableCell sx={{ border: "1px solid #ccc" }}>{row.classification}</TableCell>
                 <TableCell sx={{ border: "1px solid #ccc" }}>{row.isAllow}</TableCell>
@@ -100,6 +113,12 @@ const LifeMessageTableAll = ({itemsPerPage}) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <LifeMessageDetail
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        rowData={selectedRow}
+      />
 
       {/* 페이지네이션 */}
       <Pagination
