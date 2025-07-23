@@ -20,6 +20,7 @@ import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
 import LifeMessage from "./postmanage/pages/LifeMessage";
 import LifeMessageList from "./postmanage/pages/LifeMessageList";
+import LifeMessageAllowList from "./postmanage/pages/LifeMessageAllowList";
 
 import RankManagePage from "./usermanage/pages/RankManagePage";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
@@ -88,6 +89,7 @@ function App() {
 
       <Route path="life-message" element={<LifeMessage />}>
         <Route index element={<LifeMessageList />}></Route>
+        <Route path="allow" element={<LifeMessageAllowList />}></Route>
       
       </Route>
     </Routes>

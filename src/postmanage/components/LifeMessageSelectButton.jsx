@@ -41,6 +41,10 @@ const LifeMessageSelectButton = () => {
     {
       nav("/life-message");
     }
+    if(buttonId == "allow") // 승인 / 대기 리스트로 이동
+    {
+      nav("allow");
+    }
   };
 
   return (
