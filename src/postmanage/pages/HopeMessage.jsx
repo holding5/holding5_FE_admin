@@ -2,7 +2,7 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-const LifeMessage = () => {
+const HopeMessage = () => {
   return (
     <Box
       component="section"
@@ -22,4 +22,4 @@ const LifeMessage = () => {
   );
 };
 
-export default LifeMessage;
+export default HopeMessage;
