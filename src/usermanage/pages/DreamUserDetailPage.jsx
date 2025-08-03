@@ -2,9 +2,10 @@ import { Button, Box, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import userData from "../../modules/UserData";
 import { useState } from "react";
-import UserDetailEvalutaion from "../components/UserDetailEvaluation";
 import DreamUserDetailPosts from "../../components/DreamUserDetailPosts";
 import DreamUserDetailProfile from "../../components/DreamUserDetailProfile";
+import DreamUserEvaluation from "../components/DreamUserEvaluation";
+import ContentSearchbar from "../../components/ContentSearchbar";
 
 const DreamUserDetailPage = () => {
   const nav = useNavigate();
@@ -22,11 +23,16 @@ const DreamUserDetailPage = () => {
 
   const activeComponents = {
     profile: (
-      <DreamUserDetailProfile userData={happyUserData} onChange={onChangeData} />
+      <DreamUserDetailProfile
+        userData={happyUserData}
+        onChange={onChangeData}
+      />
     ),
-    posts: <DreamUserDetailPosts userData={happyUserData} onChange={onChangeData} />,
+    posts: (
+      <DreamUserDetailPosts userData={happyUserData} onChange={onChangeData} />
+    ),
     eval: (
-      <UserDetailEvalutaion userData={happyUserData} onChange={onChangeData} />
+      <DreamUserEvaluation userData={happyUserData} onChange={onChangeData} />
     ),
   };
 
@@ -75,6 +81,8 @@ const DreamUserDetailPage = () => {
         >
           back
         </Button>
+
+        {activeTab !== "profile" && <ContentSearchbar />}
       </Stack>
 
       <Stack
@@ -90,7 +98,7 @@ const DreamUserDetailPage = () => {
                 setActiveTab(item.id);
               }}
               sx={{
-                padding: "0px 40px",
+                padding: "5px 40px",
                 backgroundColor: isActive
                   ? item.activeColor
                   : item.inactiveColor,
@@ -104,7 +112,7 @@ const DreamUserDetailPage = () => {
         })}
       </Stack>
 
-      <Box>{activeComponents[activeTab]}</Box>
+      <Box sx={{ paddingLeft: "3.125rem" }}>{activeComponents[activeTab]}</Box>
     </Box>
   );
 };

@@ -65,7 +65,7 @@ const BannedUserDetailPage = () => {
   };
 
   return (
-    <Box component="main">
+    <Box component="main" sx={{ mt: 3 }}>
       <Stack
         direction="row"
         sx={{
@@ -76,19 +76,14 @@ const BannedUserDetailPage = () => {
         }}
       >
         <Button
-          sx={{
-            backgroundColor: "rgba(7, 209, 245, 1)",
-            color: "white",
-            padding: "2px 30px",
-            textTransform: "none",
-            fontSize: "25px",
-            borderRadius: "5px",
-            ml: "30px",
-            mb: "20px",
-            mt: "20px",
-          }}
           onClick={() => {
             nav(-1);
+          }}
+          sx={{
+            backgroundColor: "rgba(7, 209, 245, 1)",
+
+            color: "white",
+            padding: "10px 30px",
           }}
         >
           back
@@ -109,7 +104,7 @@ const BannedUserDetailPage = () => {
         ))}
       </Stack>
 
-      <Box>{components[selectBtn]}</Box>
+      <Box sx={{ paddingLeft: "3.125rem" }}>{components[selectBtn]}</Box>
     </Box>
   );
 };

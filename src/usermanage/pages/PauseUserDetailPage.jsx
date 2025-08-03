@@ -75,7 +75,7 @@ const PauseUserDetailPage = () => {
           alignItems: "center",
           rowGap: 2,
           columnGap: 3,
-          pl: "80px",
+          pl: "3rem ",
           mb: 3,
         }}
       >

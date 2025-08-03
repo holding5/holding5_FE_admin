@@ -32,7 +32,7 @@ const UserDetailProfile = ({ userData, onChange }) => {
         gridTemplateColumns: "max-content 500px",
         gap: "40px",
         alignItems: "center",
-        paddingLeft: "80px",
+        paddingLeft: "50px",
       }}
     >
       <Typography>ID</Typography>
