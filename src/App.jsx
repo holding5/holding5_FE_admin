@@ -51,10 +51,8 @@ function App() {
             path="userdetail/:id"
             element={<HappyUserDetailPage />}
           ></Route>
-        </Route>
-        <Route path="signuplist" element={<HappyinSignupListPage />}></Route>
-        <Route path="singupdetail/:id" element={<SignUpDetail />}></Route>
-        <Route path="happy-manage/group" element={<HappyManageGroup />}></Route>
+
+           <Route path="happy-manage/group" element={<HappyManageGroup />}></Route>
         <Route
           path="happy-manage/group/detail/:groupId"
           element={<HappyGroupDetailPage />}
@@ -67,6 +65,11 @@ function App() {
           path="happy-manage/group/create"
           element={<HappyGroupCreate />}
         ></Route>
+        
+        </Route>
+        <Route path="signuplist" element={<HappyinSignupListPage />}></Route>
+        <Route path="singupdetail/:id" element={<SignUpDetail />}></Route>
+       
         <Route path="rankmanage" element={<RankManagePage />}></Route>
         <Route
           path="rankmanagedetail"
