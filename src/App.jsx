@@ -31,8 +31,15 @@ import BannedUserManagePage from "./usermanage/pages/BannedUserManagePage";
 import BannedUserDetailPage from "./usermanage/pages/BannedUserDetailPage";
 import BannedUserListPage from "./usermanage/pages/BannedUserListPage";
 import HopeMessageManagePage from "./postmanage/pages/HopeMessageManagePage";
-import { SingleBed } from "@mui/icons-material";
 
+import HolpaBoardPage from "./postmanage/pages/HolpaBoardPage";
+import HolpaBoardDetailPage from "./postmanage/pages/HolpaBoardDetailPage";
+import HolpaBoardTable from "./postmanage/components/HolpaBoardTable";
+
+import CatsEyeTruthNotePage from "./postmanage/pages/CatsEyeTruthNotePage";
+import CatsEyeTable from "./postmanage/components/CatsEyeTable";
+import TruthNoteList from "./postmanage/components/TruthNoteList";
+import CatsEyeDetailPage from "./postmanage/pages/CatsEyeDetailPage";
 function App() {
   return (
     <Routes>
@@ -81,6 +88,23 @@ function App() {
         </Route>
 
         <Route path="hope-message" element={<HopeMessageManagePage />}></Route>
+
+        <Route path="holpa-board" element={<HolpaBoardPage />}>
+          <Route index element={<HolpaBoardTable />} />
+
+          <Route path=":id" element={<HolpaBoardDetailPage />}></Route>
+        </Route>
+
+        <Route path="catseye-truth" element={<CatsEyeTruthNotePage />}>
+          <Route index element={<CatsEyeTable />}></Route>
+          <Route path="cats" element={<CatsEyeTable />}></Route>
+          <Route path="truth" element={<TruthNoteList />}></Route>
+        </Route>
+
+        <Route
+          path="catseye-detail/:id"
+          element={<CatsEyeDetailPage />}
+        ></Route>
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>
@@ -91,7 +115,6 @@ function App() {
       <Route path="life-message" element={<LifeMessage />}>
         <Route index element={<LifeMessageList />}></Route>
         <Route path="allow" element={<LifeMessageAllowList />}></Route>
-      
       </Route>
     </Routes>
   );

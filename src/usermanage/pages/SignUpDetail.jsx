@@ -5,6 +5,11 @@ import SignUpDetailButton from "../components/SignUpDetailButton";
 import { useState } from "react";
 import SignUpDetailInfo from "../components/SignupDetailInfo";
 import SignUpDetailSign from "../components/SignUpDetailSign";
+import UserDetailPosts from "../components/UserDetailPosts";
+import UserDetailEvalutaion from "../components/UserDetailEvaluation";
+import userData from "../../modules/UserData";
+import ContentSearchbar from "../../components/ContentSearchbar";
+
 const sampleUserData = [
   {
     id: 1,
@@ -59,16 +64,26 @@ const sampleUserData = [
 
 const SignUpDetail = () => {
   const params = useParams();
-  const userData = SignUpUserData.find(
+  const signuserData = SignUpUserData.find(
     (item) => String(params.id) === String(item.id)
   );
   const nav = useNavigate();
+  const defaultData = userData.find(
+    (item) => String(item.id) === String(params.id)
+  );
+  const [happyUserData, setUserData] = useState(defaultData);
+  const [activeTab, setActiveTab] = useState("profile");
+
+  const onChangeData = (e) => {
+    const { name, value } = e.target;
+    setUserData({ ...happyUserData, [name]: value });
+  };
 
   const buttonColor = ["#d34204d0", "#1976d2"];
   const btnInfo = [
     { value: "info", text: "신상정보" },
     { value: "posts", text: "게시물활동" },
-    { value: "review", text: "활동평가" },
+    { value: "eval", text: "활동평가" },
     { value: "signup", text: "해피인신청" },
   ];
 
@@ -79,32 +94,49 @@ const SignUpDetail = () => {
   };
 
   const components = {
-    info: <SignUpDetailInfo userData={userData} />,
+    info: <SignUpDetailInfo userData={signuserData} />,
     signup: <SignUpDetailSign userData={sampleUserData} />,
+    posts: <UserDetailPosts userData={happyUserData} onChange={onChangeData} />,
+
+    eval: (
+      <UserDetailEvalutaion userData={happyUserData} onChange={onChangeData} />
+    ),
   };
 
   return (
     <Box>
-      <Button
+      <Stack
+        direction="row"
         sx={{
-          backgroundColor: "rgba(7, 209, 245, 1)",
-          color: "white",
-          padding: "2px 30px",
-          textTransform: "none",
-          fontSize: "25px",
-          borderRadius: "5px",
-          ml: "30px",
-          mb: "20px",
-          mt: "20px",
-        }}
-        onClick={() => {
-          nav(-1);
+          pl: "30px",
+          pr: "50px",
+          mb: "10px",
+          gap: "150px",
+          mt: "2rem",
         }}
       >
-        back
-      </Button>
+        <Button
+          onClick={() => {
+            nav(-1);
+          }}
+          sx={{
+            backgroundColor: "rgba(7, 209, 245, 1)",
+            textTransform: "none",
 
-      <Stack direction="row" sx={{ ml: "40px", gap: "20px" }}>
+            color: "white",
+            padding: "10px 30px",
+          }}
+        >
+          back
+        </Button>
+
+        <ContentSearchbar />
+      </Stack>
+
+      <Stack
+        direction="row"
+        sx={{ ml: "40px", gap: "20px", marginBottom: "20px" }}
+      >
         {btnInfo.map((item) => (
           <SignUpDetailButton
             key={item.value}
@@ -116,7 +148,7 @@ const SignUpDetail = () => {
         ))}
       </Stack>
 
-      <Box>{components[selectBtn]}</Box>
+      <Box sx={{ paddingLeft: "3.125rem" }}>{components[selectBtn]}</Box>
     </Box>
   );
 };

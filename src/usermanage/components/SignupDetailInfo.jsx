@@ -14,7 +14,16 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import AdminModal from "./AdminModal";
-const SignUpDetailInfo = ({ userData }) => {
+const SignUpDetailInfo = ({ userData, onChange }) => {
+  const [anchorEl, setAnchorEl] = useState(false);
+
+  const onClickModalOpen = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const onClickModalClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <Box
       component="form"
@@ -23,12 +32,11 @@ const SignUpDetailInfo = ({ userData }) => {
         gridTemplateColumns: "max-content 500px",
         gap: "40px",
         alignItems: "center",
-        paddingLeft: "80px",
-        mt: "20px",
+        paddingLeft: "50px",
       }}
     >
       <Typography>ID</Typography>
-      <TextField value={userData.id} name="id" />
+      <TextField value={userData.id} name="id" onChange={onChange} />
 
       <Typography>닉네임</Typography>
       <TextField value={userData.id} name="id" />
@@ -38,7 +46,12 @@ const SignUpDetailInfo = ({ userData }) => {
 
       <Typography>성별</Typography>
       <FormControl component="fieldset">
-        <RadioGroup row name="gender">
+        <RadioGroup
+          row
+          name="gender"
+          //value={gender}
+          onChange={onChange}
+        >
           <FormControlLabel value="male" control={<Radio />} label="남성" />
           <FormControlLabel value="female" control={<Radio />} label="여성" />
         </RadioGroup>
@@ -94,12 +107,13 @@ const SignUpDetailInfo = ({ userData }) => {
             color: "white",
             padding: "5px 50px",
           }}
+          onClick={onClickModalOpen}
         >
           행정관리
         </Button>
       </Stack>
 
-      <AdminModal />
+      <AdminModal anchorEl={anchorEl} onClose={onClickModalClose} />
     </Box>
   );
 };

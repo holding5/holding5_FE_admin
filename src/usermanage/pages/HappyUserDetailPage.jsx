@@ -103,7 +103,7 @@ const HappyUserDetail = () => {
                 setActiveTab(item.id);
               }}
               sx={{
-                padding: "0px 40px",
+                padding: "5px 40px",
                 backgroundColor: isActive
                   ? item.activeColor
                   : item.inactiveColor,
@@ -117,7 +117,7 @@ const HappyUserDetail = () => {
         })}
       </Stack>
 
-      <Box>{activeComponents[activeTab]}</Box>
+      <Box sx={{ paddingLeft: "3.125rem" }}>{activeComponents[activeTab]}</Box>
     </Box>
   );
 };
