@@ -11,9 +11,9 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentSearchbar from "../../components/ContentSearchbar";
 import LifeMessageSelectButton from "../components/LifeMessageSelectButton";
-import LifeMessageTableAllow from "../components/LifeMessageTableAllow";
+import LifeMessageTableRefusal from "../components/LifeMessageTableRefusal";
 
-const LifeMessageAllowList = () => {
+const LifeMessageRefusalList = () => {
   const nav = useNavigate();
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const memNum = useRef(25);
@@ -68,10 +68,10 @@ const LifeMessageAllowList = () => {
       </Stack>
 
       <Box component="section" sx={{ mt: "30px", p: "0px 20px" }}>
-        <LifeMessageTableAllow itemsPerPage={itemsPerPage}/>
+        <LifeMessageTableRefusal itemsPerPage={itemsPerPage}/>
       </Box>
     </Box>
   );
 };
 
-export default LifeMessageAllowList;
+export default LifeMessageRefusalList;

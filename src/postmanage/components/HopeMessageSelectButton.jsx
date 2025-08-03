@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Stack, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const LifeMessageSelectButton = () => {
+const HopeMessageSelectButton = () => {
   const nav = useNavigate();
 
   const buttonData = [
@@ -14,19 +14,19 @@ const LifeMessageSelectButton = () => {
     },
     {
       id: "allow",
-      text: "승인 / 대기 리스트",
+      text: "승인 리스트",
       activeColor: "#a52a2a",
       inactiveColor: "#1976d2",
     },
     {
       id: "refusal",
-      text: "보류 / 거절 리스트",
+      text: "거절 리스트",
       activeColor: "#a52a2a",
       inactiveColor: "#1976d2",
     },
     {
       id: "input",
-      text: "생명메시지 입력",
+      text: "희망메시지 입력",
       activeColor: "#a52a2a",
       inactiveColor: "#1976d2",
     },
@@ -37,21 +37,21 @@ const LifeMessageSelectButton = () => {
   const onClickUser = (buttonId) => {
     setActiveButtonId(buttonId);
 
-    if(buttonId == "all") // 전체 생명메시지 리스트로 이동
+    if(buttonId == "all") // 전체 희망메시지 리스트로 이동
     {
-      nav("/life-message");
+      nav("/hope-message");
     }
-    if(buttonId == "allow") // 승인 / 대기 리스트로 이동
+    if(buttonId == "allow") // 승인 리스트로 이동
     {
-      nav("/life-message/allow");
+      nav("/hope-message/allow");
     }
-    if(buttonId == "refusal") // 거절 / 보류 리스트로 이동
+    if(buttonId == "refusal") // 거절 리스트로 이동
     {
-      nav("/life-message/refusal");
+      nav("/hope-message/refusal");
     }
-    if(buttonId == "input") // 생명메세지 입력페이지로 이동
+    if(buttonId == "input") // 희망메세지 입력페이지로 이동
     {
-      nav("/life-message/input");
+      nav("/hope-message/input");
     }
   };
 
@@ -88,4 +88,4 @@ const LifeMessageSelectButton = () => {
     </Stack>
   );
 };
-export default LifeMessageSelectButton;
+export default HopeMessageSelectButton;

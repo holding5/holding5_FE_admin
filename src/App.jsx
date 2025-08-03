@@ -20,6 +20,12 @@ import SignUpDetail from "./usermanage/pages/SignUpDetail";
 import LifeMessage from "./postmanage/pages/LifeMessage";
 import LifeMessageList from "./postmanage/pages/LifeMessageList";
 import LifeMessageAllowList from "./postmanage/pages/LifeMessageAllowList";
+import LifeMessageRefusalList from "./postmanage/pages/LifeMessageRefusalList";
+import LifeMessageInputPage from "./postmanage/pages/LifeMessageInputPage";
+
+import HopeMessage from "./postmanage/pages/HopeMessage";
+import HopeMessageList from "./postmanage/pages/HopeMessageList";
+import HopeMessageInputPage from "./postmanage/pages/HopeMessageInputPage";
 
 import RankManagePage from "./usermanage/pages/RankManagePage";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
@@ -90,8 +96,6 @@ function App() {
           <Route path="detail" element={<BannedUserDetailPage />}></Route>
         </Route>
 
-        <Route path="hope-message" element={<HopeMessageManagePage />}></Route>
-
         <Route path="holpa-board" element={<HolpaBoardPage />}>
           <Route index element={<HolpaBoardTable />} />
 
@@ -118,6 +122,13 @@ function App() {
       <Route path="life-message" element={<LifeMessage />}>
         <Route index element={<LifeMessageList />}></Route>
         <Route path="allow" element={<LifeMessageAllowList />}></Route>
+        <Route path="refusal" element={<LifeMessageRefusalList />}></Route>
+        <Route path="input" element={<LifeMessageInputPage />}></Route>
+      </Route>
+
+      <Route path="hope-message" element={<HopeMessage />}>
+        <Route index element={<HopeMessageList />}></Route>
+        <Route path="input" element={<HopeMessageInputPage />}></Route>
       </Route>
     </Routes>
   );
