@@ -67,7 +67,7 @@ const LifeMessageAllowList = () => {
         </Box>
       </Stack>
 
-      <Box component="section" sx={{ mt: "30px", p: "0px 20px" }}>
+      <Box component="section" sx={{ mt: "30px", p: "0px 20px", maxWidth:""}}>
         <LifeMessageTableAll itemsPerPage={itemsPerPage}/>
       </Box>
     </Box>
