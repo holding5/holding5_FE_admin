@@ -1,6 +1,7 @@
-import { Box } from "@mui/material";
+import { Box, Stack, Button } from "@mui/material";
 import { Outlet } from "react-router-dom";
-
+import ContentSearchbar from "../../components/ContentSearchbar";
+import { useNavigate } from "react-router-dom";
 const userData = {
   id: "malfr3456@naver.com",
   nickname: "어리한청춘",
@@ -16,9 +17,31 @@ const userData = {
 };
 
 const PausedUserManagePage = () => {
+  const nav = useNavigate();
+
   return (
-    <Box>
-      <Box component="main">
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+        <ContentSearchbar />
+      </Box>
+      <Box sx={{ p: 3 }}>
+        <Button
+          onClick={() => {
+            nav(-1);
+          }}
+          sx={{
+            backgroundColor: "rgba(7, 209, 245, 1)",
+            textTransform: "none",
+            borderRadius: "10px",
+            fontSize: "1.2rem",
+            color: "white",
+            p: "0.6rem 2rem",
+          }}
+        >
+          back
+        </Button>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
         <Outlet context={{ userData: userData }} />
       </Box>
     </Box>

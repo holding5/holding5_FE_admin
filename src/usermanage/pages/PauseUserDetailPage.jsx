@@ -33,7 +33,6 @@ const btnInfo = [
   { value: "info", text: "신상정보" },
   { value: "posts", text: "게시물활동" },
   { value: "review", text: "활동평가" },
-  { value: "signup", text: "해피인신청" },
 ];
 
 const PauseUserDetailPage = () => {
@@ -54,7 +53,7 @@ const PauseUserDetailPage = () => {
   };
   return (
     <Box>
-      {/* <Stack direction="row" sx={{ ml: "40px", gap: "20px" }}>
+      <Stack direction="row" sx={{ ml: "40px", gap: "20px", mt: 3 }}>
         {btnInfo.map((item) => (
           <SignUpDetailButton
             key={item.value}
@@ -64,7 +63,7 @@ const PauseUserDetailPage = () => {
             text={item.text}
           />
         ))}
-      </Stack> */}
+      </Stack>
 
       <Box
         component="form"

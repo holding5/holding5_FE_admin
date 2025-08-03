@@ -58,7 +58,7 @@ const PauseUserListPage = () => {
   ];
 
   return (
-    <Box sx={{ p: 3, backgroundColor: "#f5f5f5" }}>
+    <Box sx={{ p: 3 }}>
       <Box
         sx={{
           display: "flex",
