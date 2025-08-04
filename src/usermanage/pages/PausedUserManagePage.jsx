@@ -24,26 +24,8 @@ const PausedUserManagePage = () => {
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         <ContentSearchbar />
       </Box>
-      <Box sx={{ p: 3 }}>
-        <Button
-          onClick={() => {
-            nav(-1);
-          }}
-          sx={{
-            backgroundColor: "rgba(7, 209, 245, 1)",
-            textTransform: "none",
-            borderRadius: "10px",
-            fontSize: "1.2rem",
-            color: "white",
-            p: "0.6rem 2rem",
-          }}
-        >
-          back
-        </Button>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-        <Outlet context={{ userData: userData }} />
-      </Box>
+
+      <Outlet context={{ userData: userData }} />
     </Box>
   );
 };

@@ -7,195 +7,253 @@ import {
   TableRow,
   Box,
   Typography,
+  Stack,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { useOutletContext } from "react-router-dom";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+import { useState } from "react";
+const dataNumOption = [
+  { value: 25, label: "25" },
+  { value: 50, label: "50" },
+  { value: 100, label: "100" },
+];
 const CatsEyeTable = () => {
-  const { data, onClick } = useOutletContext();
+  const { data, onClickPage } = useOutletContext();
+  const [locOption, setLocOption] = useState("all");
+  const [dataNum, setDataNum] = useState(25);
 
+  const handleChnageLoc = (e) => {
+    setLocOption(e.target.value);
+  };
+
+  const handleChangedNum = (e) => {
+    setDataNum(e.target.value);
+  };
   return (
-    <Box sx={{ width: "1150px", margin: "50px auto" }}>
+    <Box>
       <TableContainer>
         <Table
           size="small"
           sx={{
             tableLayout: "fixed",
-            borderCollapse: "collapse",
-            "& .MuiTableCell-root": {
-              border: "1px solid #ccc",
-            },
           }}
         >
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-            {/* 첫 번째 헤더 줄 */}
-            <TableRow sx={{ height: "45px" }}>
+          <colgroup>
+            <col style={{ width: "5%" }} /> {/* 번호 */}
+            <col style={{ width: "10%" }} /> {/* 지역 */}
+            <col style={{ width: "17%" }} /> {/* 내용 (너비 축소) */}
+            <col style={{ width: "9%" }} /> {/* 신고자닉네임 */}
+            <col style={{ width: "8%" }} /> {/* 작성일 */}
+            <col style={{ width: "7%" }} /> {/* 응원 */}
+            <col style={{ width: "7%" }} /> {/* 신고 */}
+            <col style={{ width: "8%" }} /> {/* 댓글수 */}
+            <col style={{ width: "7%" }} /> {/* 신고처 - 지역 */}
+            <col style={{ width: "7%" }} /> {/* 신고처 - 학교 */}
+            <col style={{ width: "7%" }} /> {/* 신고처 - 경찰 (너비 확대) */}
+            <col style={{ width: "8%" }} /> {/* 검색수 */}
+          </colgroup>
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>
+                <Select
+                  value={locOption}
+                  onChange={handleChnageLoc}
+                  size="small"
+                  fullWidth
+                >
+                  <MenuItem value={locOption}>전체</MenuItem>
+                </Select>
+              </TableCell>
+              <TableCell colSpan={8}></TableCell>
+              <TableCell>
+                <Box sx={{ width: "80px" }}>
+                  <Select
+                    value={dataNum}
+                    onChange={handleChangedNum}
+                    size="small"
+                    fullWidth
+                  >
+                    {dataNumOption.map((option) => (
+                      <MenuItem value={option.value} key={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </TableCell>
+            </TableRow>
+            <TableRow
+              sx={{
+                height: "45px",
+                "& .MuiTableCell-root": {
+                  textAlign: "center",
+                  fontSize: "12px",
+                  borderCollapse: "collapse",
+                  border: "1px solid #ccc",
+                },
+              }}
+            >
               <TableCell
                 align="center"
-                rowSpan={2} // 두 줄을 차지
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "5%",
-                  backgroundColor: "#1976d2",
-                }}
+                rowSpan={2}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
                 번호
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "10%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
                 지역
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "25%", // 너비 조정
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
                 내용
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "10%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
                 신고자닉네임
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "10%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                작성일
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>작성일</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                응원
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>응원</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                신고
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>신고</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                댓글수
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>댓글수</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
-                colSpan={3} // 세 칸을 차지
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  backgroundColor: "#1976d2",
-                }}
+                colSpan={3}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
                 신고처
               </TableCell>
               <TableCell
                 align="center"
                 rowSpan={2}
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "7%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                검색수
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>검색수</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
             </TableRow>
 
-            <TableRow sx={{ height: "45px" }}>
+            <TableRow
+              sx={{
+                height: "45px",
+                borderCollapse: "collapse",
+                "& .MuiTableCell-root": {
+                  textAlign: "center",
+                  fontSize: "12px",
+
+                  border: "1px solid #ccc",
+                },
+              }}
+            >
               <TableCell
                 align="center"
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                지역
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>지역</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                학교
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>학교</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
-                sx={{
-                  color: "#fff",
-                  fontSize: "14px",
-                  whiteSpace: "nowrap",
-                  width: "6%",
-                  backgroundColor: "#1976d2",
-                }}
+                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
               >
-                경찰
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <span>경찰</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -203,7 +261,10 @@ const CatsEyeTable = () => {
             sx={{
               "& .MuiTableCell-root": {
                 textAlign: "center",
-                fontSize: "13px", // 가독성을 위해 폰트 사이즈 살짝 조정
+                fontSize: "13px",
+
+                borderCollapse: "collapse",
+                border: "1px solid #ccc",
               },
             }}
           >
@@ -217,7 +278,7 @@ const CatsEyeTable = () => {
                     backgroundColor: "rgba(0, 0, 0, 0.04)",
                   },
                 }}
-                onClick={() => onClick(item.id)} // onClick에 id를 넘겨주는 방식으로 수정
+                onClick={onClickPage}
               >
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.region}</TableCell>
@@ -226,8 +287,8 @@ const CatsEyeTable = () => {
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    maxWidth: "200px", // 내용이 길어질 경우를 대비해 maxWidth 추가
-                    textAlign: "left", // 내용은 왼쪽 정렬이 더 자연스러움
+                    maxWidth: "200px",
+                    textAlign: "left",
                   }}
                 >
                   {item.content}
@@ -237,7 +298,6 @@ const CatsEyeTable = () => {
                 <TableCell>{item.cheerCount}</TableCell>
                 <TableCell>{item.reportCount}</TableCell>
                 <TableCell>{item.commentCount}</TableCell>
-                {/* 신고처 하위 항목들 */}
                 <TableCell>{item.reportChannels.region}</TableCell>
                 <TableCell>{item.reportChannels.school}</TableCell>
                 <TableCell>{item.reportChannels.police}</TableCell>

@@ -1,13 +1,4 @@
-import {
-  Box,
-  Typography,
-  TextField,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import React from "react";
 import AdminModal from "../components/AdminModal";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +6,9 @@ import SignUpDetailButton from "../components/SignUpDetailButton";
 import FooterBtn from "../components/FooterBtn";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-
+import PauseUserDetailEvaluation from "../components/PauseUserDetailEvaluation";
+import PauseUserDetailProfile from "../components/PauseUserDetailProfile";
+import UserDetailPosts from "../components/UserDetailPosts";
 const fieldInfo = [
   { name: "id", label: "ID", type: "text" },
   { name: "nickname", label: "닉네임", type: "text" },
@@ -28,89 +21,94 @@ const fieldInfo = [
   { name: "history", label: "경력변경", type: "textarea" },
 ];
 
-const buttonColor = ["#d34204d0", "#1976d2"];
-const btnInfo = [
-  { value: "info", text: "신상정보" },
-  { value: "posts", text: "게시물활동" },
-  { value: "review", text: "활동평가" },
+const activeBtn = [
+  {
+    id: "profile",
+    text: "신상정보",
+    activeColor: "#d34204d0",
+    inactiveColor: "#1976d2",
+  },
+  {
+    id: "posts",
+    text: "게시물활동",
+    activeColor: "#d34204d0",
+    inactiveColor: "#1976d2",
+  },
+
+  {
+    id: "eval",
+    text: "활동평가",
+    activeColor: "#d34204d0",
+    inactiveColor: "#1976d2",
+  },
 ];
 
 const PauseUserDetailPage = () => {
+  const [activeTab, setActiveTab] = useState("profile");
   const userData = useOutletContext();
+  const [anchorEl, setAnchorEl] = useState(false);
   const nav = useNavigate();
-  const [selectBtn, setSelectBtn] = useState("info");
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const onClickChangeContent = (e) => {
-    setSelectBtn(e.target.value);
-  };
-  const handleAdminClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const onClickModalOpen = (e) => {
+    setAnchorEl(e.currentTarget);
   };
 
-  const handleAdminClose = () => {
+  const activeComponents = {
+    profile: <PauseUserDetailProfile userData={userData} />,
+    posts: <UserDetailPosts />,
+    eval: <PauseUserDetailEvaluation userData={userData} />,
+  };
+
+  const onClickModalClose = () => {
     setAnchorEl(null);
   };
   return (
     <Box>
-      <Stack direction="row" sx={{ ml: "40px", gap: "20px", mt: 3 }}>
-        {btnInfo.map((item) => (
-          <SignUpDetailButton
-            key={item.value}
-            value={item.value}
-            color={selectBtn === item.value ? buttonColor[0] : buttonColor[1]}
-            onClickChangeContent={onClickChangeContent}
-            text={item.text}
-          />
-        ))}
-      </Stack>
-
-      <Box
-        component="form"
-        sx={{
-          display: "grid",
-          mt: 3,
-          gridTemplateColumns: "max-content 800px",
-          alignItems: "center",
-          rowGap: 2,
-          columnGap: 3,
-          pl: "3rem ",
-          mb: 3,
-        }}
-      >
-        {fieldInfo.map((item) => {
-          return (
-            <React.Fragment key={item.id}>
-              <Typography sx={{ fontWeight: "bold" }}>{item.label}</Typography>
-              {item.type === "text" ? (
-                <TextField value={userData[item.name]} sx={{ width: 500 }} />
-              ) : item.type === "textarea" ? (
-                <TextField multiline rows={4} value={userData[item.name]} />
-              ) : (
-                <RadioGroup row defaultValue={userData[item.name]}>
-                  {item.option.map((option) => (
-                    <FormControlLabel
-                      key={option}
-                      value={option.toLowerCase()}
-                      control={<Radio />}
-                      label={option}
-                    />
-                  ))}
-                </RadioGroup>
-              )}
-            </React.Fragment>
-          );
-        })}
+      <Box sx={{ p: 3, mb: "10px" }}>
+        <Button
+          onClick={() => {
+            nav(-1);
+          }}
+          sx={{
+            backgroundColor: "rgba(7, 209, 245, 1)",
+            textTransform: "none",
+            borderRadius: "10px",
+            fontSize: "1.2rem",
+            color: "white",
+            p: "0.6rem 2rem",
+          }}
+        >
+          back
+        </Button>
       </Box>
 
-      <FooterBtn
-        leftText={"수정"}
-        midText={"삭제"}
-        rightText={"행정관리"}
-        rightClick={handleAdminClick}
-      />
+      <Stack
+        direction="row"
+        sx={{ paddingLeft: "50px", gap: "30px", marginBottom: "20px" }}
+      >
+        {activeBtn.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <Button
+              key={item.id}
+              onClick={() => {
+                setActiveTab(item.id);
+              }}
+              sx={{
+                padding: "5px 40px",
+                backgroundColor: isActive
+                  ? item.activeColor
+                  : item.inactiveColor,
+                color: "white",
+                borderRadius: "2px",
+              }}
+            >
+              {item.text}
+            </Button>
+          );
+        })}
+      </Stack>
 
-      <AdminModal anchorEl={anchorEl} onClose={handleAdminClose} />
+      <Box sx={{ paddingLeft: "3.125rem" }}>{activeComponents[activeTab]}</Box>
     </Box>
   );
 };

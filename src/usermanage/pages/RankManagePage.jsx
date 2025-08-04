@@ -1,8 +1,8 @@
 import RankDataTable from "../components/RankDataTable";
 import { Box } from "@mui/material";
 import { useState, createContext } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, Outlet } from "react-router-dom";
+import { useOutlet } from "react-router-dom";
 const numberSortComparator = (v1, v2) => v1 - v2;
 
 const sortComparator = (v1, v2) => {
@@ -83,101 +83,6 @@ const userData = [
   },
 ];
 
-const columns = [
-  {
-    field: "id",
-    headerName: "NO",
-    width: 70,
-    headerAlign: "center",
-  },
-  {
-    field: "nickname",
-    headerName: "닉네임",
-    width: 130,
-    renderCell: (params) => (
-      <Link to={"/rankmanagedetail"} style={{ color: "blue" }}>
-        {params.value} {params.row.detailInfo && `(${params.row.detailInfo})`}
-      </Link>
-    ),
-    headerAlign: "center",
-  },
-  {
-    field: "affiliation",
-    headerName: "소속분류",
-    width: 140,
-    filterable: true,
-    filterOptions: ["전체", "해피인", "드림인"],
-    headerAlign: "center",
-  },
-
-  {
-    field: "ageGroup",
-    headerName: "나이대",
-    width: 130,
-    filterable: true,
-    filterOptions: [
-      "전체",
-      "초등학생",
-      "중학생",
-      "고등학생",
-      "20대",
-      "30대",
-      "40대 이상",
-    ],
-    headerAlign: "center",
-  },
-
-  {
-    field: "grade",
-    headerName: "등급",
-    width: 130,
-    filterable: true,
-    filterOptions: ["전체", "해피인", "드림인"],
-    headerAlign: "center",
-  },
-  {
-    field: "gradeScore",
-    headerName: "등급스코어",
-    type: "number",
-    width: 150,
-    headerAlign: "center",
-  },
-  {
-    field: "totalScore",
-    headerName: "통합누적스코어",
-    type: "number",
-    width: 150,
-    headerAlign: "center",
-  },
-  {
-    field: "startDate",
-    headerName: "시작일",
-    type: "number",
-    width: 130,
-  },
-  {
-    field: "change",
-    headerName: "출석",
-    type: "number",
-    width: 120,
-    filterable: true,
-    filterOptions: [
-      "1개월",
-      "2개월",
-      "3개월",
-      "5개월",
-      "6개월",
-      "7개월",
-      "8개월",
-      "9개월",
-      "10개월",
-      "11개월",
-      "1년",
-    ],
-    headerAlign: "center",
-  },
-];
-
 export const RankPageData = createContext();
 
 const RankManagePage = () => {
@@ -194,11 +99,9 @@ const RankManagePage = () => {
   };
 
   return (
-    <RankPageData.Provider
-      value={{ userData, columns, crntOption, onFilterChange }}
-    >
-      <Box sx={{ padding: "0 15px" }}>
-        <RankDataTable />
+    <RankPageData.Provider value={{ userData, crntOption, onFilterChange }}>
+      <Box>
+        <Outlet />
       </Box>
     </RankPageData.Provider>
   );
