@@ -28,7 +28,9 @@ import HopeMessageList from "./postmanage/pages/HopeMessageList";
 import HopeMessageInputPage from "./postmanage/pages/HopeMessageInputPage";
 
 import RankManagePage from "./usermanage/pages/RankManagePage";
+import RankManageList from "./usermanage/components/RankManageList";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
+
 import PausedUserManagePage from "./usermanage/pages/PausedUserManagePage";
 import ReportListPage from "./usermanage/pages/ReportListPage";
 import PauseUserDetailPage from "./usermanage/pages/PauseUserDetailPage";
@@ -45,7 +47,7 @@ import HolpaBoardTable from "./postmanage/components/HolpaBoardTable";
 import CatsEyeTruthNotePage from "./postmanage/pages/CatsEyeTruthNotePage";
 import CatsEyeTable from "./postmanage/components/CatsEyeTable";
 import TruthNoteList from "./postmanage/components/TruthNoteList";
-import CatsEyeDetailPage from "./postmanage/pages/CatsEyeDetailPage";
+import CatsEyeDetailPage from "./postmanage/components/CatsEyeDetailPage";
 function App() {
   return (
     <Routes>
@@ -58,25 +60,29 @@ function App() {
             element={<HappyUserDetailPage />}
           ></Route>
 
-           <Route path="happy-manage/group" element={<HappyManageGroup />}></Route>
-        <Route
-          path="happy-manage/group/detail/:groupId"
-          element={<HappyGroupDetailPage />}
-        ></Route>
-        <Route
-          path="happy-manage/group/detail/manage/:groupId"
-          element={<HappyGroupDetailManage />}
-        ></Route>
-        <Route
-          path="happy-manage/group/create"
-          element={<HappyGroupCreate />}
-        ></Route>
-        
+          <Route
+            path="happy-manage/group"
+            element={<HappyManageGroup />}
+          ></Route>
+          <Route
+            path="happy-manage/group/detail/:groupId"
+            element={<HappyGroupDetailPage />}
+          ></Route>
+          <Route
+            path="happy-manage/group/detail/manage/:groupId"
+            element={<HappyGroupDetailManage />}
+          ></Route>
+          <Route
+            path="happy-manage/group/create"
+            element={<HappyGroupCreate />}
+          ></Route>
         </Route>
         <Route path="signuplist" element={<HappyinSignupListPage />}></Route>
         <Route path="singupdetail/:id" element={<SignUpDetail />}></Route>
-       
-        <Route path="rankmanage" element={<RankManagePage />}></Route>
+
+        <Route path="rankmanage" element={<RankManagePage />}>
+          <Route index element={<RankManageList />}></Route>
+        </Route>
         <Route
           path="rankmanagedetail"
           element={<RankManageDetailPage />}
@@ -106,12 +112,8 @@ function App() {
           <Route index element={<CatsEyeTable />}></Route>
           <Route path="cats" element={<CatsEyeTable />}></Route>
           <Route path="truth" element={<TruthNoteList />}></Route>
+          <Route path="catseye-detail" element={<CatsEyeDetailPage />}></Route>
         </Route>
-
-        <Route
-          path="catseye-detail/:id"
-          element={<CatsEyeDetailPage />}
-        ></Route>
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>

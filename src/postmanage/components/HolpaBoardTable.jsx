@@ -7,13 +7,49 @@ import {
   TableRow,
   Box,
   Typography,
+  Select,
+  MenuItem,
+  Stack,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { useOutletContext } from "react-router-dom";
+import { useState } from "react";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+
+const options = [
+  { value: "all", label: "전체" },
+  { value: "bullying_violence", label: "왕따.학교폭력" },
+  { value: "academic", label: "성적.학업문제" },
+  { value: "relationships", label: "친구.이성문제" },
+  { value: "conflict_parents", label: "부모님과 갈등" },
+  { value: "conflict_teachers", label: "선생님과 갈등" },
+  { value: "financial", label: "가정형편.경제문제" },
+  { value: "appearance", label: "외모문제" },
+  { value: "etc", label: "기타문제" },
+  { value: "cats_eye", label: "캣츠아이" },
+  { value: "overcoming_story", label: "극복수기" },
+];
+
+const dataOptions = [
+  { value: 25, label: "25" },
+  { value: 50, label: "50" },
+  { value: 100, label: "100" },
+];
+
 const HolpaBoardTable = () => {
   const { data, onClick } = useOutletContext();
+  const [option, setOption] = useState("all");
+  const [dataOption, setDataOptions] = useState(25);
+
+  const handleChangeOption = (e) => {
+    setOption(e.target.value);
+  };
+
+  const handleChangeDataOption = (e) => {
+    setDataOptions(e.target.value);
+  };
   return (
-    <Box sx={{ width: "1150px", margin: "50px auto" }}>
+    <Box sx={{ margin: "50px auto" }}>
       <Box
         sx={{
           backgroundColor: "#27374D",
@@ -37,21 +73,74 @@ const HolpaBoardTable = () => {
           sx={{
             tableLayout: "fixed",
             width: "100%",
-            borderCollapse: "collapse",
-            "& .MuiTableCell-root": {
-              border: "1px solid #ccc",
-            },
           }}
         >
-          <TableHead sx={{ backgroundColor: "#1976d2" }}>
-            <TableRow sx={{ height: "45px" }}>
+          <colgroup>
+            <col style={{ width: "5%" }} /> {/* 번호 */}
+            <col style={{ width: "10%" }} /> {/* 분류 */}
+            <col style={{ width: "15%" }} /> {/* 내용 */}
+            <col style={{ width: "10%" }} /> {/* 작성자 */}
+            <col style={{ width: "11%" }} /> {/* 작성일 */}
+            <col style={{ width: "5%" }} /> {/* 추천 */}
+            <col style={{ width: "5%" }} /> {/* 신고 */}
+            <col style={{ width: "6%" }} /> {/* 댓글수 */}
+            <col style={{ width: "6%" }} /> {/* 생각수 */}
+            <col style={{ width: "8%" }} /> {/* 마음상태 */}
+            <col style={{ width: "8%" }} /> {/* 상태총점 */}
+            <col style={{ width: "11%" }} /> {/* 생명메시지발송 */}
+          </colgroup>
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>
+                <Box sx={{ width: "100%" }}>
+                  <Select
+                    size="small"
+                    value={option}
+                    onChange={handleChangeOption}
+                  >
+                    {options.map((option) => (
+                      <MenuItem value={option.value} key={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </TableCell>
+              <TableCell colSpan={9}></TableCell>
+              <TableCell>
+                <Select
+                  sx={{ width: "80%" }}
+                  size="small"
+                  value={dataOption}
+                  onChange={handleChangeDataOption}
+                >
+                  {dataOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow
+              sx={{
+                height: "45px",
+                backgroundColor: "#1976d2",
+                borderCollapse: "collapse",
+                "& .MuiTableCell-root": {
+                  border: "1px solid #ccc",
+                  fontSize: "14px",
+                  whiteSpace: "nowrap",
+                },
+              }}
+            >
               <TableCell
                 align="center"
                 sx={{
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "5%",
                 }}
               >
                 번호
@@ -62,7 +151,6 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "10%",
                 }}
               >
                 분류
@@ -73,7 +161,6 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "15%",
                 }}
               >
                 내용
@@ -84,7 +171,6 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "10%",
                 }}
               >
                 작성자
@@ -95,7 +181,6 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "12%",
                 }}
               >
                 작성일
@@ -106,10 +191,16 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "6%",
                 }}
               >
-                추천
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <span>추천</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
@@ -117,10 +208,16 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "6%",
                 }}
               >
-                신고
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <span>신고</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
@@ -128,10 +225,16 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "6%",
                 }}
               >
-                댓글수
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <span>댓글수</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
@@ -139,7 +242,6 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "6%",
                 }}
               >
                 생각수
@@ -150,10 +252,9 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "6%",
                 }}
               >
-                마음수
+                마음상태
               </TableCell>
               <TableCell
                 align="center"
@@ -161,10 +262,16 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "8%",
                 }}
               >
-                상태총점
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <span>상태총점</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
               <TableCell
                 align="center"
@@ -172,17 +279,27 @@ const HolpaBoardTable = () => {
                   color: "#fff",
                   fontSize: "14px",
                   whiteSpace: "nowrap",
-                  width: "12%",
                 }}
               >
-                생명메시지발송
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <span>생명메시지발송</span>
+                  <UnfoldMoreIcon sx={{ fontSize: "1.5rem" }} />
+                </Stack>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody
             sx={{
+              borderCollapse: "collapse",
               "& .MuiTableCell-root": {
+                border: "1px solid #ccc",
                 textAlign: "center",
+                fontSize: "14px",
+                whiteSpace: "nowrap",
               },
             }}
           >

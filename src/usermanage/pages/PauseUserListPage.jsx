@@ -9,7 +9,9 @@ import {
 } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const PauseUserListPage = () => {
+  const nav = useNavigate();
   const users = [
     {
       name: "스코어의 남자",
@@ -20,7 +22,9 @@ const PauseUserListPage = () => {
       releaseDate: "2024.07.06",
       remainingDays: 17,
       reportCount: 6,
-      reportDetails: { verbal: 2, spam: 3, inappropriate: 1 },
+      verbal: 2,
+      spam: 3,
+      inappropriate: 1,
     },
     {
       name: "팔불출",
@@ -31,7 +35,9 @@ const PauseUserListPage = () => {
       releaseDate: "2024.07.06",
       remainingDays: 17,
       reportCount: 6,
-      reportDetails: { verbal: 2, spam: 3, inappropriate: 1 },
+      verbal: 2,
+      spam: 3,
+      inappropriate: 1,
     },
     {
       name: "어메이징",
@@ -42,7 +48,9 @@ const PauseUserListPage = () => {
       releaseDate: "2024.07.06",
       remainingDays: 17,
       reportCount: 6,
-      reportDetails: { verbal: 2, spam: 3, inappropriate: 1 },
+      verbal: 2,
+      spam: 3,
+      inappropriate: 1,
     },
     {
       name: "코코바지",
@@ -53,120 +61,117 @@ const PauseUserListPage = () => {
       releaseDate: "2024.07.06",
       remainingDays: 17,
       reportCount: 6,
-      reportDetails: { verbal: 2, spam: 3, inappropriate: 1 },
+      verbal: 2,
+      spam: 3,
+      inappropriate: 1,
     },
   ];
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
-        <Stack direction="row" spacing={1}>
-          <Button variant="contained" color="warning">
-            정지해지
-          </Button>
-          <Button variant="contained" color="error">
-            영구제명
-          </Button>
-        </Stack>
-        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
-          <Link underline="hover" color="inherit" href="#">
-            회원관리
-          </Link>
-          <Link underline="hover" color="inherit" href="#">
-            일시정지회원관리
-          </Link>
-          <Typography color="text.primary">리스트</Typography>
-        </Breadcrumbs>
-      </Box>
+      <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
+        <Button variant="contained" color="warning">
+          정지해지
+        </Button>
+        <Button variant="contained" color="error">
+          영구제명
+        </Button>
+      </Stack>
 
-      <Stack spacing={2}>
-        {users.map((user, index) => (
-          <Paper
-            key={index}
-            elevation={2}
-            sx={{ display: "flex", alignItems: "stretch" }}
+      {users.map((user) => (
+        <Box
+          sx={{
+            display: "flex",
+            mb: "15px",
+            minHeight: "150px",
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: "#27374D",
+
+              display: "flex",
+              color: "white",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "18px",
+              width: "60px",
+            }}
+          ></Box>
+
+          <Stack
+            spacing={2}
+            sx={{
+              backgroundColor: "rgb(236,236,236)",
+              border: "1px solid rgb(180,180,180)",
+              padding: "10px 20px",
+              width: "80%",
+            }}
           >
-            <Box
-              sx={{
-                width: "30px",
-                backgroundColor: "primary.main",
-                borderTopLeftRadius: "4px",
-                borderBottomLeftRadius: "4px",
-              }}
-            />
-
-            <Box sx={{ p: 2, flexGrow: 1 }}>
+            <Stack direction="row" gap={2}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+                onClick={() => {
+                  nav("/pausedmanage/detail");
+                }}
+                sx={{
+                  cursor: "pointer",
+                  color: "rgba(0, 72, 255, 1)",
+                  minWidth: "150px",
+                }}
               >
-                <Link
-                  to="detail"
-                  underline="hover"
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "1.1rem",
-                    color: "primary.main",
-                  }}
-                >
-                  {user.name}
-                </Link>
-                <Typography
-                  variant="body1"
-                  sx={{ color: user.statusColor, fontWeight: "bold" }}
-                >
-                  [{user.status}]
-                </Typography>
+                <Typography variant="h6">{user.name}</Typography>
               </Box>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mb: 0.5 }}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                일시정지 시작 :{" "}
-                <Typography component="span" sx={{ color: "error.main" }}>
+                <Typography variant="h6">{`[${user.status}]`}</Typography>
+              </Box>
+            </Stack>
+
+            <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+              <Typography>
+                일시정지 시점 :{" "}
+                <Typography component="span" sx={{ color: "red" }}>
                   {user.suspensionDate}
                 </Typography>
-                {" [ 정지시로부터 : "}
-                <Typography component="span" sx={{ color: "error.main" }}>
-                  {user.suspensionElapsed}일 경과
-                </Typography>
-                {" ] [ 자동해제 : "}
-                {user.releaseDate}
-                <Typography component="span" sx={{ color: "error.main" }}>
-                  {" "}
-                  잔여일 {user.remainingDays}일
-                </Typography>
-                {" ]"}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                신고 총 {user.reportCount}건 : 언어폭력{" "}
-                <Link href="#" underline="hover">
-                  {user.reportDetails.verbal}건
-                </Link>{" "}
-                / 도배{" "}
-                <Link href="#" underline="hover">
-                  {user.reportDetails.spam}건
-                </Link>{" "}
-                / 부적절한 언어사용{" "}
-                <Link href="#" underline="hover">
-                  {user.reportDetails.inappropriate}건
-                </Link>
+              <Typography>
+                [정지시로부터 :{" "}
+                <Typography component="span" sx={{ color: "red" }}>
+                  {user.suspensionElapsed}
+                </Typography>
+                일 경과]
               </Typography>
-            </Box>
+              <Typography>
+                [자동해제: {user.releaseDate} 잔여일{" "}
+                <Typography component="span" sx={{ color: "red" }}>
+                  {user.remainingDays}일
+                </Typography>
+                ]
+              </Typography>
+            </Stack>
 
-            <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-              <Checkbox sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }} />
-            </Box>
-          </Paper>
-        ))}
-      </Stack>
+            <Stack direction="row" spacing={2}>
+              <Typography>신고 총 {user.reportCount}건 : </Typography>
+              <Typography>언어폭력 {user.verbal}건 / </Typography>
+              <Typography>도배 {user.spam}건 / </Typography>
+              <Typography>부적절한 언어사용 {user.inappropriate}건 </Typography>
+            </Stack>
+
+            <Stack
+              direction="row"
+              sx={{ justifyContent: "flex-end", width: "100%" }}
+            >
+              <Checkbox sx={{ height: "2rem" }} />
+            </Stack>
+          </Stack>
+        </Box>
+      ))}
     </Box>
   );
 };

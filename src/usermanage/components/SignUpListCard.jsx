@@ -45,7 +45,7 @@ const SignUpListCard = ({ userData }) => {
         spacing={2}
         sx={{
           backgroundColor: "rgb(236,236,236)",
-          width: "90%",
+          width: "80%",
           border: "1px solid rgb(180,180,180)",
           padding: "10px 20px",
         }}

@@ -256,8 +256,8 @@ const CatsEyeTruthNotePage = () => {
 
   const [activeBtn, setActiveBtn] = useState("cats");
 
-  const onClickPage = (id) => {
-    nav(`catseye-detail/${id}`);
+  const onClickPage = () => {
+    nav("catseye-detail");
   };
 
   const onClickBtn = (e) => {
