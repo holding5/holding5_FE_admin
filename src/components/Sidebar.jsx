@@ -32,7 +32,7 @@ const Sidebar = () => {
   const postMenuItem = [
     { text: "생명메시지", path: "/life-message" },
     { text: "희망메시지", path: "/hope-message" },
-    { text: "축하메시지", path: "/" },
+    { text: "축하메시지", path: "/congratulatory-message" },
     { text: "홀파담벼락", path: "/holpa-board" },
     { text: "캣츠아이 / 진실노트", path: "/catseye-truth" },
     { text: "극복수기", path: "/" },
