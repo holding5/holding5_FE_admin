@@ -27,6 +27,10 @@ import HopeMessage from "./postmanage/pages/HopeMessage";
 import HopeMessageList from "./postmanage/pages/HopeMessageList";
 import HopeMessageInputPage from "./postmanage/pages/HopeMessageInputPage";
 
+import CongratulatoryMessage from "./postmanage/pages/CongratulatoryMessage";
+import CongratulatoryMessageList from "./postmanage/pages/CongratulatoryMessageList";
+import CongratulatoryMessageInputPage from "./postmanage/pages/CongratulatoryMessageInputPage";
+
 import RankManagePage from "./usermanage/pages/RankManagePage";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
 import PausedUserManagePage from "./usermanage/pages/PausedUserManagePage";
@@ -129,6 +133,11 @@ function App() {
       <Route path="hope-message" element={<HopeMessage />}>
         <Route index element={<HopeMessageList />}></Route>
         <Route path="input" element={<HopeMessageInputPage />}></Route>
+      </Route>
+
+      <Route path="congratulatory-message" element={<CongratulatoryMessage />}>
+        <Route index element={<CongratulatoryMessageList />}></Route>
+        <Route path="input" element={<CongratulatoryMessageInputPage />}></Route>
       </Route>
     </Routes>
   );
