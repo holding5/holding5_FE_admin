@@ -278,7 +278,7 @@ const CatsEyeTruthNotePage = () => {
         <ContentSearchbar />
       </Box>
 
-      <Box sx={{ display: "flex", gap: "10px", paddingLeft: "40px" }}>
+      <Box sx={{ display: "flex", gap: "10px", paddingLeft: 5 }}>
         <Button
           value="cats"
           sx={{
@@ -286,7 +286,7 @@ const CatsEyeTruthNotePage = () => {
             width: "200px",
             p: "5px 30px",
             backgroundColor: activeBtn === "cats" ? activeColor : inactiveColor,
-            fontSize: "18px",
+            fontSize: "1.2rem",
           }}
           onClick={onClickBtn}
         >
@@ -300,7 +300,7 @@ const CatsEyeTruthNotePage = () => {
             p: "5px 30px",
             backgroundColor:
               activeBtn === "truth" ? activeColor : inactiveColor,
-            fontSize: "18px",
+            fontSize: "1.2rem",
           }}
           onClick={onClickBtn}
         >
