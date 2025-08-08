@@ -35,7 +35,7 @@ const Sidebar = () => {
     { text: "축하메시지", path: "/" },
     { text: "홀파담벼락", path: "/holpa-board" },
     { text: "캣츠아이 / 진실노트", path: "/catseye-truth" },
-    { text: "극복수기", path: "/" },
+    { text: "극복수기", path: "/overcoming" },
     { text: "공지사항", path: "/" },
     { text: "운영장에게 건의", path: "/" },
     { text: "신고되 게시물 보기", path: "/" },
