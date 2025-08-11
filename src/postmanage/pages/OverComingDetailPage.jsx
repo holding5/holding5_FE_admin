@@ -1,3 +1,5 @@
+import OverComingCommentCard from "../components/OverComingCommentCard";
+import OverComingMainCard from "../components/OverComingMainCard";
 import {
   ToggleButton,
   ToggleButtonGroup,
@@ -8,15 +10,13 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { useState } from "react";
-import CatsEyeCommentCard from "../components/CatsEyeCommentCard";
-import CatsEyeMainCard from "../components/CatsEyeMainCard";
-import { Label } from "@mui/icons-material";
 
-const CatsEyeDetailPage = () => {
+const OverComingDetailPage = () => {
   const [sortOption, setSortOption] = useState("latest");
 
   const handleOrder = (e) => {
     setSortOption(e.target.value);
+    //정렬 로직 추가
   };
 
   return (
@@ -28,23 +28,18 @@ const CatsEyeDetailPage = () => {
         width: "80%",
       }}
     >
-      <CatsEyeMainCard />
+      <OverComingMainCard />
       <FormControl component="fieldset">
-        <RadioGroup
-          value={sortOption}
-          onChange={handleOrder}
-          aria-label="댓글정렬"
-          row
-        >
+        <RadioGroup value={sortOption} onChange={handleOrder} row>
           <FormControlLabel value="latest" control={<Radio />} label="최신순" />
           <FormControlLabel control={<Radio />} label="등록순" value="oldest" />
         </RadioGroup>
       </FormControl>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <CatsEyeCommentCard />
+        <OverComingCommentCard />
       </Box>
     </Box>
   );
 };
 
-export default CatsEyeDetailPage;
+export default OverComingDetailPage;

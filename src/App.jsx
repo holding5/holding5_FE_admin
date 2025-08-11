@@ -50,6 +50,9 @@ import TruthNoteList from "./postmanage/components/TruthNoteList";
 import CatsEyeDetailPage from "./postmanage/components/CatsEyeDetailPage";
 
 import OverComingPage from "./postmanage/pages/OverComingPage";
+import OverComingDetailPage from "./postmanage/pages/OverComingDetailPage";
+import OverComingList from "./postmanage/components/OverComingList";
+
 function App() {
   return (
     <Routes>
@@ -117,7 +120,10 @@ function App() {
           <Route path="catseye-detail" element={<CatsEyeDetailPage />}></Route>
         </Route>
 
-        <Route path="overcoming" element={<OverComingPage />}></Route>
+        <Route path="overcoming" element={<OverComingPage />}>
+          <Route index element={<OverComingList />} />
+          <Route path="detail" element={<OverComingDetailPage />} />
+        </Route>
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>
