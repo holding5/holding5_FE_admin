@@ -57,6 +57,12 @@ import OverComingPage from "./postmanage/pages/OverComingPage";
 import OverComingDetailPage from "./postmanage/pages/OverComingDetailPage";
 import OverComingList from "./postmanage/components/OverComingList";
 
+import AnnouncementPage from "./postmanage/pages/AnnouncementPage";
+import AnnouncementList from "./postmanage/pages/AnnouncementList";
+
+import RecommendationPage from "./postmanage/pages/RecommendationPage";
+import RecommendationList from "./postmanage/pages/RecommendationList";
+
 function App() {
   return (
     <Routes>
@@ -151,6 +157,15 @@ function App() {
         <Route index element={<CongratulatoryMessageList />}></Route>
         <Route path="input" element={<CongratulatoryMessageInputPage />}></Route>
       </Route>
+
+      <Route path="announcement" element={<AnnouncementPage />}>
+        <Route index element={<AnnouncementList />}></Route>
+      </Route>
+
+      <Route path="recommendation" element={<RecommendationPage />}>
+        <Route index element={<RecommendationList />}></Route>
+      </Route>
+
     </Routes>
   );
 }
