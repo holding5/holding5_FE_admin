@@ -41,6 +41,11 @@ const Sidebar = () => {
     { text: "신고된 게시물 보기", path: "/" },
   ];
 
+  const messageMenuItem = [
+    { text: "메시지 리스트", path: "/message-list"},
+    { text: "메시지 발송", path: "/"},
+  ];
+
   return (
     <Box
       variant="permanent"
@@ -132,9 +137,15 @@ const Sidebar = () => {
             {openMessage ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMessage} timeout="auto" unmountOnExit>
-            {["메시지 리스트", "메시지 발송"].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {messageMenuItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
           </Collapse>
