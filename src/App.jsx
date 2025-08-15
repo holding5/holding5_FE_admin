@@ -53,6 +53,14 @@ import OverComingPage from "./postmanage/pages/OverComingPage";
 import OverComingDetailPage from "./postmanage/pages/OverComingDetailPage";
 import OverComingList from "./postmanage/components/OverComingList";
 
+import ReportPostPage from "./postmanage/pages/ReportPostPage";
+import WallReportList from "./postmanage/components/WallReportList";
+import MessageReportList from "./postmanage/components/MessageReportList";
+import SailBoatReportList from "./postmanage/components/SailBoatReportList";
+import HelpReportList from "./postmanage/components/HelpReportList";
+
+import SailBoatPage from "./postmanage/pages/SailBoatPage";
+
 function App() {
   return (
     <Routes>
@@ -124,6 +132,16 @@ function App() {
           <Route index element={<OverComingList />} />
           <Route path="detail" element={<OverComingDetailPage />} />
         </Route>
+
+        <Route path="report-post" element={<ReportPostPage />}>
+          <Route index element={<WallReportList />}></Route>
+          <Route path="wall-report" element={<WallReportList />}></Route>
+          <Route path="sail-report" element={<SailBoatReportList />}></Route>
+          <Route path="help-report" element={<HelpReportList />}></Route>
+          <Route path="message-report" element={<MessageReportList />}></Route>
+        </Route>
+
+        <Route path="sailboat-list" element={<SailBoatPage />}></Route>
       </Route>
 
       <Route path="dream-manage" element={<DreamManage />}>

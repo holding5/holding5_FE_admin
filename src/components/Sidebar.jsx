@@ -38,7 +38,14 @@ const Sidebar = () => {
     { text: "극복수기", path: "/overcoming" },
     { text: "공지사항", path: "/" },
     { text: "운영장에게 건의", path: "/" },
-    { text: "신고되 게시물 보기", path: "/" },
+    { text: "신고되 게시물 보기", path: "/report-post" },
+  ];
+
+  const sailBoatItem = [
+    {
+      text: "돛단배 리스트",
+      path: "/sailboat-list",
+    },
   ];
 
   return (
@@ -94,9 +101,13 @@ const Sidebar = () => {
             {openBoat ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openBoat} timeout="auto" unmountOnExit>
-            {["돛단배 리스트"].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {sailBoatItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={nav(item.path)}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
           </Collapse>
