@@ -12,7 +12,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-const LifeMessageDetail = ({ anchorEl, onClose, row }) => {
+const HopeMessageDetail = ({ anchorEl, onClose, row }) => {
   const open = Boolean(anchorEl);
 
   // ✅ row 변경 시 폼 값 세팅
@@ -109,4 +109,4 @@ const LifeMessageDetail = ({ anchorEl, onClose, row }) => {
   );
 };
 
-export default LifeMessageDetail;
+export default HopeMessageDetail;
