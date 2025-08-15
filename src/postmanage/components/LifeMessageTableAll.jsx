@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
+import LifeMessageDetail from "./LifeMessageDetail";
 
 const sampleData = [
   { id: 1, classification: "공통", isAllow: "승인보류", religion: "상관없음", title: "그래도 행복을 꿈꿔야합니다.", file: "240808.m4a", date: "2025.01.02", nickName: "유재석(메뚜기)", reports: 0, comments: 3, lifeSaves: 4, courage: 6, notHelpFul: 8, sending: 15, approver: "관리자1" },
@@ -51,6 +52,10 @@ const LifeMessageTableAll = ({ itemsPerPage = 10 }) => {
   const [page, setPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
+  // ✅ 팝오버용 상태
+  const [detailAnchor, setDetailAnchor] = useState(null); // HTMLElement
+  const [selectedRow, setSelectedRow] = useState(null);   // 클릭된 행 데이터
+
   // filter 상태를 컬럼 기반으로 자동 생성
   const initialFilters = columns
     .filter(col => col.filterable)
@@ -89,6 +94,18 @@ const LifeMessageTableAll = ({ itemsPerPage = 10 }) => {
   const totalPages = Math.ceil(sampleData.length / itemsPerPage);
   const startIdx = (page - 1) * itemsPerPage;
   const visibleRows = sortedData.slice(startIdx, startIdx + itemsPerPage);
+
+  // ✅ 셀 클릭 시 팝오버 열기
+  const handleCellClick = (e, row) => {
+    setSelectedRow(row);
+    setDetailAnchor(e.currentTarget); // 이 셀을 기준으로 팝오버 앵커 지정
+  };
+
+  // ✅ 팝오버 닫기
+  const handleCloseDetail = () => {
+    setDetailAnchor(null);
+    setSelectedRow(null);
+  };
 
   return (
     <Paper>
@@ -130,7 +147,8 @@ const LifeMessageTableAll = ({ itemsPerPage = 10 }) => {
             {visibleRows.map((row) => (
               <TableRow key={row.id} hover>
                 {columns.map((col) => (
-                  <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px" }}>
+                  <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px", cursor: "pointer" }}
+                    onClick={(e) => handleCellClick(e, row)}>
                     {row[col.key]}
                   </TableCell>
                 ))}
@@ -150,6 +168,14 @@ const LifeMessageTableAll = ({ itemsPerPage = 10 }) => {
         variant="outlined"
         shape="rounded"
       />
+
+      {/* ✅ 디테일 팝오버 */}
+      <LifeMessageDetail
+        anchorEl={detailAnchor}
+        onClose={handleCloseDetail}
+        row={selectedRow}
+      />
+      
     </Paper>
   );
 };

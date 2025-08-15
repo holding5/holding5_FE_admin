@@ -12,7 +12,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-const LifeMessageDetail = ({ anchorEl, onClose, row }) => {
+const AnnouncementDetail = ({ anchorEl, onClose, row }) => {
   const open = Boolean(anchorEl);
 
   // ✅ row 변경 시 폼 값 세팅
@@ -93,9 +93,6 @@ const LifeMessageDetail = ({ anchorEl, onClose, row }) => {
         <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 2 }}>
           <Button variant="contained" sx={{ backgroundColor: "#2e3b4e" }}>수정</Button>
           <Button variant="contained" sx={{ backgroundColor: "#d35400" }}>삭제</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#f1c40f", color: "#000" }}>보류</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#c0392b" }}>거절</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#27ae60" }}>승인</Button>
           <Button
             variant="contained"
             onClick={onClose}
@@ -109,4 +106,4 @@ const LifeMessageDetail = ({ anchorEl, onClose, row }) => {
   );
 };
 
-export default LifeMessageDetail;
+export default AnnouncementDetail;
