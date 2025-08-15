@@ -63,6 +63,9 @@ import AnnouncementList from "./postmanage/pages/AnnouncementList";
 import RecommendationPage from "./postmanage/pages/RecommendationPage";
 import RecommendationList from "./postmanage/pages/RecommendationList";
 
+import Message from "./sendmessage/pages/Message";
+import MessageList from "./sendmessage/pages/MessageList";
+
 function App() {
   return (
     <Routes>
@@ -164,6 +167,10 @@ function App() {
 
       <Route path="recommendation" element={<RecommendationPage />}>
         <Route index element={<RecommendationList />}></Route>
+      </Route>
+
+      <Route path="message-list" element={<Message />}>
+        <Route index element={<MessageList />}></Route>
       </Route>
 
     </Routes>
