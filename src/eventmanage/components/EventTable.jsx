@@ -5,30 +5,44 @@ import {
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
+import EventDetail from "./EventDetail";
 
 const sampleData = [
-  { id: 1, target: "드림인 초,중,고", title: "그래도 행복을 꿈꿔야합니다.", content: "힘든 소년들에게 ...", file: "240808.m4a", date: "2025.01.02", approver: "관리자1" },
-  { id: 2, target: "드림인 20대", title: "제목 1", content: "축하인사 올리기가...", file: "240809.m4a", date: "2025.01.05", approver: "관리자2" }
+  { id: 1, classification: "가입환영", religion: "상관없음", content: "그래도 행복을 꿈꿔야합니다.", file: "240808.m4a", date: "2025.01.02", nickName: "유재석(메뚜기)"},
+  { id: 2, classification: "생일축하", religion: "불교", content: "생일을 축하합니다....", file: "240808.m4a", date: "2025.01.25", nickName: "추동석(메뚜기)"},
+
 ];
 
 const columns = [
   { key: "id", label: "번호", width: "50px" },
-  { key: "target", 
-    label: "대상", 
+  {
+    key: "classification",
+    label: "분류",
     width: "100px",
     filterable: true,
-    options: ["전체", "드림인 초/중/고", "드림인 20대/30대/40대"], 
+    options: ["전체", "가입환영", "생일축하", "시험격려"]
   },
-  { key: "title", label: "제목", width: "130px" },
-  { key: "content", label: "내용", width: "200px" },
+  {
+    key: "religion",
+    label: "종교",
+    width: "80px",
+    filterable: true,
+    options: ["전체", "상관없음", "기독교", "불교", "천주교"]
+  },
+  { key: "content", label: "내용", width: "150px" },
   { key: "file", label: "파일명", width: "100px" },
   { key: "date", label: "등록일시", width: "100px" },
-  { key: "approver", label: "결재인", width: "80px" },
+  { key: "nickName", label: "작성자 닉네임", width: "120px" },
+
 ];
 
-const MessageTable = ({ itemsPerPage = 10 }) => {
+const EventTable = ({ itemsPerPage = 10 }) => {
   const [page, setPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+  // ✅ 팝오버용 상태
+  const [detailAnchor, setDetailAnchor] = useState(null); // HTMLElement
+  const [selectedRow, setSelectedRow] = useState(null);   // 클릭된 행 데이터
 
   // filter 상태를 컬럼 기반으로 자동 생성
   const initialFilters = columns
@@ -68,6 +82,18 @@ const MessageTable = ({ itemsPerPage = 10 }) => {
   const totalPages = Math.ceil(sampleData.length / itemsPerPage);
   const startIdx = (page - 1) * itemsPerPage;
   const visibleRows = sortedData.slice(startIdx, startIdx + itemsPerPage);
+
+  // ✅ 셀 클릭 시 팝오버 열기
+  const handleCellClick = (e, row) => {
+    setSelectedRow(row);
+    setDetailAnchor(e.currentTarget); // 이 셀을 기준으로 팝오버 앵커 지정
+  };
+
+  // ✅ 팝오버 닫기
+  const handleCloseDetail = () => {
+    setDetailAnchor(null);
+    setSelectedRow(null);
+  };
 
   return (
     <Paper>
@@ -109,7 +135,8 @@ const MessageTable = ({ itemsPerPage = 10 }) => {
             {visibleRows.map((row) => (
               <TableRow key={row.id} hover>
                 {columns.map((col) => (
-                  <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px" }}>
+                  <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px", cursor: "pointer" }}
+                    onClick={(e) => handleCellClick(e, row)}>
                     {row[col.key]}
                   </TableCell>
                 ))}
@@ -129,8 +156,16 @@ const MessageTable = ({ itemsPerPage = 10 }) => {
         variant="outlined"
         shape="rounded"
       />
+
+      {/* ✅ 디테일 팝오버 */}
+      <EventDetail
+        anchorEl={detailAnchor}
+        onClose={handleCloseDetail}
+        row={selectedRow}
+      />
+
     </Paper>
   );
 };
 
-export default MessageTable;
+export default EventTable;
