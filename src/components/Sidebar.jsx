@@ -43,8 +43,25 @@ const Sidebar = () => {
 
   const messageMenuItem = [
     { text: "메시지 리스트", path: "/message-list"},
-    { text: "메시지 발송", path: "/"},
+    { text: "메시지 발송", path: "/message-list/send"},
   ];
+
+  const eventMenuItem = [
+    { text: "전체", path: "/event-list"},
+    { text: "가입환영인사", path: "/event-join"},
+    { text: "생일축하인사", path: "/event-birth"},
+    { text: "시험격려", path: "event-test"}
+  ]
+
+  const systemMenuItem = [
+    { text: "시스템 현황", path: "/system" },
+    { text: "F & Q 관리", path: "/system/fnq" },
+    { text: "해피인 안내", path: "/" },
+    { text: "도움주신 분", path: "/system/helpers" },
+    { text: "학교 / 경찰서 등록", path: "/" },
+    { text: "생명살림 집계", path: "/" },
+    { text: "관리자 관리", path: "/" },
+  ]
 
   return (
     <Box
@@ -123,13 +140,17 @@ const Sidebar = () => {
             {openEvent ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openEvent} timeout="auto" unmountOnExit>
-            {["전체", "가입 환영인사", "생일 축하인사", "시험격려"].map(
-              (item) => (
-                <ListItemButton key={item} sx={{ pl: 4 }}>
-                  <ListItemText primary={item} />
-                </ListItemButton>
-              )
-            )}
+            {eventMenuItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            ))}
           </Collapse>
 
           <ListItemButton onClick={() => setOpenMessage(!openMessage)}>
@@ -155,17 +176,15 @@ const Sidebar = () => {
             {openSystem ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openSystem} timeout="auto" unmountOnExit>
-            {[
-              "시스템 현황",
-              "F & Q 관리",
-              "해피인 안내",
-              "도움주신 분",
-              "학교 / 경찰서 등록",
-              "생명살림집계",
-              "관리자 관리",
-            ].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {systemMenuItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
           </Collapse>

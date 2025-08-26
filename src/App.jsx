@@ -65,6 +65,15 @@ import RecommendationList from "./postmanage/pages/RecommendationList";
 
 import Message from "./sendmessage/pages/Message";
 import MessageList from "./sendmessage/pages/MessageList";
+import MessageSend from "./sendmessage/pages/MessageSend";
+
+import Event from "./eventmanage/pages/Event";
+import EventList from "./eventmanage/pages/EventList";
+
+import System from "./systemmanage/pages/System";
+import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
+import FnQPage from "./systemmanage/pages/FnQPage";
+import HelpersPage from "./systemmanage/pages/HelpersPage";
 
 function App() {
   return (
@@ -171,6 +180,17 @@ function App() {
 
       <Route path="message-list" element={<Message />}>
         <Route index element={<MessageList />}></Route>
+        <Route path="send" element={<MessageSend />}></Route>
+      </Route>
+
+      <Route path="event-list" element={<Event />}>
+        <Route index element={<EventList />}></Route>
+      </Route>
+
+      <Route path="system" element={<System />}>
+        <Route index element={<SystemOverviewPage />}></Route>
+        <Route path="fnq" element={<FnQPage />}></Route>
+        <Route path="helpers" element={<HelpersPage />}></Route>
       </Route>
 
     </Routes>
