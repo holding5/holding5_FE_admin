@@ -1,6 +1,6 @@
 import { Tabs, Tab } from "@mui/material";
 
-const TabsNav = ({ value, onChange }) => {
+const HelperTabsNav = ({ value, onChange }) => {
   const handle = (_, v) => onChange(v);
   return (
     <Tabs value={value} onChange={handle}>
@@ -11,5 +11,5 @@ const TabsNav = ({ value, onChange }) => {
   );
 }
 
-export default TabsNav;
+export default HelperTabsNav;
 
