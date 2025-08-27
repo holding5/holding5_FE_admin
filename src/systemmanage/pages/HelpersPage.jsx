@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useState, useRef } from "react";
 import ContentSearchbar from "../../components/ContentSearchbar";
-import TabsNav from "../components/TabsNav";
+import HelperTabsNav from "../components/HelperTabsNav";
 import OpinionSection from "../components/OpinionSection";
 import AppDevSection from "../components/AppDevSection";
 import SupportSection from "../components/SupportSection";
@@ -25,7 +25,7 @@ const HelpersPage = () => {
       </Stack>
 
       <Box sx={{ mt: 3 }}>
-      <TabsNav value={activeTab} onChange={setActiveTab} />
+      <HelperTabsNav value={activeTab} onChange={setActiveTab} />
       <Box sx={{ mt: 5, ml: 5, mr: 5 }}>
         {activeTab === "opinion" && <OpinionSection />}
         {activeTab === "appdev"  && <AppDevSection />}

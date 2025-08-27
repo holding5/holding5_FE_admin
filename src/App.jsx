@@ -74,6 +74,7 @@ import System from "./systemmanage/pages/System";
 import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
 import FnQPage from "./systemmanage/pages/FnQPage";
 import HelpersPage from "./systemmanage/pages/HelpersPage";
+import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
 
 function App() {
   return (
@@ -191,6 +192,7 @@ function App() {
         <Route index element={<SystemOverviewPage />}></Route>
         <Route path="fnq" element={<FnQPage />}></Route>
         <Route path="helpers" element={<HelpersPage />}></Route>
+        <Route path="school-police" element={<SchoolPolicePage />}></Route>
       </Route>
 
     </Routes>
