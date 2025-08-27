@@ -11,7 +11,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentSearchbar from "../../components/ContentSearchbar";
 import DetailSearch from "../../components/DetailSearch";
-import DreamUserTable from "../../components/DreamUserTable";
+import DreamUserTable from "../components/DreamUserTable";
 
 const DreamManageList = () => {
   const nav = useNavigate();
