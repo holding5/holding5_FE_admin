@@ -22,7 +22,7 @@ const Sidebar = () => {
   const memberMenutItem = [
     { text: "해피인 관리", path: "/" },
     { text: "해피인 신청", path: "/signuplist" },
-    { text: "드림인 관리", path: "/dream-manage" },
+    { text: "드림인 관리", path: "/user/dream" },
     { text: "카운셀러 관리", path: "/" },
     { text: "등급관리", path: "/rankmanage" },
     { text: "일시정지 회원관리", path: "/pausedmanage" },

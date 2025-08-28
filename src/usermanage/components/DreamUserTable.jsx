@@ -6,7 +6,9 @@ import {
 import Pagination from "@mui/material/Pagination";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 
-import useTableApi from "../../hooks/useTableApi"; // ✅ 훅 import
+const sampleData = [
+  { id: 1, nickname: "추", gender: "남", name: "추동훈", createdAt: "2025-08-22", phoneNumber: "010-9744-5113", email: "cdh5113@naver.com", religion: "불교", status: "활동중"  },
+];
 
 const columns = [
   { key: "id", label: "번호", width: "30px" },
@@ -28,29 +30,24 @@ const columns = [
 
 const DreamUserTable = ({ itemsPerPage = 10 }) => {
   const [page, setPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "desc" });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  const { data, total, loading, setParams } = useTableApi({
-    url: "/admin/member/dreamins",
-    initialParams: {
-      page: page - 1,
-      size: itemsPerPage,
-      sort: `${sortConfig.key},${sortConfig.direction}`,
-    },
-  });
+  // filter 상태를 컬럼 기반으로 자동 생성
+  const initialFilters = columns
+    .filter(col => col.filterable)
+    .reduce((acc, col) => ({ ...acc, [col.key]: "전체" }), {});
+  const [filters, setFilters] = useState(initialFilters);
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
 
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
-    const newSort = { key, direction };
-    setSortConfig(newSort);
-
-    setParams((prev) => ({
-      ...prev,
-      sort: `${key},${direction}`,
-    }));
+    setSortConfig({ key, direction });
   };
 
   const renderSortIcon = (key) => {
@@ -62,23 +59,38 @@ const DreamUserTable = ({ itemsPerPage = 10 }) => {
     );
   };
 
-  const totalPages = Math.ceil(total / itemsPerPage);
+  // 정렬 처리
+  const sortedData = [...sampleData].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "asc" ? -1 : 1;
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  });
 
-  const handlePageChange = (e, value) => {
-    setPage(value);
-    setParams((prev) => ({
-      ...prev,
-      page: value - 1,
-    }));
-  };
+  const totalPages = Math.ceil(sampleData.length / itemsPerPage);
+  const startIdx = (page - 1) * itemsPerPage;
+  const visibleRows = sortedData.slice(startIdx, startIdx + itemsPerPage);
 
   return (
     <Paper>
-      {/* 필터 추후 연결 */}
+      {/* === 필터 (filterable=true)만 위에 렌더링 === */}
       <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-        {/* 필터 조건이 있을 경우 여기에 */}
+        {columns.filter(c => c.filterable).map(col => (
+          <Select
+            key={col.key}
+            size="small"
+            value={filters[col.key]}
+            sx={{ fontSize: "12px" }}
+            onChange={(e) => handleFilterChange(col.key, e.target.value)}
+          >
+            {col.options.map(opt => (
+              <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+            ))}
+          </Select>
+        ))}
       </Stack>
 
+      {/* === 테이블 === */}
       <TableContainer>
         <Table size="small">
           <TableHead sx={{ backgroundColor: "#1976d2" }}>
@@ -96,11 +108,11 @@ const DreamUserTable = ({ itemsPerPage = 10 }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
+            {visibleRows.map((row) => (
               <TableRow key={row.id} hover>
                 {columns.map((col) => (
                   <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px" }}>
-                    {row[col.key] ?? "-"}
+                    {row[col.key]}
                   </TableCell>
                 ))}
               </TableRow>
@@ -115,7 +127,7 @@ const DreamUserTable = ({ itemsPerPage = 10 }) => {
         showLastButton
         count={totalPages}
         page={page}
-        onChange={handlePageChange}
+        onChange={(e, value) => setPage(value)}
         variant="outlined"
         shape="rounded"
       />
