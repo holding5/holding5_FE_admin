@@ -10,9 +10,7 @@ import HappyManageGroup from "./usermanage/pages/HappyManageGroup";
 import HappyGroupDetailPage from "./usermanage/pages/HappyGroupDetailPage";
 import HappyGroupDetailManage from "./usermanage/pages/HappyGroupDetailManage";
 import HappyGroupCreate from "./usermanage/pages/HappyGroupCreate";
-import DreamManage from "./usermanage/pages/DreamManage";
-import DreamManageList from "./usermanage/pages/DreamManageList";
-import DreamUserDetailPage from "./usermanage/pages/DreamUserDetailPage";
+
 import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
@@ -55,18 +53,23 @@ import MessageSend from "./sendmessage/pages/MessageSend";
 import Event from "./eventmanage/pages/Event";
 import EventList from "./eventmanage/pages/EventList";
 
-// 시스템 관리
-import System from "./systemmanage/pages/System";
-import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
-import FnQPage from "./systemmanage/pages/FnQPage";
-import HelpersPage from "./systemmanage/pages/HelpersPage";
-import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
+// 회원 관리
+import User from "./usermanage2/pages/User";
+import DreamUserPage from "./usermanage2/pages/DreamUserPage";
+import DreamUserDetailPage from "./usermanage2/pages/DreamUserDetailPage";
 
 // 게시물 관리
 import Post from "./postmanage2/pages/Post";
 import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
 import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
 import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessagePage";
+
+// 시스템 관리
+import System from "./systemmanage/pages/System";
+import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
+import FnQPage from "./systemmanage/pages/FnQPage";
+import HelpersPage from "./systemmanage/pages/HelpersPage";
+import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
 
 function App() {
   return (
@@ -141,11 +144,6 @@ function App() {
         </Route>
       </Route>
 
-      <Route path="dream-manage" element={<DreamManage />}>
-        <Route index element={<DreamManageList />}></Route>
-        <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
-      </Route>
-
       <Route path="announcement" element={<AnnouncementPage />}>
         <Route index element={<AnnouncementList />}></Route>
       </Route>
@@ -163,12 +161,10 @@ function App() {
         <Route index element={<EventList />}></Route>
       </Route>
 
-      {/* 시스템 관리 */}
-      <Route path="system" element={<System />}> 
-        <Route index element={<SystemOverviewPage />}></Route>
-        <Route path="fnq" element={<FnQPage />}></Route>
-        <Route path="helpers" element={<HelpersPage />}></Route>
-        <Route path="school-police" element={<SchoolPolicePage />}></Route>
+      {/* 회원 관리 */}
+      <Route path="user" element={<User />}>
+        <Route path="dream" element={<DreamUserPage />}></Route>
+        <Route path="dream/detail/:id" element={<DreamUserDetailPage />}></Route>
       </Route>
 
       {/* 게시물 관리 */}
@@ -176,6 +172,14 @@ function App() {
         <Route path="life-message" element={<LifeMessagePage />}></Route>
         <Route path="hope-message" element={<HopeMessagePage />}></Route>
         <Route path="congratulatory-message" element={<CongratulatoryMessagePage />}></Route>
+      </Route>
+
+      {/* 시스템 관리 */}
+      <Route path="system" element={<System />}> 
+        <Route index element={<SystemOverviewPage />}></Route>
+        <Route path="fnq" element={<FnQPage />}></Route>
+        <Route path="helpers" element={<HelpersPage />}></Route>
+        <Route path="school-police" element={<SchoolPolicePage />}></Route>
       </Route>
 
     </Routes>
