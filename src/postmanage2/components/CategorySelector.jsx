@@ -1,4 +1,4 @@
-import { Box, FormLabel, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
+import { Box, Typography, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { useState } from "react";
 
 const defaultCategories = [
@@ -25,7 +25,7 @@ const CategorySelector = ({ selected, onChange }) => {
 
   return (
     <Box sx={{ my: 2 }}>
-      <FormLabel sx={{ fontWeight: "bold" }}>주제 카테고리 선택</FormLabel>
+      <Typography sx={{ fontWeight: "bold" }}>주제 카테고리 선택</Typography>
       <FormGroup row>
         {defaultCategories.map((cat) => (
           <FormControlLabel
