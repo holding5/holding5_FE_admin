@@ -17,10 +17,6 @@ import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
-import HopeMessage from "./postmanage/pages/HopeMessage";
-import HopeMessageList from "./postmanage/pages/HopeMessageList";
-import HopeMessageInputPage from "./postmanage/pages/HopeMessageInputPage";
-
 import CongratulatoryMessage from "./postmanage/pages/CongratulatoryMessage";
 import CongratulatoryMessageList from "./postmanage/pages/CongratulatoryMessageList";
 import CongratulatoryMessageInputPage from "./postmanage/pages/CongratulatoryMessageInputPage";
@@ -36,7 +32,6 @@ import PauseUserListPage from "./usermanage/pages/PauseUserListPage";
 import BannedUserManagePage from "./usermanage/pages/BannedUserManagePage";
 import BannedUserDetailPage from "./usermanage/pages/BannedUserDetailPage";
 import BannedUserListPage from "./usermanage/pages/BannedUserListPage";
-import HopeMessageManagePage from "./postmanage/pages/HopeMessageManagePage";
 
 import HolpaBoardPage from "./postmanage/pages/HolpaBoardPage";
 import HolpaBoardDetailPage from "./postmanage/pages/HolpaBoardDetailPage";
@@ -152,11 +147,6 @@ function App() {
       <Route path="dream-manage" element={<DreamManage />}>
         <Route index element={<DreamManageList />}></Route>
         <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
-      </Route>
-
-      <Route path="hope-message" element={<HopeMessage />}>
-        <Route index element={<HopeMessageList />}></Route>
-        <Route path="input" element={<HopeMessageInputPage />}></Route>
       </Route>
 
       <Route path="congratulatory-message" element={<CongratulatoryMessage />}>

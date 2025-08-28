@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-const LifeMessageStatBox = ({ label, count, color = "#1976d2" }) => {
+const MessageStatBox = ({ label, count, color = "#1976d2" }) => {
   return (
     <Box
       sx={{
@@ -22,4 +22,4 @@ const LifeMessageStatBox = ({ label, count, color = "#1976d2" }) => {
   );
 };
 
-export default LifeMessageStatBox;
+export default MessageStatBox;
