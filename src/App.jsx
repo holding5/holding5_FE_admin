@@ -17,12 +17,6 @@ import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
-import LifeMessage from "./postmanage/pages/LifeMessage";
-import LifeMessageList from "./postmanage/pages/LifeMessageList";
-import LifeMessageAllowList from "./postmanage/pages/LifeMessageAllowList";
-import LifeMessageRefusalList from "./postmanage/pages/LifeMessageRefusalList";
-import LifeMessageInputPage from "./postmanage/pages/LifeMessageInputPage";
-
 import HopeMessage from "./postmanage/pages/HopeMessage";
 import HopeMessageList from "./postmanage/pages/HopeMessageList";
 import HopeMessageInputPage from "./postmanage/pages/HopeMessageInputPage";
@@ -70,11 +64,17 @@ import MessageSend from "./sendmessage/pages/MessageSend";
 import Event from "./eventmanage/pages/Event";
 import EventList from "./eventmanage/pages/EventList";
 
+// 시스템 관리
 import System from "./systemmanage/pages/System";
 import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
 import FnQPage from "./systemmanage/pages/FnQPage";
 import HelpersPage from "./systemmanage/pages/HelpersPage";
 import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
+
+// 게시물 관리
+import Post from "./postmanage2/pages/Post";
+import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
+import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
 
 function App() {
   return (
@@ -154,13 +154,6 @@ function App() {
         <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
       </Route>
 
-      <Route path="life-message" element={<LifeMessage />}>
-        <Route index element={<LifeMessageList />}></Route>
-        <Route path="allow" element={<LifeMessageAllowList />}></Route>
-        <Route path="refusal" element={<LifeMessageRefusalList />}></Route>
-        <Route path="input" element={<LifeMessageInputPage />}></Route>
-      </Route>
-
       <Route path="hope-message" element={<HopeMessage />}>
         <Route index element={<HopeMessageList />}></Route>
         <Route path="input" element={<HopeMessageInputPage />}></Route>
@@ -188,11 +181,18 @@ function App() {
         <Route index element={<EventList />}></Route>
       </Route>
 
-      <Route path="system" element={<System />}>
+      {/* 시스템 관리 */}
+      <Route path="system" element={<System />}> 
         <Route index element={<SystemOverviewPage />}></Route>
         <Route path="fnq" element={<FnQPage />}></Route>
         <Route path="helpers" element={<HelpersPage />}></Route>
         <Route path="school-police" element={<SchoolPolicePage />}></Route>
+      </Route>
+
+      {/* 게시물 관리 */}
+      <Route path="post" element={<Post />}>
+        <Route path="life-message" element={<LifeMessagePage />}></Route>
+        <Route path="hope-message" element={<HopeMessagePage />}></Route>
       </Route>
 
     </Routes>
