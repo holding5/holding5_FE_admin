@@ -1,15 +1,15 @@
 import { Stack, Box } from "@mui/material";
 import { useState } from "react";
 import ContentSearchbar from "../../components/ContentSearchbar";
-import LifeMessageTabsNav from "../components/LifeMessageTabsNav";
-import LifeMessageStatBox from "../components/LifeMessageStatBox";
-import LifeMessageTable from "../components/LifeMessageTable"; // ✅ 테이블 import
-import LifeMessageInputForm from "../components/LifeMessageInputForm"; // ✅ 입력폼 import
-import { lifeMessageMock } from "../utils/lifeMessageMock";
+import HopeMessageTabsNav from "../components/HopeMessageTabsNav";
+import MessageStatBox from "../components/MessageStatBox";
+import HopeMessageTable from "../components/HopeMessageTable"; // ✅ 테이블 import
+import HopeMessageInputForm from "../components/HopeMessageInputForm"; // ✅ 입력폼 import
+import { hopeMessageMock } from "../utils/HopeMessageMock";
 
-const allCount = lifeMessageMock.length;
-const pendingCount = lifeMessageMock.filter(msg => msg.isAllow === "승인완료" || msg.isAllow === "승인대기").length;
-const rejectingCount = lifeMessageMock.filter(msg => msg.isAllow === "거절" || msg.isAllow === "승인보류").length;
+const allCount = hopeMessageMock.length;
+const allowedCount = hopeMessageMock.filter(msg => msg.log === "희망" || msg.log === "희망>생명").length;
+const rejectedCount = hopeMessageMock.filter(msg => msg.log === "삭제" || msg.log === "희망>거절").length;
 
 const HopeMessagePage = () => {
   const [activeTab, setActiveTab] = useState("all");
@@ -23,24 +23,24 @@ const HopeMessagePage = () => {
 
       {/* 탭 메뉴 */}
       <Box sx={{ mt: 3 }}>
-        <LifeMessageTabsNav value={activeTab} onChange={setActiveTab} />
+        <HopeMessageTabsNav value={activeTab} onChange={setActiveTab} />
 
         {/* create 탭이면 입력폼 렌더 */}
         {activeTab === "create" ? (
           <Box sx={{ mt: 3 }}>
-            <LifeMessageInputForm />
+            <HopeMessageInputForm />
           </Box>
         ) : (
           <>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2, ml: 2 }}>
-              <LifeMessageStatBox label="전체 생명메시지" count={allCount} color="#1976d2" />
-              <LifeMessageStatBox label="승인/대기 메시지" count={pendingCount} color="#f39c12" />
-              <LifeMessageStatBox label="거절/보류 메시지" count={rejectingCount} color="#c0392b" />
+              <MessageStatBox label="전체 희망메시지" count={allCount} color="#1976d2" />
+              <MessageStatBox label="승인 메시지" count={allowedCount} color="#f39c12" />
+              <MessageStatBox label="거절 메시지" count={rejectedCount} color="#c0392b" />
             </Stack>
 
             <Box sx={{ mt: 2 }}>
               {/* ✅ 테이블에 필터값 전달 */}
-              <LifeMessageTable filter={activeTab} />
+              <HopeMessageTable filter={activeTab} />
             </Box>
           </>
         )}

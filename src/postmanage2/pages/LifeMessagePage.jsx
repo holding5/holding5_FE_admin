@@ -2,7 +2,7 @@ import { Stack, Box } from "@mui/material";
 import { useState } from "react";
 import ContentSearchbar from "../../components/ContentSearchbar";
 import LifeMessageTabsNav from "../components/LifeMessageTabsNav";
-import LifeMessageStatBox from "../components/LifeMessageStatBox";
+import MessageStatBox from "../components/MessageStatBox";
 import LifeMessageTable from "../components/LifeMessageTable"; // ✅ 테이블 import
 import LifeMessageInputForm from "../components/LifeMessageInputForm"; // ✅ 입력폼 import
 import { lifeMessageMock } from "../utils/lifeMessageMock";
@@ -33,9 +33,9 @@ const LifeMessagePage = () => {
         ) : (
           <>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2, ml: 2 }}>
-              <LifeMessageStatBox label="전체 생명메시지" count={allCount} color="#1976d2" />
-              <LifeMessageStatBox label="승인/대기 메시지" count={pendingCount} color="#f39c12" />
-              <LifeMessageStatBox label="거절/보류 메시지" count={rejectingCount} color="#c0392b" />
+              <MessageStatBox label="전체 생명메시지" count={allCount} color="#1976d2" />
+              <MessageStatBox label="승인/대기 메시지" count={pendingCount} color="#f39c12" />
+              <MessageStatBox label="거절/보류 메시지" count={rejectingCount} color="#c0392b" />
             </Stack>
 
             <Box sx={{ mt: 2 }}>
