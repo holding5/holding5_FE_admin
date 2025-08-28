@@ -17,10 +17,6 @@ import Main from "./usermanage/pages/Main";
 import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
 import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
-import CongratulatoryMessage from "./postmanage/pages/CongratulatoryMessage";
-import CongratulatoryMessageList from "./postmanage/pages/CongratulatoryMessageList";
-import CongratulatoryMessageInputPage from "./postmanage/pages/CongratulatoryMessageInputPage";
-
 import RankManagePage from "./usermanage/pages/RankManagePage";
 import RankManageList from "./usermanage/components/RankManageList";
 import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
@@ -70,6 +66,7 @@ import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
 import Post from "./postmanage2/pages/Post";
 import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
 import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
+import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessagePage";
 
 function App() {
   return (
@@ -149,11 +146,6 @@ function App() {
         <Route path="user/detail/:id" element={<DreamUserDetailPage />}></Route>
       </Route>
 
-      <Route path="congratulatory-message" element={<CongratulatoryMessage />}>
-        <Route index element={<CongratulatoryMessageList />}></Route>
-        <Route path="input" element={<CongratulatoryMessageInputPage />}></Route>
-      </Route>
-
       <Route path="announcement" element={<AnnouncementPage />}>
         <Route index element={<AnnouncementList />}></Route>
       </Route>
@@ -183,6 +175,7 @@ function App() {
       <Route path="post" element={<Post />}>
         <Route path="life-message" element={<LifeMessagePage />}></Route>
         <Route path="hope-message" element={<HopeMessagePage />}></Route>
+        <Route path="congratulatory-message" element={<CongratulatoryMessagePage />}></Route>
       </Route>
 
     </Routes>

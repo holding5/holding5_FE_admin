@@ -16,7 +16,7 @@ const MessageEditor = ({ message, setMessage }) => {
 
   return (
     <Box sx={{ my: 3 }}>
-      <Typography fontWeight="bold" mb={1}>생명메시지 입력</Typography>
+      <Typography fontWeight="bold" mb={1}>메시지 입력</Typography>
       <TextField
         fullWidth
         multiline
