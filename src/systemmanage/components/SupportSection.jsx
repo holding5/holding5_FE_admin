@@ -1,9 +1,9 @@
 // SupportSection.jsx
 import { useState, useMemo } from "react";
 import { Box, Stack, Button, Typography, Divider } from "@mui/material";
-import SupportCategoryInput from "./SupportCategoryInput";        // 새로 만든 컴포넌트
+import SupportCategoryInput from "./SupportCategoryInput"; // 새로 만든 컴포넌트
 import SupportList from "./SupportList";
-import { getSponsors } from "../api";
+import { getSponsors } from "../utils/api";
 
 const CATEGORY_OPTIONS = ["전체", "정기후원단체", "후원단체·회사", "후원자"];
 
@@ -41,7 +41,6 @@ const SupportSection = () => {
 
   return (
     <Box>
-
       {/* 카테고리 선택 + 관리 버튼 */}
       <SupportCategoryInput
         categories={CATEGORY_OPTIONS}
@@ -54,9 +53,18 @@ const SupportSection = () => {
       />
 
       {/* 3) 우측 액션 버튼 */}
-      <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mb: 1 }}>
-        <Button variant="contained" onClick={handleCreate}>등록</Button>
-        <Button variant="outlined" onClick={handleEdit}>수정</Button>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="flex-end"
+        sx={{ mb: 1 }}
+      >
+        <Button variant="contained" onClick={handleCreate}>
+          등록
+        </Button>
+        <Button variant="outlined" onClick={handleEdit}>
+          수정
+        </Button>
       </Stack>
 
       <Divider sx={{ mb: 2 }} />
@@ -64,21 +72,27 @@ const SupportSection = () => {
       {/* 4) 리스트 렌더링 (카테고리별) */}
       {category === "전체" || category === "정기후원단체" ? (
         <>
-          <Typography variant="subtitle1" sx={{ mt: 1 }}>정기후원단체</Typography>
+          <Typography variant="subtitle1" sx={{ mt: 1 }}>
+            정기후원단체
+          </Typography>
           <SupportList items={filtered.orgs} />
         </>
       ) : null}
 
       {category === "전체" || category === "후원단체·회사" ? (
         <>
-          <Typography variant="subtitle1" sx={{ mt: 3 }}>후원단체·회사</Typography>
+          <Typography variant="subtitle1" sx={{ mt: 3 }}>
+            후원단체·회사
+          </Typography>
           <SupportList items={filtered.companies} />
         </>
       ) : null}
 
       {category === "전체" || category === "후원자" ? (
         <>
-          <Typography variant="subtitle1" sx={{ mt: 3 }}>후원자</Typography>
+          <Typography variant="subtitle1" sx={{ mt: 3 }}>
+            후원자
+          </Typography>
           <SupportList items={filtered.individuals} />
         </>
       ) : null}

@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import {
   Box, Typography, Stack, TextField, Divider, Paper, MenuItem, Button
 } from "@mui/material";
 import useDreaminProfile from "../../hooks/useDreaminProfile";
+import DreamAdminModal from "./DreamAdminModal";
 
 const religionOptions = ["기독교", "불교", "천주교", "무교", "기타"];
 const genderOptions = ["남", "여"];
@@ -10,6 +12,16 @@ const genderOptions = ["남", "여"];
 const DreamUserProfile = () => {
   const { id } = useParams();
   const { form, setForm, histories, loading } = useDreaminProfile(id);
+
+  const [adminAnchorEl, setAdminAnchorEl] = useState(null);
+
+  const handleAdminClick = (event) => {
+    setAdminAnchorEl(event.currentTarget);
+  };
+
+  const handleAdminClose = () => {
+    setAdminAnchorEl(null);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,8 +116,10 @@ const DreamUserProfile = () => {
       <Stack direction="row" spacing={2} justifyContent="flex-end">
         <Button variant="outlined" color="primary">수정</Button>
         <Button variant="outlined" color="error">삭제</Button>
-        <Button variant="contained" color="secondary">행정관리</Button>
+        <Button variant="contained" color="secondary" onClick={handleAdminClick}>행정관리</Button>
       </Stack>
+
+      <DreamAdminModal anchorEl={adminAnchorEl} onClose={handleAdminClose} userId={id} onDone={() => {console.log("행정 조치 완료됨.")}} />
     </Paper>
   );
 };

@@ -1,138 +1,313 @@
-import React, { useState } from "react";
+// src/pages/components/SchoolTable.jsx
+import React, { useMemo } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Select, MenuItem, Stack
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Stack,
+  Select,
+  MenuItem,
+  TextField,
+  CircularProgress,
+  Box,
+  IconButton,
+  Tooltip,
+  Divider,
+  Typography,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
-import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
-
-const sampleData = [
-  { id: 1, classification: "초등학교", school: "구미초등학교", phone: "054-123-4565", address: "경북 구미시 거의동 450-4", region: "경북", members: "235" },
-  { id: 2, classification: "중학교", school: "옥계중학교", phone: "054-183-4588", address: "경북 구미시 거의동 450-4", region: "경북", members: "55" },
-];
+import { Clear, Search } from "@mui/icons-material";
+import { REGIONS } from "../utils/eduSupportData";
+import { labelMapper } from "../../utils/LabelMapper";
+import { schoolTypeMap } from "../../constant/codeMaps";
 
 const columns = [
-  { key: "id", label: "번호", width: "50px" },
-  { key: "classification", 
-    label: "분류", 
-    width: "100px",
-    filterable: true,
-    options: ["전체", "초등학교", "중학교", "고등학교" ], 
-  },
-  { key: "school", label: "학교명", width: "130px" },
-  { key: "phone", label: "전화", width: "200px" },
-  { key: "address", label: "주소", width: "200px" },
-  { key: "region", label: "지역", width: "100px", filterable: true,
-    options: ["전체", "서울", "인천", "대전", "광주", "대구", "부산", "경북", "경남", "전북", "전남" ]
-   },
-  { key: "members", label: "회원수", width: "50px" },
+  { key: "id", label: "번호", width: "3rem" },
+  { key: "schoolType", label: "분류", width: "8rem" },
+  { key: "province", label: "지역", width: "8rem" },
+  { key: "name", label: "학교명", width: "8rem" },
+  { key: "phoneNumber", label: "전화", width: "10rem" },
+  { key: "address", label: "주소", width: "12rem" },
+  { key: "memberCount", label: "회원수", width: "4rem" },
 ];
 
-const SchoolTable = ({ itemsPerPage = 10 }) => {
-  const [page, setPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+// province는 서버가 라벨(예: '경상북도')을 받으므로 라벨을 옵션으로 노출
+const PROVINCE_OPTIONS = ["전체", ...REGIONS.map((r) => r.label)];
+const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
-  // filter 상태를 컬럼 기반으로 자동 생성
-  const initialFilters = columns
-    .filter(col => col.filterable)
-    .reduce((acc, col) => ({ ...acc, [col.key]: "전체" }), {});
-  const [filters, setFilters] = useState(initialFilters);
+export default function SchoolTable({
+  // 데이터/상태
+  rows = [],
+  totalPages = 1,
+  page = 1,
+  loading = false,
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
+  // 컨트롤러 (useSchoolList에서 전달)
+  setPage,
+  filters = {},
+  setFilters,
+  size,
+  setSize,
+}) {
+  const safeRows = useMemo(
+    () =>
+      Array.isArray(rows) ? rows.filter((r) => r && typeof r === "object") : [],
+    [rows]
+  );
 
-  const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
+  const clearKeyword = () => setFilters((f) => ({ ...f, keyword: "" }));
 
-  const renderSortIcon = (key) => {
-    if (sortConfig.key !== key) return <UnfoldMore fontSize="small" />;
-    return sortConfig.direction === "asc" ? (
-      <ArrowUpward fontSize="small" />
-    ) : (
-      <ArrowDownward fontSize="small" />
-    );
-  };
-
-  // 정렬 처리
-  const sortedData = [...sampleData].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "asc" ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  const totalPages = Math.ceil(sampleData.length / itemsPerPage);
-  const startIdx = (page - 1) * itemsPerPage;
-  const visibleRows = sortedData.slice(startIdx, startIdx + itemsPerPage);
+  const resetFilters = () =>
+    setFilters({
+      schoolType: "",
+      province: "",
+      keyword: "",
+    });
 
   return (
-    <Paper>
-      {/* === 필터 (filterable=true)만 위에 렌더링 === */}
-      <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-        {columns.filter(c => c.filterable).map(col => (
+    <Paper sx={{ overflow: "hidden" }}>
+      {/* ====== 컨트롤 바 ====== */}
+      <Box sx={{ p: 1.25 }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1.25}
+          alignItems="center"
+        >
+          {/* 학교 타입 */}
           <Select
-            key={col.key}
             size="small"
-            value={filters[col.key]}
-            sx={{ fontSize: "12px" }}
-            onChange={(e) => handleFilterChange(col.key, e.target.value)}
+            value={filters.schoolType ?? ""}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, schoolType: e.target.value }))
+            }
+            sx={{ minWidth: 120, fontSize: "0.8em" }}
+            displayEmpty
+            renderValue={(val) =>
+              val === "" ? "전체" : labelMapper("schoolTypeMap", val)
+            }
           >
-            {col.options.map(opt => (
-              <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+            <MenuItem value="">전체</MenuItem>
+            {Object.keys(schoolTypeMap).map((code) => (
+              <MenuItem key={code} value={code}>
+                {labelMapper("schoolTypeMap", code)}
+              </MenuItem>
             ))}
           </Select>
-        ))}
-      </Stack>
 
-      {/* === 테이블 === */}
-      <TableContainer>
-        <Table size="small">
-          <TableHead sx={{ backgroundColor: "#1976d2" }}>
-            <TableRow>
+          {/* 지역(라벨) */}
+          <Select
+            size="small"
+            value={filters.province || "전체"}
+            onChange={(e) =>
+              setFilters((f) => ({
+                ...f,
+                province: e.target.value === "전체" ? "" : e.target.value,
+              }))
+            }
+            sx={{ minWidth: 130, fontSize: "0.8em" }}
+          >
+            {PROVINCE_OPTIONS.map((label) => (
+              <MenuItem key={label} value={label}>
+                {label}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {/* 검색 */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              flex: 1,
+              minWidth: 200,
+            }}
+          >
+            <TextField
+              size="small"
+              fullWidth
+              placeholder="학교명 검색"
+              value={filters.keyword || ""}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, keyword: e.target.value }))
+              }
+              InputProps={{
+                startAdornment: <Search fontSize="small" sx={{ mr: 0.5 }} />,
+                endAdornment: !!filters.keyword && (
+                  <Tooltip title="검색어 지우기">
+                    <IconButton
+                      size="small"
+                      onClick={clearKeyword}
+                      aria-label="clear keyword"
+                    >
+                      <Clear fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                ),
+              }}
+            />
+          </Box>
+
+          {/* 페이지당 개수 */}
+          {typeof size !== "undefined" && setSize && (
+            <Select
+              size="small"
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              sx={{ minWidth: 90, fontSize: "0.8em" }}
+            >
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <MenuItem key={n} value={n}>
+                  {n}개
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+
+          {/* 초기화 */}
+          <Tooltip title="필터 초기화">
+            <IconButton
+              onClick={resetFilters}
+              size="small"
+              aria-label="reset filters"
+            >
+              <Clear fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Box>
+
+      <Divider />
+
+      {/* ====== 테이블 ====== */}
+      <TableContainer sx={{ maxHeight: 520 }}>
+        <Table size="small" stickyHeader aria-label="학교 목록 테이블">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#1976d2" }}>
               {columns.map((col) => (
                 <TableCell
                   key={col.key}
-                  align="center"
-                  sx={{ color: "#fff", width: col.width, border: "1px solid #ccc", fontSize: "12px", whiteSpace: "nowrap" }}
-                  onClick={() => handleSort(col.key)}
+                  align={col.align || "center"}
+                  sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: "#1976d2",
+                    color: "#fff",
+                    borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    borderRight: "1px solid rgba(255,255,255,0.12)",
+                    whiteSpace: "nowrap",
+                    width: col.width,
+                    minWidth: col.width,
+                    fontSize: 12,
+                    userSelect: "none",
+                  }}
                 >
-                  {col.label} {renderSortIcon(col.key)}
+                  <Stack
+                    direction="row"
+                    spacing={0.75}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <span>{col.label}</span>
+                  </Stack>
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {visibleRows.map((row) => (
-              <TableRow key={row.id} hover>
-                {columns.map((col) => (
-                  <TableCell key={col.key} align="center" sx={{ border: "1px solid #ccc", fontSize: "12px" }}>
-                    {row[col.key]}
-                  </TableCell>
-                ))}
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  align="center"
+                  sx={{ py: 4 }}
+                >
+                  <CircularProgress size={22} />
+                </TableCell>
               </TableRow>
-            ))}
+            ) : safeRows.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  align="center"
+                  sx={{ py: 5 }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    표시할 데이터가 없습니다.
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              safeRows.map((row) => (
+                <TableRow key={row.id} hover>
+                  {columns.map((col) => {
+                    let val = row?.[col.key] ?? "";
+
+                    if (col.key === "schoolType" && val) {
+                      val = labelMapper("schoolTypeMap", val);
+                    }
+                    if (col.key === "phoneNumber" && val) {
+                      val = (
+                        <a
+                          href={`tel:${String(row.phoneNumber).replace(
+                            /[^0-9+]/g,
+                            ""
+                          )}`}
+                          style={{ color: "inherit", textDecoration: "none" }}
+                        >
+                          {row.phoneNumber}
+                        </a>
+                      );
+                    }
+                    if (
+                      col.key === "memberCount" &&
+                      typeof row.memberCount === "number"
+                    ) {
+                      val = row.memberCount.toLocaleString();
+                    }
+
+                    return (
+                      <TableCell
+                        key={col.key}
+                        align={col.align || "center"}
+                        sx={{
+                          borderBottom: "1px solid #eee",
+                          fontSize: 12,
+                          width: col.width,
+                          minWidth: col.width,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {val}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <Pagination
-        sx={{ display: "flex", justifyContent: "center", my: 2 }}
-        showFirstButton
-        showLastButton
-        count={totalPages}
-        page={page}
-        onChange={(e, value) => setPage(value)}
-        variant="outlined"
-        shape="rounded"
-      />
+      {/* ====== 페이지네이션 ====== */}
+      <Box sx={{ display: "flex", justifyContent: "center", py: 1.5 }}>
+        <Pagination
+          showFirstButton
+          showLastButton
+          count={Math.max(1, totalPages)}
+          page={page}
+          onChange={(_, value) => setPage?.(value)}
+          variant="outlined"
+          shape="rounded"
+          size="small"
+        />
+      </Box>
     </Paper>
   );
-};
-
-export default SchoolTable;
+}
