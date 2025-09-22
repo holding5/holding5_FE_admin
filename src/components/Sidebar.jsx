@@ -25,33 +25,33 @@ const Sidebar = () => {
     { text: "드림인 관리", path: "/user/dream" },
     { text: "카운셀러 관리", path: "/" },
     { text: "등급관리", path: "/rankmanage" },
-    { text: "일시정지 회원관리", path: "/pausedmanage" },
-    { text: "영구탈퇴 회원관리", path: "/banned-manage" },
+    { text: "일시정지 회원관리", path: "/user/paused" },
+    { text: "영구탈퇴 회원관리", path: "/user/banned" },
   ];
 
   const postMenuItem = [
     { text: "생명메시지", path: "/post/life-message" },
     { text: "희망메시지", path: "/post/hope-message" },
     { text: "축하메시지", path: "/post/congratulatory-message" },
-    { text: "홀파담벼락", path: "/holpa-board" },
+    { text: "홀파담벼락", path: "/post/holpa" },
     { text: "캣츠아이 / 진실노트", path: "/catseye-truth" },
     { text: "극복수기", path: "/overcoming" },
     { text: "공지사항", path: "/announcement" },
     { text: "운영장에게 건의", path: "/recommendation" },
-    { text: "신고된 게시물 보기", path: "/" },
+    { text: "신고된 게시물 보기", path: "/post/reported" },
   ];
 
   const messageMenuItem = [
-    { text: "메시지 리스트", path: "/message-list"},
-    { text: "메시지 발송", path: "/message-list/send"},
+    { text: "메시지 리스트", path: "/message-list" },
+    { text: "메시지 발송", path: "/message-list/send" },
   ];
 
   const eventMenuItem = [
-    { text: "전체", path: "/event-list"},
-    { text: "가입환영인사", path: "/event-join"},
-    { text: "생일축하인사", path: "/event-birth"},
-    { text: "시험격려", path: "event-test"}
-  ]
+    { text: "전체", path: "/event-list" },
+    { text: "가입환영인사", path: "/event-join" },
+    { text: "생일축하인사", path: "/event-birth" },
+    { text: "시험격려", path: "event-test" },
+  ];
 
   const systemMenuItem = [
     { text: "시스템 현황", path: "/system" },
@@ -61,7 +61,7 @@ const Sidebar = () => {
     { text: "학교 / 경찰서 등록", path: "/system/school-police" },
     { text: "생명살림 집계", path: "/" },
     { text: "관리자 관리", path: "/" },
-  ]
+  ];
 
   return (
     <Box

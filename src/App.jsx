@@ -53,16 +53,29 @@ import MessageSend from "./sendmessage/pages/MessageSend";
 import Event from "./eventmanage/pages/Event";
 import EventList from "./eventmanage/pages/EventList";
 
+// 로그인
+import LoginPage from "./login/pages/LoginPage";
+import KakaoCallback from "./login/pages/KaKaoCallBack";
+
 // 회원 관리
 import User from "./usermanage2/pages/User";
 import DreamUserPage from "./usermanage2/pages/DreamUserPage";
 import DreamUserDetailPage from "./usermanage2/pages/DreamUserDetailPage";
+
+import PausedUserPage from "./usermanage2/pages/PausedUserPage";
+import BannedUserPage from "./usermanage2/pages/BannedUserPage";
 
 // 게시물 관리
 import Post from "./postmanage2/pages/Post";
 import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
 import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
 import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessagePage";
+import HolpaPage from "./postmanage2/pages/HolpaPage";
+import HolpaDetailPage from "./postmanage2/pages/HolpaDetailPage";
+import CatsEyePage from "./postmanage2/pages/CatsEyePage";
+
+import ReportedPostPage from "./postmanage2/pages/ReportedPostPage";
+import ReportedPostDetailPage from "./postmanage2/pages/ReportedPostDetailPage";
 
 // 시스템 관리
 import System from "./systemmanage/pages/System";
@@ -161,27 +174,51 @@ function App() {
         <Route index element={<EventList />}></Route>
       </Route>
 
+      {/* 로그인 */}
+      <Route path="login" element={<LoginPage />}></Route>
+      <Route path="auth/kakao/callback" element={<KakaoCallback />}></Route>
+
       {/* 회원 관리 */}
       <Route path="user" element={<User />}>
         <Route path="dream" element={<DreamUserPage />}></Route>
-        <Route path="dream/detail/:id" element={<DreamUserDetailPage />}></Route>
+        <Route
+          path="dream/detail/:id"
+          element={<DreamUserDetailPage />}
+        ></Route>
+
+        <Route path="paused" element={<PausedUserPage />}></Route>
+        <Route path="banned" element={<BannedUserPage />}></Route>
       </Route>
 
       {/* 게시물 관리 */}
       <Route path="post" element={<Post />}>
         <Route path="life-message" element={<LifeMessagePage />}></Route>
         <Route path="hope-message" element={<HopeMessagePage />}></Route>
-        <Route path="congratulatory-message" element={<CongratulatoryMessagePage />}></Route>
+        <Route
+          path="congratulatory-message"
+          element={<CongratulatoryMessagePage />}
+        ></Route>
+        <Route path="holpa" element={<HolpaPage />}></Route>
+        <Route
+          path="holpa/detail/:postId"
+          element={<HolpaDetailPage />}
+        ></Route>
+        <Route path="cats-eye" element={<CatsEyePage />}></Route>
+
+        <Route path="reported" element={<ReportedPostPage />}></Route>
+        <Route
+          path="reported/detail/:postId"
+          element={<ReportedPostDetailPage />}
+        ></Route>
       </Route>
 
       {/* 시스템 관리 */}
-      <Route path="system" element={<System />}> 
+      <Route path="system" element={<System />}>
         <Route index element={<SystemOverviewPage />}></Route>
         <Route path="fnq" element={<FnQPage />}></Route>
         <Route path="helpers" element={<HelpersPage />}></Route>
         <Route path="school-police" element={<SchoolPolicePage />}></Route>
       </Route>
-
     </Routes>
   );
 }

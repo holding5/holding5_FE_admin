@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
 import AppDevList from "./AppDevList";
-import { getAppDevMembers } from "../api";
+import { getAppDevMembers } from "../utils/api";
 import LeadingMessageInput from "./LeadingMessageInput";
 
 const AppDevSection = () => {
