@@ -1,9 +1,16 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import {
-  Box, Typography, Stack, TextField, Divider, Paper, MenuItem, Button
+  Box,
+  Typography,
+  Stack,
+  TextField,
+  Divider,
+  Paper,
+  MenuItem,
+  Button,
 } from "@mui/material";
-import useDreaminProfile from "../../hooks/useDreaminProfile";
+import { useDreaminProfile } from "../hooks/useDreamins";
 import DreamAdminModal from "./DreamAdminModal";
 
 const religionOptions = ["기독교", "불교", "천주교", "무교", "기타"];
@@ -53,7 +60,9 @@ const DreamUserProfile = () => {
           select
         >
           {genderOptions.map((opt) => (
-            <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+            <MenuItem key={opt} value={opt}>
+              {opt}
+            </MenuItem>
           ))}
         </TextField>
         <TextField
@@ -95,14 +104,18 @@ const DreamUserProfile = () => {
           select
         >
           {religionOptions.map((opt) => (
-            <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+            <MenuItem key={opt} value={opt}>
+              {opt}
+            </MenuItem>
           ))}
         </TextField>
       </Stack>
 
       <Divider sx={{ my: 3 }} />
 
-      <Typography variant="h6" gutterBottom>경력 변경 이력</Typography>
+      <Typography variant="h6" gutterBottom>
+        경력 변경 이력
+      </Typography>
       <Stack spacing={2}>
         {histories.map((h, idx) => (
           <Box key={idx} sx={{ fontSize: 14 }}>
@@ -114,12 +127,29 @@ const DreamUserProfile = () => {
       <Divider sx={{ my: 3 }} />
 
       <Stack direction="row" spacing={2} justifyContent="flex-end">
-        <Button variant="outlined" color="primary">수정</Button>
-        <Button variant="outlined" color="error">삭제</Button>
-        <Button variant="contained" color="secondary" onClick={handleAdminClick}>행정관리</Button>
+        <Button variant="outlined" color="primary">
+          수정
+        </Button>
+        <Button variant="outlined" color="error">
+          삭제
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleAdminClick}
+        >
+          행정관리
+        </Button>
       </Stack>
 
-      <DreamAdminModal anchorEl={adminAnchorEl} onClose={handleAdminClose} userId={id} onDone={() => {console.log("행정 조치 완료됨.")}} />
+      <DreamAdminModal
+        anchorEl={adminAnchorEl}
+        onClose={handleAdminClose}
+        userId={id}
+        onDone={() => {
+          console.log("행정 조치 완료됨.");
+        }}
+      />
     </Paper>
   );
 };

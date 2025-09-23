@@ -12,7 +12,7 @@ import {
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // 테이블 셀 클릭시 Detail/:id 페이지로 이동
 
-import useDreamins from "../../hooks/useDreamins"; // ✅ 커스텀 훅 사용
+import useDreamins from "../hooks/useDreamins"; // ✅ 커스텀 훅 사용
 import { labelMapper } from "../../utils/LabelMapper";
 
 const columns = [
@@ -26,13 +26,13 @@ const columns = [
   {
     key: "religion",
     label: "종교",
-    width: "80px",
+    width: "100px",
     valueFormatter: (v) => labelMapper("religionMap", v),
   },
   { key: "nickname", label: "닉네임", width: "100px" },
   { key: "name", label: "이름", width: "100px" },
   { key: "createdAt", label: "가입일", width: "100px" },
-  { key: "phoneNumber", label: "전화번호", width: "100px" },
+  { key: "phoneNumber", label: "전화번호", width: "200px" },
   { key: "email", label: "이메일", width: "100px" },
   {
     key: "status",
@@ -46,9 +46,9 @@ const columns = [
     width: "100px",
     valueFormatter: (v) => labelMapper("ageGroupMap", v),
   },
-  { key: "reports", label: "신고건수", width: "100px" },
-  { key: "totalAccess", label: "출첵누적", width: "100px" },
-  { key: "avgAccess", label: "출첵평균", width: "100px" },
+  { key: "reports", label: "신고건수", width: "50px" },
+  { key: "totalAccess", label: "출첵누적", width: "50px" },
+  { key: "avgAccess", label: "출첵평균", width: "50px" },
 ];
 
 const sortableKeys = [
@@ -57,9 +57,6 @@ const sortableKeys = [
   "name",
   "createdAt",
   "status",
-  "ageGroup",
-  "holpaScore",
-  "holpaRank",
   "reports",
   "totalAccess",
   "avgAccess",
