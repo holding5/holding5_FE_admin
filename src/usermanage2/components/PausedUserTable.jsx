@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import usePausedUsers from "../../hooks/usePausedUsers";
-import { releasePausedUsers } from "../../hooks/usePausedUsers";
-import { banPausedUsers } from "../../hooks/usePausedUsers";
+import usePausedUsers from "../hooks/usePausedUsers";
+import { releasePausedUsers } from "../hooks/usePausedUsers";
+import { banPausedUsers } from "../hooks/usePausedUsers";
 import { labelMapper } from "../../utils/LabelMapper";
 
 const columns = [

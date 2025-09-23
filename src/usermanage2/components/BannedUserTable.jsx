@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import useBannedUsers from "../../hooks/useBannedUser";
+import useBannedUsers from "../hooks/useBannedUser";
 import releaseBannedUsers from "../../api/releaseBannedUsers";
 import { labelMapper } from "../../utils/LabelMapper";
 

@@ -260,6 +260,28 @@ export async function getSchoolDetail(schoolId) {
   return data;
 }
 
+/** 드림인 검색 (닉네임/이름/전화 통합검색), -> 선생 선택시 활용 */
+export async function searchDreamins(
+  q,
+  page = 0,
+  size = 10,
+  onlyActive = true
+) {
+  const { data } = await axiosInstance.get("/admin/member/dreamins", {
+    params: { q, onlyActive, page, size, sort: "id,desc" },
+  });
+  // Spring Pageable 페이지 형태 가정
+  const content =
+    data?.content ?? data?.page?.content ?? data?.page?.data ?? [];
+  return content.map((u) => ({
+    id: u.id, // 사용자 ID (백엔드가 주는 키 이름에 맞춰 조정)
+    nickname: u.nickname,
+    name: u.name,
+    phoneNumber: u.phoneNumber,
+    active: u.active ?? true,
+  }));
+}
+
 /** 6자리 PIN 미리 생성(저장은 안 함) */
 export async function previewPin() {
   const { data } = await axiosInstance.post("/api/system/schools/pin/preview");

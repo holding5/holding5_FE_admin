@@ -27,6 +27,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
   searchSchools,
   getSchoolDetail,
+  searchDreamins,
   previewPin,
   registerMemberSchool,
 } from "../hooks/useSchool";
@@ -126,6 +127,104 @@ function SchoolSearchPopover({ open, anchorEl, onClose, onPick }) {
   );
 }
 
+/* ------- 드림인 검색 팝오버 (복수 선택) -> 담당선생 등록시 활용 ------- */
+function DreaminSearchPopover({ open, anchorEl, onClose, onPickMany }) {
+  const [keyword, setKeyword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState([]);
+  const [checked, setChecked] = useState(new Set()); // 선택 집합
+
+  const runSearch = async () => {
+    setLoading(true);
+    try {
+      const list = await searchDreamins(keyword, 0, 20, true);
+      setResults(list);
+      setChecked(new Set());
+    } finally {
+      setLoading(false);
+    }
+  };
+  const onEnter = (e) => e.key === "Enter" && runSearch();
+  const toggle = (id) =>
+    setChecked((prev) => {
+      const n = new Set(prev);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+
+  const apply = () => {
+    const picked = results.filter((r) => checked.has(r.id));
+    onPickMany?.(picked);
+    onClose?.();
+  };
+
+  return (
+    <Popover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+      PaperProps={{ sx: { width: 560, p: 1.5 } }}
+    >
+      <Stack direction="row" spacing={1} alignItems="center">
+        <TextField
+          size="small"
+          placeholder="닉네임/이름/전화로 검색"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={onEnter}
+          fullWidth
+        />
+        <Button variant="contained" onClick={runSearch} disabled={loading}>
+          {loading ? "검색중" : "검색"}
+        </Button>
+      </Stack>
+
+      <Divider sx={{ my: 1 }} />
+
+      {results.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          {loading ? "로딩 중..." : "검색 결과가 없습니다."}
+        </Typography>
+      ) : (
+        <List dense sx={{ maxHeight: 320, overflowY: "auto" }}>
+          {results.map((u) => (
+            <ListItemButton key={u.id} onClick={() => toggle(u.id)}>
+              <Checkbox
+                edge="start"
+                checked={checked.has(u.id)}
+                tabIndex={-1}
+              />
+              <ListItemText
+                primary={`${u.nickname ?? ""} (${u.name ?? "-"})`}
+                secondaryTypographyProps={{ component: "span" }}
+                secondary={
+                  <>
+                    <span>전화: {u.phoneNumber || "-"}</span>
+                  </>
+                }
+              />
+            </ListItemButton>
+          ))}
+        </List>
+      )}
+
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        spacing={1}
+        sx={{ mt: 1 }}
+      >
+        <Button onClick={onClose}>취소</Button>
+        <Button variant="contained" onClick={apply}>
+          추가
+        </Button>
+      </Stack>
+    </Popover>
+  );
+}
+
 /* ------- 메인 다이얼로그 ------- */
 const initialForm = {
   schoolId: "",
@@ -142,9 +241,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  // 선생 옵션 & 선택값
+  // 기존 선생 옵션 & 선택값
   const [teacherOptions, setTeacherOptions] = useState([]); // [{id,name,phone}]
   const [selectedTeacherIds, setSelectedTeacherIds] = useState([]); // [101, 202, ...]
+
+  // 선생 검색(드림인 검색)
+  const [extraDreamins, setExtraDreamins] = useState([]); // [{id,nickname,name,phoneNumber}]
+  const [dreaminOpen, setDreaminOpen] = useState(false);
+  const dreaminBtnRef = useRef(null);
 
   // PIN
   const [pin, setPin] = useState("");
@@ -158,6 +262,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
     setTeacherOptions([]);
     setSelectedTeacherIds([]);
     setPin("");
+    setExtraDreamins([]);
   }, []);
 
   const handleClose = () => {
@@ -177,8 +282,16 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
     if (!validate()) return;
     setSubmitting(true);
     try {
+      const teacherIdsFromSelect = selectedTeacherIds.map((v) => Number(v));
+      const teacherIdsFromDreamin = extraDreamins.map((d) => Number(d.id));
+
+      // 중복 제거
+      const teacherUserIds = Array.from(
+        new Set([...teacherIdsFromSelect, ...teacherIdsFromDreamin])
+      );
+
       const body = {
-        teacherUserIds: selectedTeacherIds.map((v) => Number(v)),
+        teacherUserIds,
         pinCode: pin,
         phoneNumber: form.phone,
         address: form.address,
@@ -191,11 +304,10 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
       alert("회원학교 등록이 완료되었습니다.");
       handleClose();
     } catch (e) {
-      // 409(CONFLICT): PIN 중복 등
       const status = e?.response?.status;
       if (status === 409) {
         alert(
-          "이미 사용 중인 PIN이거나 학교 등록 충돌이 발생했습니다. 다시 시도해 주세요."
+          "이미 사용 중인 PIN이거나 등록 충돌이 발생했습니다. 다시 시도해 주세요."
         );
       } else {
         alert("등록 중 오류가 발생했습니다.");
@@ -389,6 +501,37 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
             </Typography>
           )}
 
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="subtitle2" sx={{ minWidth: 120 }}>
+              드림인 검색 추가
+            </Typography>
+            <Button
+              ref={dreaminBtnRef}
+              variant="outlined"
+              size="small"
+              onClick={() => setDreaminOpen(true)}
+            >
+              드림인 검색
+            </Button>
+          </Stack>
+
+          {/* 선택된 드림인들 Chip 표시/삭제 */}
+          {extraDreamins.length > 0 && (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+              {extraDreamins.map((u) => (
+                <Chip
+                  key={u.id}
+                  label={`${u.nickname ?? ""} (${u.name ?? "-"})`}
+                  onDelete={() =>
+                    setExtraDreamins((prev) =>
+                      prev.filter((x) => x.id !== u.id)
+                    )
+                  }
+                />
+              ))}
+            </Box>
+          )}
+
           <Divider sx={{ my: 1 }} />
 
           {/* 학교 PIN */}
@@ -443,6 +586,21 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
         anchorEl={searchBtnRef.current}
         onClose={() => setPopoverOpen(false)}
         onPick={handlePickSchool}
+      />
+
+      {/* 🔎 드림인 검색 팝오버 */}
+      <DreaminSearchPopover
+        open={dreaminOpen}
+        anchorEl={dreaminBtnRef.current}
+        onClose={() => setDreaminOpen(false)}
+        onPickMany={(picked) => {
+          // 중복 제거하여 합치기
+          setExtraDreamins((prev) => {
+            const map = new Map(prev.map((p) => [p.id, p]));
+            picked.forEach((p) => map.set(p.id, p));
+            return Array.from(map.values());
+          });
+        }}
       />
     </Dialog>
   );

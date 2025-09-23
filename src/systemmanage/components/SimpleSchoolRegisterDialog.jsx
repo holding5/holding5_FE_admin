@@ -84,7 +84,7 @@ const SimpleSchoolRegisterDialog = ({ open, onClose }) => {
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1, minWidth: 420 }}>
           <TextField
-            label="학교명"
+            label="학교명 ex)OO초등학교, OO중학교, OO고등학교"
             size="small"
             fullWidth
             value={form.schoolName}

@@ -1,6 +1,6 @@
 // src/hooks/usePausedUsers.js
-import usePaginatedList from "./usePaginatedList";
-import axiosInstance from "../utils/axiosInstance";
+import usePaginatedList from "../../hooks/usePaginatedList";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function usePausedUsers(options = {}) {
   return usePaginatedList({

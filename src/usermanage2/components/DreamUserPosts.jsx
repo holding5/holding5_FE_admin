@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
-import useDreaminPosts from "../../hooks/useDreaminPosts";
+import { useDreaminPosts } from "../hooks/useDreamins";
 
 const columns = [
   { key: "no", label: "번호", width: "50px" },

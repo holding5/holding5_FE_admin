@@ -1,5 +1,5 @@
 // src/hooks/useBannedUsers.js
-import usePaginatedList from "./usePaginatedList";
+import usePaginatedList from "../../hooks/usePaginatedList";
 
 /**
  * 영구제명 회원 목록 전용 훅
