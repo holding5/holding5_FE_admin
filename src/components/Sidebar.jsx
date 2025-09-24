@@ -60,7 +60,7 @@ const Sidebar = () => {
     { text: "도움주신 분", path: "/system/helpers" },
     { text: "학교 / 경찰서 등록", path: "/system/school-police" },
     { text: "생명살림 집계", path: "/" },
-    { text: "관리자 관리", path: "/" },
+    { text: "관리자 관리", path: "/system/admin" },
   ];
 
   return (
