@@ -83,6 +83,7 @@ import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
 import FnQPage from "./systemmanage/pages/FnQPage";
 import HelpersPage from "./systemmanage/pages/HelpersPage";
 import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
+import AdminPage from "./systemmanage/pages/AdminPage";
 
 function App() {
   return (
@@ -218,6 +219,7 @@ function App() {
         <Route path="fnq" element={<FnQPage />}></Route>
         <Route path="helpers" element={<HelpersPage />}></Route>
         <Route path="school-police" element={<SchoolPolicePage />}></Route>
+        <Route path="admin" element={<AdminPage />}></Route>
       </Route>
     </Routes>
   );
