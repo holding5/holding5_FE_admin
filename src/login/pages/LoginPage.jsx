@@ -11,27 +11,25 @@ import {
   InputAdornment,
   Alert,
   Divider,
-  Link,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Login } from "@mui/icons-material";
-import { useAuth } from "../../contexts/AuthContext";
-import { getKakaoAuthUrl } from "../../utils/kakao";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext.jsx";
+import axiosInstance from "../../utils/axiosInstance";
 
 export default function LoginPage() {
   const { login } = useAuth();
-
   const nav = useNavigate();
 
-  const [form, setForm] = useState({ email: "", password: "", remember: true });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [hint, setHint] = useState(""); // UI 확인용 성공 힌트
+  const [hint, setHint] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
-    setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
@@ -48,35 +46,58 @@ export default function LoginPage() {
     setError("");
     setHint("");
 
-    const v = validate();
-    if (v) {
-      setError(v);
+    const msg = validate();
+    if (msg) {
+      setError(msg);
       return;
     }
 
     setSubmitting(true);
 
-    // 아직 api 없음 -> mock데이터 로그인
-    setTimeout(() => {
-      const fakeSuccess = Math.random() > 0.3; // 70% 성공
-      if (fakeSuccess) {
-        const fakeToken = "mock-jwt-token";
-        const fakeUser = {
-          id: 1,
-          email: form.email,
-          nickname: "관리자",
-          role: "ADMIN",
-        };
+    try {
+      // 🔥 로그인 API 호출 (/admin/auth/login)
+      const res = await axiosInstance.post("/admin/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
 
-        login(fakeToken, fakeUser); // ✅ 로그인 처리!
-        setHint("로그인 성공! (mock)");
-        nav("/");
-      } else {
-        setError("로그인 실패 (mock)");
+      console.log("로그인 응답:", res.data);
+
+      const { accessToken, tokenType, expiresIn } = res.data;
+
+      if (!accessToken) {
+        setError("로그인 토큰을 받지 못했습니다.");
+        return;
       }
 
+      // 🔥 유저 정보는 아직 API가 없으므로 최소값만 저장
+      const user = {
+        email: form.email,
+        role: "ADMIN",
+        tokenType,
+        expiresIn,
+      };
+
+      // AuthContext 저장
+      login(accessToken, user);
+
+      setHint("로그인 성공!");
+      nav("/");
+    } catch (err) {
+      console.error("로그인 실패:", err);
+
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+        } else {
+          setError(`로그인 중 오류 발생 (code: ${err.response.status})`);
+        }
+      } else {
+        setError("서버에 연결할 수 없습니다.");
+      }
+    } finally {
       setSubmitting(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -116,6 +137,7 @@ export default function LoginPage() {
                 autoFocus
                 required
               />
+
               <TextField
                 label="비밀번호"
                 name="password"
@@ -152,25 +174,7 @@ export default function LoginPage() {
             </Stack>
           </form>
 
-          <Stack direction="row" justifyContent="space-between" sx={{ mt: 1 }}>
-            <Link component="button" variant="body2" underline="hover" disabled>
-              회원가입
-            </Link>
-          </Stack>
-
           <Divider sx={{ my: 2 }} />
-
-          <Stack spacing={1}>
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={() => {
-                window.location.href = getKakaoAuthUrl();
-              }}
-            >
-              카카오로 계속하기
-            </Button>
-          </Stack>
         </Stack>
       </Paper>
     </Box>

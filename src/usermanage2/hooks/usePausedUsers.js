@@ -1,13 +1,17 @@
 // src/hooks/usePausedUsers.js
 import usePaginatedList from "../../hooks/usePaginatedList";
 import axiosInstance from "../../utils/axiosInstance";
+import { useState } from "react";
 
 export default function usePausedUsers(options = {}) {
-  return usePaginatedList({
-    endpoint: "/admin/suspensions", // 👉 BE API 엔드포인트 확인 필요
+  // 기본은 "목록" 엔드포인트
+  const [endpoint, setEndPoint] = useState("/admin/suspensions");
+
+  const list = usePaginatedList({
+    endpoint, // 동적으로 바뀜
     initialParams: options.initialParams ?? {},
     initialSort: {
-      key: "startDate",
+      key: "suspensionStartAt",
       dir: "desc",
       ...options.initialSort,
     },
@@ -32,6 +36,31 @@ export default function usePausedUsers(options = {}) {
 
     ...options,
   });
+
+  // 돋보기 버튼 눌렀을 시 검색
+  const runSearch = (q) => {
+    const keyword = (q ?? "").trim();
+
+    if (keyword) {
+      setEndPoint("/admin/suspensions/search");
+      list.setParams({ ...(list.params ?? {}), q: keyword });
+      list.setSort({ key: null, dir: null });
+    } else {
+      //빈 검색어이면 검색 모드 해제 = 목록모드
+      setEndPoint("/admin/suspensions");
+      list.setParams({ ...(list.params ?? {}), q: "" });
+    }
+    list.setPage(1);
+  };
+
+  //
+  const clearSearch = () => {
+    setEndPoint("/admin/suspensions");
+    list.setParams({ ...(list.params ?? {}), q: "" });
+    list.setPage(1);
+  };
+
+  return { ...list, runSearch, clearSearch, setEndPoint };
 }
 
 /**

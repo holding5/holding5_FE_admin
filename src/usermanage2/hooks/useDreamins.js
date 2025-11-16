@@ -6,11 +6,22 @@ import { labelMapper } from "../../utils/LabelMapper";
 
 /**
  * 드림인 목록 전용 커스텀 훅 -> 드림인 테이블 조회
+ * - options.endpoint: 기본 목록(/admin/member/dreamins) 또는 상세검색(/admin/member/dreamins/search)로 교체 가능
+ * - options.externalParams: 상세검색에서 넘어온 추가 파라미터를 초기 파라미터에 병합
  */
 export default function useDreamins(options = {}) {
+  const endpoint = options.endpoint || "/admin/member/dreamins"; // ✅ 엔드포인트 오버라이드
+
   return usePaginatedList({
-    endpoint: "/admin/member/dreamins", // ✅ 백엔드 엔드포인트
-    initialParams: { onlyActive: true, ...options.initialParams },
+    endpoint, // ✅ 전달
+
+    // ✅ 초기 파라미터: 기본 + 외부(상세필터) + 사용자가 넘긴 initialParams
+    initialParams: {
+      onlyActive: true,
+      ...(options.initialParams ?? {}),
+      ...(options.externalParams ?? {}),
+    },
+
     initialSort: { key: "createdAt", dir: "desc", ...options.initialSort },
     initialPage: options.initialPage ?? 1,
     initialSize: options.initialSize ?? 10,
@@ -25,15 +36,9 @@ export default function useDreamins(options = {}) {
       phoneNumber: it.phoneNumber,
       email: it.email,
       status: it.status, // ACTIVE / SUSPENDED / BANNED
-      religion: it.religion, // NONE / BUDDHIST / CHRISTIAN ...
-      ageGroup: it.ageGroup, // 초등 / 중등 / 고등 ...
+      religion: it.religion, // NONE / BUDDHIST / CHRISTIAN / CATHOLIC
+      ageGroup: it.ageGroup, // ELEMENTARY / MIDDLE / HIGH / ...
       reports: it.totalReportCount,
-
-      // ✱ 아직 API 응답에 없는 값들은 보류
-      // holpaScore: it.holpaScore,
-      // holpaRank: it.holpaRank,
-      // avgAccess: it.avgAccess,
-      // totalAccess: it.totalAccess,
     }),
 
     ...options,
@@ -45,53 +50,76 @@ export default function useDreamins(options = {}) {
  * @param {string|number} id - 드림인 ID
  */
 export function useDreaminProfile(id) {
-  const [form, setForm] = useState(null); // ✅ 프로필 정보
-  const [histories, setHistories] = useState([]); // ✅ 활동 이력
-  const [loading, setLoading] = useState(true); // ✅ 로딩 상태
-  const [error, setError] = useState(null); // ✅ 에러 상태
+  const [form, setForm] = useState(null); // 라벨 매핑된 표시용 데이터
+  const [histories, setHistories] = useState([]); // 활동 이력
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
+  // 👇 중복 조치 방지를 위해 원시값을 별도로 보관
+  const [rawStatus, setRawStatus] = useState(null); // "ACTIVE" | "SUSPENDED" | "BANNED"
+  const [rawRoles, setRawRoles] = useState([]); // ["DREAMIN","HAPPYIN", ...]
+
+  const fetchProfile = useCallback(async () => {
     if (!id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axiosInstance.get(`/admin/member/dreamins/${id}`);
+      const data = res.data;
 
-    const fetchProfile = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await axiosInstance.get(`/admin/member/dreamins/${id}`);
-        const data = res.data;
+      // ✅ 라벨 매핑된 표시용 폼
+      setForm({
+        email: data.email ?? "",
+        nickname: data.nickname ?? "",
+        gender: labelMapper("genderMap", data.gender),
+        name: data.name ?? "",
+        birthdate: data.birthdate ?? "",
+        phoneNumber: data.phoneNumber ?? "",
+        job: data.job ?? "",
+        school: data.school ?? "",
+        religion: labelMapper("religionMap", data.religion),
+        status: labelMapper("statusMap", data.status),
+        ageGroup: labelMapper("ageGroupMap", data.ageGroup),
+      });
 
-        setForm({
-          email: data.email ?? "",
-          nickname: data.nickname ?? "",
-          gender: labelMapper("genderMap", data.gender), // "남"/"여"
-          name: data.name ?? "",
-          birthdate: data.birthdate ?? "",
-          phoneNumber: data.phoneNumber ?? "",
-          job: data.job ?? "",
-          school: data.school ?? "",
-          religion: labelMapper("religionMap", data.religion), // "불교" 등
-          status: labelMapper("statusMap", data.status), // "활동중"
-          ageGroup: labelMapper("ageGroupMap", data.ageGroup), // "중학생" 등
-        });
+      // ✅ 원시 상태/역할 (백엔드 enum 그대로)
+      const statusVal = data.status ?? null;
 
-        setHistories(Array.isArray(data.histories) ? data.histories : []);
-      } catch (err) {
-        console.error("드림인 프로필 조회 실패:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      // 백엔드 스키마가 serviceRoles(배열) 또는 serviceRole(단일)일 수 있으니 둘 다 케어
+      const rolesVal = Array.isArray(data.serviceRoles)
+        ? data.serviceRoles
+        : data.serviceRole
+        ? [data.serviceRole]
+        : [];
 
-    fetchProfile();
+      setRawStatus(statusVal);
+      setRawRoles(rolesVal);
+
+      setHistories(Array.isArray(data.histories) ? data.histories : []);
+    } catch (err) {
+      console.error("드림인 프로필 조회 실패:", err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
   return {
-    form, // 입력 폼 상태
-    setForm, // 외부에서 수정 가능
-    histories, // 활동 이력
+    form,
+    setForm,
+    histories,
+    setHistories,
     loading,
     error,
+    refetch: fetchProfile,
+
+    // 👇 모달에서 중복 조치 방지 판단에 사용
+    rawStatus, // e.g., "ACTIVE" | "SUSPENDED" | "BANNED"
+    rawRoles, // e.g., ["DREAMIN","HAPPYIN"]
   };
 }
 

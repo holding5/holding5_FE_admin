@@ -1,5 +1,5 @@
 // src/pages/components/SchoolTable.jsx
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -59,14 +59,29 @@ export default function SchoolTable({
     [rows]
   );
 
-  const clearKeyword = () => setFilters((f) => ({ ...f, keyword: "" }));
+  const [keywordInput, setKeywordInput] = useState(filters.keyword || "");
 
-  const resetFilters = () =>
+  // 바깥에서 필터가 리셋되면 입력창도 동기화
+  useEffect(() => {
+    setKeywordInput(filters.keyword || "");
+  }, [filters.keyword]);
+
+  const runKeywordSearch = () =>
+    setFilters((f) => ({ ...f, keyword: keywordInput.trim() }));
+
+  const clearKeyword = () => {
+    setKeywordInput("");
+    setFilters((f) => ({ ...f, keyword: "" }));
+  };
+
+  const resetFilters = () => {
+    setKeywordInput("");
     setFilters({
       schoolType: "",
       province: "",
       keyword: "",
     });
+  };
 
   return (
     <Paper sx={{ overflow: "hidden" }}>
@@ -131,22 +146,38 @@ export default function SchoolTable({
               size="small"
               fullWidth
               placeholder="학교명 검색"
-              value={filters.keyword || ""}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, keyword: e.target.value }))
-              }
+              value={keywordInput}
+              onChange={(e) => setKeywordInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  runKeywordSearch();
+                }
+              }}
               InputProps={{
                 startAdornment: <Search fontSize="small" sx={{ mr: 0.5 }} />,
-                endAdornment: !!filters.keyword && (
-                  <Tooltip title="검색어 지우기">
-                    <IconButton
-                      size="small"
-                      onClick={clearKeyword}
-                      aria-label="clear keyword"
-                    >
-                      <Clear fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                endAdornment: (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Tooltip title="검색">
+                      <IconButton
+                        size="small"
+                        onClick={runKeywordSearch}
+                        aria-label="search keyword"
+                      >
+                        <Search fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    {!!keywordInput && (
+                      <Tooltip title="검색어 지우기">
+                        <IconButton
+                          size="small"
+                          onClick={clearKeyword}
+                          aria-label="clear keyword"
+                        >
+                          <Clear fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
                 ),
               }}
             />

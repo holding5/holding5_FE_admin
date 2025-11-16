@@ -7,7 +7,7 @@ import usePaginatedList from "../../hooks/usePaginatedList";
 export default function useBannedUsers(options = {}) {
   return usePaginatedList({
     endpoint: "/admin/member/banned",
-    initialParams: { ...options.initialParams },
+    initialParams: { keyword: "", ...(options.initialParams || {}) },
     initialSort: { key: "userId", dir: "asc", ...options.initialSort },
     initialPage: options.initialPage ?? 1,
     initialSize: options.initialSize ?? 25,

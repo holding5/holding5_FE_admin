@@ -1,13 +1,26 @@
-import HeaderSearchbar from "./HeaderSearchbar";
+// src/components/Header.jsx (파일 경로는 네 프로젝트 구조에 맞게)
+
 import logoImage from "../assets/holding5.png";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { Stack, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext"; // 🔹 추가
+
 const Header = () => {
   const nav = useNavigate();
+  const { user, logout } = useAuth(); // 🔹 로그인 정보 / 로그아웃 함수
+
   const onClickHome = () => {
-    nav("/");
+    nav("/"); // "/" → App에서 /user/happy 로 리다이렉트 되도록 이미 설정
   };
+
+  const handleLogout = () => {
+    logout(); // 토큰/유저 정보 제거
+    nav("/login", { replace: true });
+  };
+
+  const displayName = user?.email || "관리자";
+
   return (
     <Box
       component="header"
@@ -28,26 +41,32 @@ const Header = () => {
         <Box
           component="img"
           src={logoImage}
-          sx={{ height: 40 }}
+          alt="Holding5 로고"
+          sx={{ height: 40, cursor: "pointer" }}
           onClick={onClickHome}
         />
-        <HeaderSearchbar />
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={3}>
+        {/* 🔹 이메일 기반 인사말 */}
         <Typography sx={{ mt: 1 }}>
           <Box
             component="span"
             sx={{ color: "#00BFFF", fontWeight: "bold", fontSize: "20px" }}
           >
-            홍길동
+            {displayName}
           </Box>{" "}
-          해피인님 반갑습니다.
+          님 반갑습니다.
         </Typography>
 
-        <Stack alignItems="center" sx={{ cursor: "pointer" }}>
-          <PersonOutlineIcon sx={{ fontSize: 30 }} />
-          <Typography variant="caption">마이페이지</Typography>
+        {/* 🔹 마이페이지 대신 로그아웃 버튼 */}
+        <Stack
+          alignItems="center"
+          sx={{ cursor: "pointer" }}
+          onClick={handleLogout}
+        >
+          <LogoutIcon sx={{ fontSize: 30 }} />
+          <Typography variant="caption">로그아웃</Typography>
         </Stack>
       </Stack>
     </Box>

@@ -9,6 +9,7 @@ export default function useHolpaPosts(options = {}) {
     endpoint: "/admin/holpawall/posts",
     initialParams: options.initialParams ?? {},
     initialSort: { key: "createdAt", dir: "desc", ...options.initialSort },
+    // initialSort: null,
     initialPage: options.initialPage ?? 1,
     initialSize: options.initialSize ?? 10,
 

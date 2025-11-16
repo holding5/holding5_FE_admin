@@ -15,6 +15,9 @@ import {
   Tooltip,
   Typography,
   CircularProgress,
+  // 🔹 추가
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ReplayIcon from "@mui/icons-material/Replay";
@@ -23,10 +26,24 @@ import { searchDreamins } from "../hooks/useAdmin"; // ⬅️ 훅에서 API 사�
 /**
  * props
  *  - form: { id, name, email, phoneNumber, password }
- *  - onChange: (updater) => void  // setState(updater) 형태 권장
+ *  - onChange: (updater) => void
+ *  - onSubmit?: (payload) => void   // 🔹 추가: 등록/수정 버튼 콜백
  */
-export default function AdminInputForm({ form, onChange }) {
+export default function AdminInputForm({
+  form,
+  onChange,
+  onSubmit,
+  resetSignal,
+}) {
   const [openPicker, setOpenPicker] = useState(false);
+
+  // 🔹 추가: '해제/정지' 선택 상태 (null | 'RELEASE' | 'SUSPEND')
+  const [actionType, setActionType] = useState(null);
+
+  useEffect(() => {
+    setActionType(null);
+    setOpenPicker(false);
+  }, [resetSignal]);
 
   const setField = (k, v) => onChange((prev) => ({ ...prev, [k]: v }));
 
@@ -49,10 +66,17 @@ export default function AdminInputForm({ form, onChange }) {
     setField("password", pw);
   };
 
+  // 🔹 추가: 등록/수정 버튼 액션
+  const handleSubmit = () => {
+    // actionType은 선택해도 되고 안해도 됨(null 허용)
+    const payload = { ...form, actionType }; // 예: 'RELEASE' | 'SUSPEND' | null
+    onSubmit?.(payload);
+  };
+
   return (
     <Box>
-      {/* 최상단: 드림인 검색하기 */}
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
+      {/* 1번째 줄: 드림인 검색 버튼 */}
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
         <Button
           variant="contained"
           startIcon={<SearchIcon />}
@@ -66,7 +90,7 @@ export default function AdminInputForm({ form, onChange }) {
       </Stack>
 
       {/* 입력 요소들 */}
-      <Grid container spacing={1.5}>
+      <Grid container spacing={1.5} sx={{ mt: 2 }}>
         <Grid item xs={12} sm={4} md={3}>
           <TextField
             size="small"
@@ -124,6 +148,38 @@ export default function AdminInputForm({ form, onChange }) {
           </Tooltip>
         </Grid>
       </Grid>
+
+      {/* 🔹 2번째 줄: 해제/정지(라디오처럼 단일선택, 클릭 시 해제 가능) + 등록/수정하기 버튼 */}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        alignItems={{ xs: "stretch", sm: "center" }}
+        spacing={3}
+        sx={{ mt: 2 }}
+      >
+        <ToggleButtonGroup
+          exclusive
+          value={actionType}
+          // 같은 값을 또 클릭하면 해제(null)되도록 처리
+          onChange={(_, next) =>
+            setActionType((prev) => (prev === next ? null : next))
+          }
+        >
+          <ToggleButton value="RELEASE">해제</ToggleButton>
+          <ToggleButton value="SUSPEND">정지</ToggleButton>
+        </ToggleButtonGroup>
+
+        <Box flex={0.95} />
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={
+            !form?.email || !form?.name || !form?.phoneNumber || !form?.password
+          }
+        >
+          등록/수정하기
+        </Button>
+      </Stack>
 
       {/* 드림인 선택 다이얼로그 */}
       <DreaminPickerDialog

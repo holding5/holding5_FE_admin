@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -6,239 +6,282 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
   Paper,
   Select,
   MenuItem,
   Stack,
-  Checkbox, // ✅ 추가
+  Box,
+  CircularProgress,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { reportedPostMock } from "../utils/ReportedPostMock"; // mock 데이터
+import useReportedPosts from "../hooks/useReportedPosts";
+import { labelMapper } from "../../utils/LabelMapper";
 
-const columns = [
-  { key: "post_id", label: "번호", width: "50px" },
-  { key: "nickname", label: "닉네임", width: "80px" },
-  { key: "email", label: "이메일", width: "100px" },
-  { key: "type", label: "분류", width: "80px" },
-  { key: "status", label: "현상태", width: "80px" },
-  { key: "content", label: "내용", width: "150px" },
-  { key: "reportedAt", label: "신고시점", width: "100px" },
-  { key: "bannedAt", label: "영구제명 시점", width: "100px" },
-  { key: "totalReportCount", label: "총 신고 수", width: "50px" },
-  { key: "spammingCount", label: "언어폭력", width: "50px" },
-  { key: "inappropriateLanguageCount", label: "도배", width: "50px" },
-  { key: "verbalAbuseCount", label: "부적절한 언어", width: "50px" },
-  { key: "sexualHarassmentCount", label: "음담패설, 성희롱", width: "50px" },
+// 처리대기, 무혐의, 처리완료
+const POST_STATUS_FILTER_OPTIONS = [
+  { value: "", label: "신고상태 전체" },
+  ...["OPEN", "DISMISSED", "RESOLVED"].map((key) => ({
+    value: key,
+    label: labelMapper("reportedPostStatusMap", key),
+  })),
 ];
 
-const sortableKeys = [];
+const columns = [
+  { key: "id", label: "번호", width: "4rem" },
+  {
+    key: "reportStatus",
+    label: "처리상태",
+    width: "5rem",
+    valueFormatter: (v) => labelMapper("reportedPostStatusMap", v),
+  },
+  { key: "authorNickname", label: "작성자", width: "8rem" },
+  {
+    key: "postType",
+    label: "분류",
+    width: "10rem",
+    valueFormatter: (v) => labelMapper("reportedPostTypeMap", v),
+  },
 
-const ReportedPostTable = ({ itemsPerPage = 10 }) => {
-  const [page, setPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  { key: "content", label: "내용", width: "30rem" },
+  {
+    key: "dominantReportType",
+    label: "신고 분류",
+    width: "4rem",
+    valueFormatter: (v) => labelMapper("dominantReportTypeMap", v),
+  },
+  {
+    key: "firstReportedAt",
+    label: "신고 시점",
+    width: "8rem",
+    valueFormatter: (v) =>
+      typeof v === "string" ? v.slice(0, 16).replace("T", " ") : "-",
+  },
+  {
+    key: "bannedAt",
+    label: "영구정지 시점",
+    width: "8rem",
+    valueFormatter: (v) =>
+      typeof v === "string" ? v.slice(0, 16).replace("T", " ") : "-",
+  },
+  { key: "totalReportCount", label: "신고수", width: "3rem" },
+  { key: "verbalAbuseCount", label: "언어폭력", width: "3rem" },
+  { key: "spammingCount", label: "도배", width: "3rem" },
+  { key: "inappropriateLanguageCount", label: "부적절한 언어", width: "3rem" },
+  { key: "sexualHarassmentCount", label: "음담패설/성희롱", width: "3rem" },
+];
+
+const sortableKeys = ["firstReportedAt", "totalReportCount"];
+
+export default function ReportedPostTable() {
+  const {
+    rows,
+    totalElements,
+    totalPages,
+    page,
+    setPage,
+    sort,
+    setSort,
+    params,
+    setParams,
+    size,
+    setSize,
+    loading,
+    error,
+  } = useReportedPosts({ initialSize: 25 });
 
   const nav = useNavigate();
 
-  // ✅ 선택 상태 추가
-  const [selectedIds, setSelectedIds] = useState([]);
-
-  const initialFilters = columns
-    .filter((col) => col.filterable)
-    .reduce((acc, col) => ({ ...acc, [col.key]: "전체" }), {});
-  const [filters, setFilters] = useState(initialFilters);
-
-  const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
   const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
+    if (!sortableKeys.includes(key)) return;
+    let dir = "asc";
+    if (sort?.key === key && sort?.dir === "asc") dir = "desc";
+    setSort({ key, dir });
+    setPage(1);
   };
 
   const renderSortIcon = (key) => {
-    if (sortConfig.key !== key) return <UnfoldMore fontSize="small" />;
-    return sortConfig.direction === "asc" ? (
+    if (!sortableKeys.includes(key)) return null;
+    if (sort?.key !== key) return <UnfoldMore fontSize="small" />;
+    return sort?.dir === "asc" ? (
       <ArrowUpward fontSize="small" />
     ) : (
       <ArrowDownward fontSize="small" />
     );
   };
 
-  // ✅ 필터 적용
-  const filteredData = reportedPostMock.filter((row) => {
-    return Object.entries(filters).every(([key, value]) => {
-      if (value === "전체") return true;
-      return row[key] === value;
+  const onChangePageSize = (v) => {
+    setSize(v);
+    setPage(1);
+  };
+
+  const statusFilterValue = params?.status ?? "";
+
+  const handleStatusChange = (e) => {
+    const value = e.target.value;
+
+    setParams((prev) => {
+      const next = { ...prev };
+      if (!value) {
+        delete next.status;
+      } else {
+        next.status = value;
+      }
+      return next;
     });
-  });
 
-  // ✅ 정렬 적용
-  const sortedData = [...filteredData].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-    const key = sortConfig.key;
-    if (a[key] < b[key]) return sortConfig.direction === "asc" ? -1 : 1;
-    if (a[key] > b[key]) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-  const startIdx = (page - 1) * itemsPerPage;
-  const visibleRows = sortedData.slice(startIdx, startIdx + itemsPerPage);
-
-  // ✅ 개별 선택/해제
-  const handleSelectRow = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
-    );
-  };
-
-  // ✅ 현재 페이지(visibleRows) 기준 전체 선택/해제
-  const handleSelectAll = () => {
-    const pageIds = visibleRows.map((r) => r.id);
-    const allSelected = pageIds.every((id) => selectedIds.includes(id));
-    if (allSelected) {
-      // 현재 페이지 아이디들만 제거
-      setSelectedIds((prev) => prev.filter((id) => !pageIds.includes(id)));
-    } else {
-      // 현재 페이지 아이디들 추가(중복 제거)
-      setSelectedIds((prev) => Array.from(new Set([...prev, ...pageIds])));
-    }
-  };
-
-  const isSelected = (id) => selectedIds.includes(id);
-
-  // 테이블 셀 클릭 핸들러
-  const handleCellClick = (e, row, colKey) => {
-    if (["nickname", "email"].includes(colKey)) return;
-    if (e.target.type === "checkbox") return;
-    nav(`/post/reported/detail/${row.post_id}`);
+    setPage(1); // 필터 바꾸면 1페이지로 이동
   };
 
   return (
     <Paper>
-      <Stack
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="center"
-        spacing={2}
-        sx={{ px: 2, pt: 2, m: 1 }}
+      {/* 상단 툴바 */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          px: 2,
+          py: 1,
+        }}
       >
-        <button
-          disabled={selectedIds.length === 0}
-          style={{
-            backgroundColor: "#57b306ff",
-            color: "#fff",
-            padding: "6px 16px",
-            border: "none",
-            borderRadius: "4px",
-            cursor: selectedIds.length === 0 ? "not-allowed" : "pointer",
-            fontWeight: "bold",
-            fontSize: "14px",
-          }}
-        >
-          일괄 행정처리
-        </button>
-      </Stack>
+        {/* 🔹 왼쪽: group 필터 */}
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Select
+            size="small"
+            value={statusFilterValue}
+            onChange={handleStatusChange}
+            displayEmpty
+            sx={{ minWidth: 160, fontSize: "0.8rem" }}
+          >
+            {POST_STATUS_FILTER_OPTIONS.map((opt) => (
+              <MenuItem key={opt.value || "ALL"} value={opt.value}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
 
-      <TableContainer>
-        <Table size="small">
-          <TableHead sx={{ backgroundColor: "#1976d2" }}>
-            <TableRow>
-              {/* ✅ 헤더 체크박스 컬럼 */}
-              <TableCell padding="checkbox" sx={{ border: "1px solid #ccc" }}>
-                <Checkbox
-                  color="default"
-                  onChange={handleSelectAll}
-                  checked={
-                    visibleRows.length > 0 &&
-                    visibleRows.every((r) => selectedIds.includes(r.id))
-                  }
-                  indeterminate={
-                    visibleRows.some((r) => selectedIds.includes(r.id)) &&
-                    !visibleRows.every((r) => selectedIds.includes(r.id))
-                  }
-                />
-              </TableCell>
+        {/* 오른쪽: 총 개수 + 페이지 사이즈 */}
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", whiteSpace: "nowrap" }}
+          >
+            총 {totalElements?.toLocaleString?.() ?? 0}건
+          </Typography>
+          <Select
+            size="small"
+            value={size}
+            onChange={(e) => onChangePageSize(Number(e.target.value))}
+          >
+            <MenuItem value={25}>25</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
+        </Stack>
+      </Box>
 
-              {columns.map((col) => (
-                <TableCell
-                  key={col.key}
-                  align="center"
-                  sx={{
-                    color: "#fff",
-                    width: col.width,
-                    border: "1px solid #ccc",
-                    fontSize: "12px",
-                    whiteSpace: "nowrap",
-                    cursor: sortableKeys.includes(col.key)
-                      ? "pointer"
-                      : "default",
-                  }}
-                  onClick={() => {
-                    if (sortableKeys.includes(col.key)) {
-                      handleSort(col.key);
-                    }
-                  }}
-                >
-                  {col.label}{" "}
-                  {sortableKeys.includes(col.key) && renderSortIcon(col.key)}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
+      {loading && (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress size={24} />
+        </Box>
+      )}
+      {error && (
+        <Box sx={{ color: "error.main", px: 2, pb: 2 }}>
+          목록을 불러오는 중 오류가 발생했습니다.
+        </Box>
+      )}
 
-          <TableBody>
-            {visibleRows.map((row) => (
-              <TableRow key={row.post_id} hover>
-                {/* ✅ 행 체크박스 */}
-                <TableCell padding="checkbox" sx={{ border: "1px solid #ccc" }}>
-                  <Checkbox
-                    color="default"
-                    checked={isSelected(row.post_id)}
-                    onChange={() => handleSelectRow(row.post_id)}
-                  />
-                </TableCell>
-
+      {!loading && (
+        <TableContainer>
+          <Table size="small">
+            <TableHead sx={{ backgroundColor: "#1976d2" }}>
+              <TableRow>
                 {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     align="center"
                     sx={{
+                      color: "#fff",
+                      width: col.width,
                       border: "1px solid #ccc",
                       fontSize: "12px",
-                      cursor: ["nickname", "email"].includes(col.key)
-                        ? "default"
-                        : "pointer",
+                      whiteSpace: "nowrap",
+                      cursor: sortableKeys.includes(col.key)
+                        ? "pointer"
+                        : "default",
                     }}
-                    onClick={(e) => handleCellClick(e, row, col.key)}
+                    onClick={() => handleSort(col.key)}
                   >
-                    {row[col.key]}
+                    {col.label} {renderSortIcon(col.key)}
                   </TableCell>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.key}
+                  hover
+                  sx={{ cursor: "pointer" }}
+                  onClick={() =>
+                    nav(`detail/user/${row.id}/post/${row.postId}`)
+                  }
+                >
+                  {columns.map((col) => {
+                    let value = row[col.key];
+
+                    if (
+                      col.key === "createdAt" &&
+                      typeof row.createdAt === "string"
+                    ) {
+                      value = row.createdAt.slice(0, 10);
+                    }
+                    if (col.valueFormatter) {
+                      value = col.valueFormatter(value, row);
+                    }
+
+                    return (
+                      <TableCell
+                        key={col.key}
+                        align="center"
+                        sx={{ border: "1px solid #ccc", fontSize: "12px" }}
+                      >
+                        {value}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    align="center"
+                    sx={{ py: 4 }}
+                  >
+                    표시할 데이터가 없습니다.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", my: 2 }}
         showFirstButton
         showLastButton
-        count={totalPages}
+        count={Math.max(totalPages, 1)}
         page={page}
-        onChange={(e, value) => setPage(value)}
+        onChange={(_, v) => setPage(v)}
         variant="outlined"
         shape="rounded"
       />
     </Paper>
   );
-};
-
-export default ReportedPostTable;
+}

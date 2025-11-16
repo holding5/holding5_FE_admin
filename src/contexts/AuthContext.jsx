@@ -1,58 +1,84 @@
 // src/contexts/AuthContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 
-// 1. Context 생성
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-// 2. Provider 정의
-export const AuthProvider = ({ children }) => {
-  // ✅ 로그인 상태
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  });
+const STORAGE_TOKEN_KEY = "hf_admin_access_token";
+const STORAGE_USER_KEY = "hf_admin_user";
 
+export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || null;
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(STORAGE_TOKEN_KEY) || null;
   });
 
-  // ✅ 로그인 처리 함수 (일반 로그인, 카카오 공통)
-  const login = (newToken, userInfo) => {
-    setToken(newToken);
-    setUser(userInfo);
+  const [user, setUser] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const raw = localStorage.getItem(STORAGE_USER_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  });
 
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("user", JSON.stringify(userInfo));
-
-    axiosInstance.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${newToken}`;
-  };
-
-  // ✅ 로그아웃 함수
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    delete axiosInstance.defaults.headers.common["Authorization"];
-  };
-
-  // ✅ 초기화 시 토큰이 있으면 axios에 자동 적용
   useEffect(() => {
+    const tokenType = user?.tokenType || "Bearer";
     if (token) {
-      axiosInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common.Authorization = `${tokenType} ${token}`;
+    } else {
+      delete axiosInstance.defaults.headers.common.Authorization;
+    }
+  }, [token, user]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (token) {
+      localStorage.setItem(STORAGE_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(STORAGE_TOKEN_KEY);
     }
   }, [token]);
 
-  return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (user) {
+      localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(STORAGE_USER_KEY);
+    }
+  }, [user]);
 
-export const useAuth = () => useContext(AuthContext);
+  const login = (accessToken, userInfo) => {
+    setToken(accessToken);
+    setUser(userInfo);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+  };
+
+  const value = useMemo(
+    () => ({
+      token,
+      user,
+      isAuthenticated: !!token,
+      login,
+      logout,
+    }),
+    [token, user]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth는 AuthProvider 내부에서만 사용할 수 있습니다.");
+  }
+  return ctx;
+}
