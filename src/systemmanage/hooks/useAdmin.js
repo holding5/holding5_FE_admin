@@ -5,7 +5,7 @@ import usePaginatedList from "../../hooks/usePaginatedList";
 /** 시스템 관리자 목록 훅 */
 export default function useAdmins(options = {}) {
   return usePaginatedList({
-    endpoint: "/api/system/admins",
+    endpoint: "/admin/system/admins",
     initialParams: { onlyActive: true, ...(options.initialParams ?? {}) },
     initialSort: options.initialSort ?? { key: "createdAt", dir: "desc" },
     initialPage: options.initialPage ?? 1,
@@ -20,24 +20,37 @@ export default function useAdmins(options = {}) {
 }
 
 /**
- * 드림인 검색
- * @param {string} q - 검색어
- * @param {{page?: number, size?: number, sort?: string}} opts
+ * 공통 회원 검색 (DREAMIN / HAPPYIN 등 전체)
+ *
+ * @param {string} q - 검색어(닉네임/이름/전화번호)
+ * @param {{
+ *   role?: "DREAMIN"|"BASIC_HAPPYIN"|"STAR_HAPPYIN"|"GROUP_HAPPYIN"|"TEEN_HAPPYIN",
+ *   onlyActive?: boolean,
+ *   page?: number,
+ *   size?: number,
+ *   sort?: string
+ * }} opts
  * @returns {Promise<Array<{id,name,email,phoneNumber,raw}>>}
  */
-export async function searchDreamins(q, opts = {}) {
-  const { page = 0, size = 20, sort = "createdAt,desc" } = opts;
+export async function searchMembers(q, opts = {}) {
+  const {
+    role, // 선택: 특정 역할만 찾고 싶을 때
+    onlyActive = true, // 기본값 true
+    page = 0,
+    size = 20,
+    sort = "createdAt,desc",
+  } = opts;
 
-  const res = await axiosInstance.get("/admin/member/dreamins", {
-    params: { q, page, size, sort },
+  const res = await axiosInstance.get("/admin/members", {
+    params: { role, q, onlyActive, page, size, sort },
   });
 
   const list = res?.data?.content ?? res?.data ?? [];
   return list.map((x) => ({
-    id: x.id ?? x.userId,
-    name: x.name ?? x.userName ?? x.nickname,
-    email: x.email ?? x.id ?? x.loginId,
-    phoneNumber: x.phoneNumber ?? x.phone,
+    id: x.id,
+    name: x.name ?? x.nickname ?? "",
+    email: x.email ?? "",
+    phoneNumber: x.phoneNumber ?? "",
     raw: x,
   }));
 }
@@ -76,6 +89,9 @@ export async function saveAdmin(form, actionType = null) {
     if (payload[k] === "") delete payload[k];
   });
 
-  const { data } = await axiosInstance.post("/api/system/admins/save", payload);
+  const { data } = await axiosInstance.post(
+    "/admin/system/admins/save",
+    payload
+  );
   return data; // 서버가 저장된 엔티티나 응답 메시지를 내려줄 것
 }

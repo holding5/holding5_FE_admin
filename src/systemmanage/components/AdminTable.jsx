@@ -17,6 +17,7 @@ import {
   Typography,
   Select,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { Clear, Search } from "@mui/icons-material";
@@ -34,7 +35,10 @@ const columns = [
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
 export default function AdminTable({ onPick }) {
+  // 👉 실제 필터에 적용되는 값
   const [keyword, setKeyword] = useState("");
+  // 👉 입력 중인 값 (엔터/아이콘 클릭 시에만 keyword로 반영)
+  const [pendingKeyword, setPendingKeyword] = useState("");
 
   const {
     rows,
@@ -52,7 +56,13 @@ export default function AdminTable({ onPick }) {
     initialSize: 10,
   });
 
-  // (선택) 현재 페이지 안에서만 간단 키워드 필터
+  // 🔍 검색 실행 함수 (엔터 / 아이콘 클릭에서 사용)
+  const applySearch = () => {
+    setKeyword(pendingKeyword.trim());
+    setPage(1);
+  };
+
+  // 현재 페이지 안에서만 간단 키워드 필터
   const paged = useMemo(() => {
     const k = keyword.trim().toLowerCase();
     if (!k) return rows;
@@ -70,9 +80,15 @@ export default function AdminTable({ onPick }) {
     totalPages || Math.ceil((totalElements || rows.length) / (size || 10)) || 1
   );
 
-  const clearKeyword = () => setKeyword("");
+  const clearKeyword = () => {
+    setKeyword("");
+    setPendingKeyword("");
+    setPage(1);
+  };
+
   const resetAll = () => {
     setKeyword("");
+    setPendingKeyword("");
     setSize(10);
     setPage(1);
     setParams({ ...params, onlyActive: true });
@@ -101,14 +117,30 @@ export default function AdminTable({ onPick }) {
               size="small"
               fullWidth
               placeholder="이름 / 이메일 / 전화 검색"
-              value={keyword}
+              value={pendingKeyword}
               onChange={(e) => {
-                setKeyword(e.target.value);
-                setPage(1);
+                setPendingKeyword(e.target.value);
+                // 👉 여기서는 페이지를 바꾸지 않음 (검색 확정 시에만)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  applySearch();
+                }
               }}
               InputProps={{
-                startAdornment: <Search fontSize="small" sx={{ mr: 0.5 }} />,
-                endAdornment: !!keyword && (
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton
+                      size="small"
+                      onClick={applySearch}
+                      aria-label="검색"
+                    >
+                      <Search fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                endAdornment: !!pendingKeyword && (
                   <Tooltip title="검색어 지우기">
                     <IconButton
                       size="small"

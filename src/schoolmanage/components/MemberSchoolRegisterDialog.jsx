@@ -27,7 +27,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
   searchSchools,
   getSchoolDetail,
-  searchDreamins,
+  searchMembers,
   previewPin,
   registerMemberSchool,
 } from "../hooks/useSchool";
@@ -127,17 +127,24 @@ function SchoolSearchPopover({ open, anchorEl, onClose, onPick }) {
   );
 }
 
-/* ------- 드림인 검색 팝오버 (복수 선택) -> 담당선생 등록시 활용 ------- */
-function DreaminSearchPopover({ open, anchorEl, onClose, onPickMany }) {
+/* ------- 회원 검색 팝오버 (복수 선택) -> 담당선생 등록시 활용 ------- */
+function MemberSearchPopover({ open, anchorEl, onClose, onPickMany }) {
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [checked, setChecked] = useState(new Set()); // 선택 집합
+  const [role, setRole] = useState(""); // 🔹 선택 역할 (옵션)
 
   const runSearch = async () => {
     setLoading(true);
     try {
-      const list = await searchDreamins(keyword, 0, 20, true);
+      const list = await searchMembers({
+        q: keyword,
+        page: 0,
+        size: 20,
+        onlyActive: true,
+        role: role || undefined,
+      });
       setResults(list);
       setChecked(new Set());
     } finally {
@@ -167,7 +174,23 @@ function DreaminSearchPopover({ open, anchorEl, onClose, onPickMany }) {
       transformOrigin={{ vertical: "top", horizontal: "left" }}
       PaperProps={{ sx: { width: 560, p: 1.5 } }}
     >
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        {/* 역할 선택 (전체 / DREAMIN / BASIC_HAPPYIN ... ) */}
+        <Select
+          size="small"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          displayEmpty
+          sx={{ minWidth: 150 }}
+        >
+          <MenuItem value="">역할 전체</MenuItem>
+          <MenuItem value="DREAMIN">드림인</MenuItem>
+          <MenuItem value="BASIC_HAPPYIN">해피인</MenuItem>
+          <MenuItem value="STAR_HAPPYIN">스타 해피인</MenuItem>
+          <MenuItem value="GROUP_HAPPYIN">그룹 해피인</MenuItem>
+          <MenuItem value="TEEN_HAPPYIN">또래 해피인</MenuItem>
+        </Select>
+
         <TextField
           size="small"
           placeholder="닉네임/이름/전화로 검색"
@@ -199,11 +222,7 @@ function DreaminSearchPopover({ open, anchorEl, onClose, onPickMany }) {
               <ListItemText
                 primary={`${u.nickname ?? ""} (${u.name ?? "-"})`}
                 secondaryTypographyProps={{ component: "span" }}
-                secondary={
-                  <>
-                    <span>전화: {u.phoneNumber || "-"}</span>
-                  </>
-                }
+                secondary={<span>전화: {u.phoneNumber || "-"}</span>}
               />
             </ListItemButton>
           ))}
@@ -551,7 +570,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
 
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography variant="subtitle2" sx={{ minWidth: 120 }}>
-              드림인 검색 추가
+              회원 검색 추가
             </Typography>
             <Button
               ref={dreaminBtnRef}
@@ -559,7 +578,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               size="small"
               onClick={() => setDreaminOpen(true)}
             >
-              드림인 검색
+              회원 검색
             </Button>
           </Stack>
 
@@ -644,7 +663,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
       />
 
       {/* 🔎 드림인 검색 팝오버 */}
-      <DreaminSearchPopover
+      <MemberSearchPopover
         open={dreaminOpen}
         anchorEl={dreaminBtnRef.current}
         onClose={() => setDreaminOpen(false)}
