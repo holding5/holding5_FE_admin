@@ -97,7 +97,48 @@ const SimpleSchoolRegisterDialog = ({ open, onClose }) => {
             size="small"
             fullWidth
             value={form.phone}
-            onChange={(e) => setField("phone", e.target.value)}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 남김
+              let formatted = raw;
+
+              // 02로 시작하는 경우 (서울)
+              if (raw.startsWith("02")) {
+                if (raw.length > 2 && raw.length <= 5)
+                  formatted = `${raw.slice(0, 2)}-${raw.slice(2)}`;
+                else if (raw.length > 5 && raw.length <= 9)
+                  formatted = `${raw.slice(0, 2)}-${raw.slice(
+                    2,
+                    5
+                  )}-${raw.slice(5)}`;
+                else if (raw.length > 9)
+                  formatted = `${raw.slice(0, 2)}-${raw.slice(
+                    2,
+                    6
+                  )}-${raw.slice(6, 10)}`;
+              }
+              // 010, 011, 016 등 휴대폰 번호
+              else if (raw.startsWith("01")) {
+                if (raw.length > 3 && raw.length <= 7)
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+                else if (raw.length > 7)
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(
+                    3,
+                    7
+                  )}-${raw.slice(7, 11)}`;
+              }
+              // 그 외 지역번호 (031, 054, 070 등)
+              else if (raw.startsWith("0")) {
+                if (raw.length > 3 && raw.length <= 6)
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+                else if (raw.length > 6)
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(
+                    3,
+                    6
+                  )}-${raw.slice(6, 10)}`;
+              }
+
+              setField("phone", formatted);
+            }}
             placeholder="예) 02-123-4567 또는 010-1234-5678"
             error={!!errors.phone}
             helperText={errors.phone}

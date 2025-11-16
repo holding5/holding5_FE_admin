@@ -60,7 +60,7 @@ const DreamUserPosts = ({ itemsPerPage = 10 }) => {
   const [page, setPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: "createdAt",
-    direction: "desc",
+    dir: "desc",
   });
   const [filters, setFilters] = useState(
     columns
@@ -77,7 +77,7 @@ const DreamUserPosts = ({ itemsPerPage = 10 }) => {
     setPage: setQueryPage,
     page: queryPage,
   } = useDreaminPosts(id, {
-    initialPage: 0,
+    initialPage: 1,
     initialSize: itemsPerPage,
     initialSort: sortConfig,
   });
@@ -110,7 +110,10 @@ const DreamUserPosts = ({ itemsPerPage = 10 }) => {
     );
   };
 
-  const totalPages = Math.ceil((totalElements ?? 0) / itemsPerPage);
+  const safeTotal = totalElements ?? (Array.isArray(rows) ? rows.length : 0);
+  const totalPages = Math.max(Math.ceil(safeTotal / itemsPerPage), 1);
+
+  // const totalPages = Math.ceil((totalElements ?? 0) / itemsPerPage);
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -165,19 +168,34 @@ const DreamUserPosts = ({ itemsPerPage = 10 }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.no} hover>
-                {columns.map((col) => (
-                  <TableCell
-                    key={col.key}
-                    align="center"
-                    sx={{ border: "1px solid #ccc", fontSize: "12px" }}
-                  >
-                    {row[col.key] ?? "-"}
-                  </TableCell>
-                ))}
+            {loading && (
+              <TableRow>
+                <TableCell colSpan={columns.length} align="center">
+                  불러오는 중…
+                </TableCell>
               </TableRow>
-            ))}
+            )}
+            {!loading && rows.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={columns.length} align="center">
+                  데이터가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
+            {!loading &&
+              rows.map((row) => (
+                <TableRow key={row.no} hover>
+                  {columns.map((col) => (
+                    <TableCell
+                      key={col.key}
+                      align="center"
+                      sx={{ border: "1px solid #ccc", fontSize: "12px" }}
+                    >
+                      {row[col.key] ?? "-"}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

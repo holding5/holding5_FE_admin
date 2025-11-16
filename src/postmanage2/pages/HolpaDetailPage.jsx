@@ -1,13 +1,7 @@
 // src/pages/HolpaDetailPage.jsx
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Box,
-  CircularProgress,
-  Typography,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import useHolpaPostDetail from "../hooks/useHolpaPostDetail";
 import HolpaContent from "../components/HolpaContent";
 import HolpaComments from "../components/HolpaComments";

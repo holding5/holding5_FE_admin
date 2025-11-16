@@ -14,6 +14,7 @@ import axiosInstance from "../utils/axiosInstance";
  * @param {number} [options.debounceMs=250]
  * @param {boolean} [options.supportsPageParams=true]  // ✅ 기본값 유지(기존 화면 영향 없음)
  * @param {"page"|"auto"} [options.responseMode="page"] // ✅ 기본값 page (기존과 동일)
+ * @param {boolean} [options.supportsSort=true]        // ✅ Pageable sort 사용 여부
  */
 export default function usePaginatedList({
   endpoint,
@@ -25,10 +26,11 @@ export default function usePaginatedList({
   debounceMs = 250,
   supportsPageParams = true,
   responseMode = "page",
+  supportsSort = true,
 }) {
   const [page, setPage] = useState(initialPage);
   const [size, setSize] = useState(initialSize);
-  const [sort, setSort] = useState(initialSort);
+  const [sort, setSort] = useState(initialSort || null);
   const [params, setParams] = useState(initialParams);
 
   const [rows, setRows] = useState([]);
@@ -46,15 +48,27 @@ export default function usePaginatedList({
     if (supportsPageParams) {
       p.page = Math.max(0, page - 1); // 서버는 0부터
       p.size = size;
-      if (sort?.key) p.sort = `${sort.key},${sort.dir || "asc"}`;
+      // ✅ Pageable sort를 쓰는 경우에만 property,dir 형식으로 붙이기
+      if (supportsSort && sort?.key) {
+        p.sort = `${sort.key},${sort.dir || "asc"}`;
+      }
     } else {
-      // 서버가 page/size 안 받는 경우 (정렬 쿼리를 받는다면 initialParams로 넣어 사용)
-      if (sort?.key) p.sort = `${sort.key},${sort.dir || "asc"}`;
+      // 서버가 page/size 안 받는 경우
+      if (supportsSort && sort?.key) {
+        p.sort = `${sort.key},${sort.dir || "asc"}`;
+      }
     }
 
     if (p.q === "") delete p.q; // 빈 문자열 제거
     return p;
-  }, [debouncedParams, page, size, sort, supportsPageParams]);
+  }, [
+    debouncedParams,
+    page,
+    size,
+    sort,
+    supportsPageParams,
+    supportsSort, // 🔹 의존성에도 추가
+  ]);
 
   const fetchList = async () => {
     if (!endpoint) return;

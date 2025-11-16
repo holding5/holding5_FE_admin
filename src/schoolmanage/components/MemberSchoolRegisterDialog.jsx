@@ -397,6 +397,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               InputProps={{ readOnly: true }}
               error={!!errors.schoolName}
               helperText={errors.schoolName}
+              sx={{
+                "& .MuiInputBase-input": {
+                  color: "text.secondary", // 🔹 글자색 회색
+                },
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+                },
+              }}
             />
             <IconButton
               ref={searchBtnRef}
@@ -425,6 +433,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
             InputProps={{ readOnly: true }}
             error={!!errors.phone}
             helperText={errors.phone}
+            sx={{
+              "& .MuiInputBase-input": {
+                color: "text.secondary", // 🔹 글자색 회색
+              },
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+              },
+            }}
           />
           <TextField
             label="주소"
@@ -434,6 +450,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
             InputProps={{ readOnly: true }}
             error={!!errors.address}
             helperText={errors.address}
+            sx={{
+              "& .MuiInputBase-input": {
+                color: "text.secondary", // 🔹 글자색 회색
+              },
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+              },
+            }}
           />
 
           {/* 지역 정보 */}
@@ -446,6 +470,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               InputProps={{ readOnly: true }}
               error={!!errors.province}
               helperText={errors.province}
+              sx={{
+                "& .MuiInputBase-input": {
+                  color: "text.secondary", // 🔹 글자색 회색
+                },
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+                },
+              }}
             />
             <TextField
               label="교육청"
@@ -455,6 +487,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               InputProps={{ readOnly: true }}
               error={!!errors.cityOffice}
               helperText={errors.cityOffice}
+              sx={{
+                "& .MuiInputBase-input": {
+                  color: "text.secondary", // 🔹 글자색 회색
+                },
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+                },
+              }}
             />
             <TextField
               label="교육지원청"
@@ -464,6 +504,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               InputProps={{ readOnly: true }}
               error={!!errors.districtOffice}
               helperText={errors.districtOffice}
+              sx={{
+                "& .MuiInputBase-input": {
+                  color: "text.secondary", // 🔹 글자색 회색
+                },
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+                },
+              }}
             />
           </Stack>
 
@@ -543,7 +591,14 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
               InputProps={{ readOnly: true }}
               error={!!errors.pin}
               helperText={errors.pin}
-              sx={{ width: 220 }}
+              sx={{
+                "& .MuiInputBase-input": {
+                  color: "text.secondary", // 🔹 글자색 회색
+                },
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "#f5f5f5", // 🔹 배경 약간 회색
+                },
+              }}
             />
             <Button
               variant="contained"

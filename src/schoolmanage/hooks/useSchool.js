@@ -33,7 +33,7 @@ export function useSchoolStats() {
     setError(null);
 
     axiosInstance
-      .get("/api/system/schools/overview", {
+      .get("/admin/system/schools/overview", {
         params: { page: 0, size: 1 },
         signal: controller.signal,
       })
@@ -138,7 +138,7 @@ export function useSchoolList(options = {}) {
     setError(null);
 
     axiosInstance
-      .get("/api/system/schools/overview", {
+      .get("/admin/system/schools/overview", {
         params,
         signal: controller.signal,
       })
@@ -228,7 +228,7 @@ export function useCreateSchool() {
     setError(null);
     try {
       const payload = buildSchoolPayload(form);
-      const res = await axiosInstance.post("/api/system/schools", payload);
+      const res = await axiosInstance.post("/admin/system/schools", payload);
       return res.data;
     } catch (e) {
       setError(e);
@@ -246,7 +246,7 @@ export function useCreateSchool() {
 /** 학교명 검색 */
 export async function searchSchools(keyword, limit = 20) {
   if (!keyword?.trim()) return [];
-  const { data } = await axiosInstance.get("/api/system/schools/search", {
+  const { data } = await axiosInstance.get("/admin/system/schools/search", {
     params: { keyword, limit },
   });
   return Array.isArray(data) ? data : [];
@@ -255,7 +255,7 @@ export async function searchSchools(keyword, limit = 20) {
 /** 학교 상세(선생 목록, 현재 PIN 포함) */
 export async function getSchoolDetail(schoolId) {
   const { data } = await axiosInstance.get(
-    `/api/system/schools/${schoolId}/detail`
+    `/admin/system/schools/${schoolId}/detail`
   );
   return data;
 }
@@ -284,15 +284,201 @@ export async function searchDreamins(
 
 /** 6자리 PIN 미리 생성(저장은 안 함) */
 export async function previewPin() {
-  const { data } = await axiosInstance.post("/api/system/schools/pin/preview");
+  const { data } = await axiosInstance.post(
+    "/admin/system/schools/pin/preview"
+  );
   return data?.pinCode ?? "";
 }
 
 /** 회원학교 등록 */
 export async function registerMemberSchool(schoolId, body) {
   const { data } = await axiosInstance.post(
-    `/api/system/schools/${schoolId}/member-register`,
+    `/admin/system/schools/${schoolId}/member-register`,
     body
   );
   return data;
+}
+
+/**
+ * 회원학교(핀코드 존재) 목록 훅
+ * - GET /api/system/schools/overview/member
+ * - 서버가 Page 객체를 "루트"로 주거나 schoolPage에 넣어줄 수 있어 둘 다 대응
+ */
+export function useMemberSchoolList(options = {}) {
+  // 필터
+  const [filters, setFilters] = useState({
+    schoolType: options.schoolType ?? "", // ELEMENTARY | MIDDLE | HIGH | ""
+    province: options.province ?? "", // 라벨(예: "경상북도")
+    keyword: options.keyword ?? "",
+  });
+  const debouncedKeyword = useDebouncedValue(filters.keyword, 250);
+
+  // 페이지/정렬
+  const [page, setPage] = useState(options.initialPage ?? 1); // 1-base UI
+  const [size, setSize] = useState(options.initialSize ?? 25);
+  const [sort, setSort] = useState(
+    options.initialSort ?? { key: "name", dir: "asc" }
+  );
+
+  // 데이터 상태
+  const [rows, setRows] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const abortRef = useRef(null);
+
+  // 요청 파라미터
+  const params = useMemo(() => {
+    const p = {
+      schoolType: filters.schoolType || undefined,
+      province: filters.province || undefined, // 라벨 그대로
+      keyword: debouncedKeyword || undefined,
+      page: Math.max(0, page - 1), // 서버 0-base
+      size,
+      sort: sort?.key ? `${sort.key},${sort.dir || "asc"}` : undefined,
+    };
+    return p;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    filters.schoolType,
+    filters.province,
+    debouncedKeyword,
+    page,
+    size,
+    sort,
+  ]);
+
+  // 타입/지역/정렬 변경 시 1페이지로 리셋
+  useEffect(() => {
+    setPage(1);
+  }, [filters.schoolType, filters.province, sort.key, sort.dir]);
+
+  const refetch = useCallback(async () => {
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await axiosInstance.get(
+        "/admin/system/schools/overview/member",
+        { params, signal: controller.signal }
+      );
+
+      // 응답 모양 두 가지 모두 지원:
+      // 1) 루트가 Page: { content, totalPages, totalElements, ... }
+      // 2) 루트에 schoolPage 키로 Page가 들어옴: { memberSchoolStats, schoolPage: {...} }
+      const root = res?.data ?? {};
+      const pageObj = Array.isArray(root.content)
+        ? root
+        : root.schoolPage ?? {};
+
+      const content = Array.isArray(pageObj.content) ? pageObj.content : [];
+      const mapped = content.filter(Boolean).map((it) => ({
+        id: it.id,
+        schoolType: it.schoolType,
+        name: it.name,
+        phoneNumber: it.phoneNumber,
+        address: it.address,
+        province: it.province,
+        memberCount: it.memberCount,
+        pinNumber: it.pinCode ?? it.pinNumber ?? "", // 컬럼에 맞춰 매핑
+      }));
+
+      setRows(mapped);
+      setTotalPages(pageObj.totalPages ?? 1);
+      setTotalElements(pageObj.totalElements ?? mapped.length);
+      // 서버 페이지 동기화가 필요하면 아래 주석을 풀어도 됨
+      // setPage((pageObj.number ?? 0) + 1);
+    } catch (e) {
+      if (e.name !== "CanceledError" && e.code !== "ERR_CANCELED") {
+        setError(e);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [params]);
+
+  useEffect(() => {
+    refetch();
+    return () => abortRef.current?.abort();
+  }, [refetch]);
+
+  return {
+    // 데이터
+    rows,
+    totalPages,
+    totalElements,
+    loading,
+    error,
+    // 제어기
+    filters,
+    setFilters,
+    page,
+    setPage,
+    size,
+    setSize,
+    sort,
+    setSort,
+    // 수동 재요청
+    refetch,
+  };
+}
+
+// 회원학교 상세 페이지
+// API 응답 → 화면 폼 매핑
+const mapSchoolDetailToForm = (d = {}) => ({
+  name: d.name ?? "",
+  schoolType: d.schoolType ?? "",
+  province: d.province ?? "",
+  address: d.address ?? "",
+  phoneNumber: d.phoneNumber ?? "",
+  memberCount: String(d.memberCount ?? ""),
+  pinNumber: d.pinCode ?? "",
+});
+
+// 상세 조회 훅
+export function useSchoolDetail(schoolId) {
+  const [form, setForm] = useState(null);
+  const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const abortRef = useRef(null);
+
+  const refetch = useCallback(async () => {
+    if (!schoolId) return;
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const d = await getSchoolDetail(schoolId, { signal: controller.signal });
+      setForm(mapSchoolDetailToForm(d));
+      const list = Array.isArray(d.teachers) ? d.teachers : [];
+      setTeachers(
+        list.map((t) => ({
+          id: t.userId ?? t.id, // 백엔드 키 유연 대응
+          nickname: t.uid ?? t.nickname ?? "",
+          name: t.name ?? "",
+          phoneNumber: t.phoneNumber ?? "",
+        }))
+      );
+    } catch (e) {
+      if (e.name !== "CanceledError" && e.code !== "ERR_CANCELED") setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [schoolId]);
+
+  useEffect(() => {
+    refetch();
+    return () => abortRef.current?.abort();
+  }, [refetch]);
+
+  return { form, setForm, teachers, setTeachers, loading, error, refetch };
 }

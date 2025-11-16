@@ -1,67 +1,37 @@
+// src/App.jsx
 import "./App.css";
-import { Box } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
-import HappyManageImg from "./usermanage/pages/HappyManageImg";
-import HappyManageList from "./usermanage/pages/HappyManageList";
-import HappyUserDetailPage from "./usermanage/pages/HappyUserDetailPage";
-import HappyManageLayout from "./usermanage/components/HappyManageLayout";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "./contexts/AuthContext";
 
-import HappyManageGroup from "./usermanage/pages/HappyManageGroup";
-import HappyGroupDetailPage from "./usermanage/pages/HappyGroupDetailPage";
-import HappyGroupDetailManage from "./usermanage/pages/HappyGroupDetailManage";
-import HappyGroupCreate from "./usermanage/pages/HappyGroupCreate";
-
+// 메인/공통
 import Main from "./usermanage/pages/Main";
-import HappyinSignupListPage from "./usermanage/pages/HappyinSignupListPage";
-import SignUpDetail from "./usermanage/pages/SignUpDetail";
 
-import RankManagePage from "./usermanage/pages/RankManagePage";
-import RankManageList from "./usermanage/components/RankManageList";
-import RankManageDetailPage from "./usermanage/pages/RankManageDetailPage";
-
-import PausedUserManagePage from "./usermanage/pages/PausedUserManagePage";
-import ReportListPage from "./usermanage/pages/ReportListPage";
-import PauseUserDetailPage from "./usermanage/pages/PauseUserDetailPage";
-import PauseUserListPage from "./usermanage/pages/PauseUserListPage";
-import BannedUserManagePage from "./usermanage/pages/BannedUserManagePage";
-import BannedUserDetailPage from "./usermanage/pages/BannedUserDetailPage";
-import BannedUserListPage from "./usermanage/pages/BannedUserListPage";
-
-import HolpaBoardPage from "./postmanage/pages/HolpaBoardPage";
-import HolpaBoardDetailPage from "./postmanage/pages/HolpaBoardDetailPage";
-import HolpaBoardTable from "./postmanage/components/HolpaBoardTable";
-
-import CatsEyeTruthNotePage from "./postmanage/pages/CatsEyeTruthNotePage";
-import CatsEyeTable from "./postmanage/components/CatsEyeTable";
-import TruthNoteList from "./postmanage/components/TruthNoteList";
-import CatsEyeDetailPage from "./postmanage/components/CatsEyeDetailPage";
-
-import OverComingPage from "./postmanage/pages/OverComingPage";
-import OverComingDetailPage from "./postmanage/pages/OverComingDetailPage";
-import OverComingList from "./postmanage/components/OverComingList";
-
+// 공지/추천
 import AnnouncementPage from "./postmanage/pages/AnnouncementPage";
 import AnnouncementList from "./postmanage/pages/AnnouncementList";
-
 import RecommendationPage from "./postmanage/pages/RecommendationPage";
 import RecommendationList from "./postmanage/pages/RecommendationList";
 
+// 메시지
 import Message from "./sendmessage/pages/Message";
 import MessageList from "./sendmessage/pages/MessageList";
 import MessageSend from "./sendmessage/pages/MessageSend";
 
+// 이벤트
 import Event from "./eventmanage/pages/Event";
 import EventList from "./eventmanage/pages/EventList";
 
 // 로그인
 import LoginPage from "./login/pages/LoginPage";
-import KakaoCallback from "./login/pages/KaKaoCallBack";
 
 // 회원 관리
 import User from "./usermanage2/pages/User";
 import DreamUserPage from "./usermanage2/pages/DreamUserPage";
 import DreamUserDetailPage from "./usermanage2/pages/DreamUserDetailPage";
-
+import HappyUserPage from "./usermanage2/pages/HappyUserPage";
+import HappyUserDetailPage from "./usermanage2/pages/HappyUserDetailPage";
+import HappyUserApplicationPage from "./usermanage2/pages/HappyUserApplicationPage";
+import HappyUserApplicationDetailPage from "./usermanage2/pages/HappyUserApplicationDetailPage";
 import PausedUserPage from "./usermanage2/pages/PausedUserPage";
 import BannedUserPage from "./usermanage2/pages/BannedUserPage";
 
@@ -73,154 +43,139 @@ import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessage
 import HolpaPage from "./postmanage2/pages/HolpaPage";
 import HolpaDetailPage from "./postmanage2/pages/HolpaDetailPage";
 import CatsEyePage from "./postmanage2/pages/CatsEyePage";
-
+import CatsEyeDetailPage from "./postmanage2/pages/CatsEyeDetailPage";
+import OvercomePage from "./postmanage2/pages/OvercomePage";
+import OvercomeDetailPage from "./postmanage2/pages/OvercomeDetailPage";
 import ReportedPostPage from "./postmanage2/pages/ReportedPostPage";
 import ReportedPostDetailPage from "./postmanage2/pages/ReportedPostDetailPage";
+
+// 학교 관리
+import School from "./schoolmanage/pages/School";
+import SchoolPolicePage from "./schoolmanage/pages/SchoolPolicePage";
+import MemberSchoolPage from "./schoolmanage/pages/MemberSchoolPage";
+import MemberSchoolDetailPage from "./schoolmanage/pages/MemberSchoolDetailPage";
 
 // 시스템 관리
 import System from "./systemmanage/pages/System";
 import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
 import FnQPage from "./systemmanage/pages/FnQPage";
 import HelpersPage from "./systemmanage/pages/HelpersPage";
-import SchoolPolicePage from "./systemmanage/pages/SchoolPolicePage";
 import AdminPage from "./systemmanage/pages/AdminPage";
+
+/**
+ * 로그인 체크용 래퍼
+ * - 인증 안 되어 있으면 /login 으로 보냄
+ */
+function RequireAuth() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Main />}>
-        <Route element={<HappyManageLayout />}>
-          <Route index element={<HappyManageImg />}></Route>
-          <Route path="happy-manage/list" element={<HappyManageList />}></Route>
-          <Route
-            path="userdetail/:id"
-            element={<HappyUserDetailPage />}
-          ></Route>
+      {/* 공개 라우트: 로그인 페이지 */}
+      <Route path="/login" element={<LoginPage />} />
 
+      {/* 이 아래는 전부 로그인 필요 */}
+      <Route element={<RequireAuth />}>
+        {/* 🔹 로그인 후 기본 진입: 해피인 관리 */}
+        <Route path="/" element={<Navigate to="/user/happy" replace />} />
+
+        {/* 필요하면 대시보드용 메인 페이지도 보호된 경로로 남겨둠 */}
+        <Route path="/main" element={<Main />} />
+
+        {/* 공지/추천 */}
+        {/* <Route path="announcement" element={<AnnouncementPage />}>
+          <Route index element={<AnnouncementList />} />
+        </Route> */}
+
+        {/* <Route path="recommendation" element={<RecommendationPage />}>
+          <Route index element={<RecommendationList />} />
+        </Route> */}
+
+        {/* 메시지 */}
+        {/* <Route path="message-list" element={<Message />}>
+          <Route index element={<MessageList />} />
+          <Route path="send" element={<MessageSend />} />
+        </Route> */}
+
+        {/* 이벤트 */}
+        {/* <Route path="event-list" element={<Event />}>
+          <Route index element={<EventList />} />
+        </Route> */}
+
+        {/* 회원 관리 */}
+        <Route path="user" element={<User />}>
+          <Route path="happy" element={<HappyUserPage />} />
+          <Route path="happy/detail/:id" element={<HappyUserDetailPage />} />
           <Route
-            path="happy-manage/group"
-            element={<HappyManageGroup />}
-          ></Route>
+            path="happy/application"
+            element={<HappyUserApplicationPage />}
+          />
           <Route
-            path="happy-manage/group/detail/:groupId"
-            element={<HappyGroupDetailPage />}
-          ></Route>
-          <Route
-            path="happy-manage/group/detail/manage/:groupId"
-            element={<HappyGroupDetailManage />}
-          ></Route>
-          <Route
-            path="happy-manage/group/create"
-            element={<HappyGroupCreate />}
-          ></Route>
+            path="happy/application/detail/:id"
+            element={<HappyUserApplicationDetailPage />}
+          />
+          <Route path="dream" element={<DreamUserPage />} />
+          <Route path="dream/detail/:id" element={<DreamUserDetailPage />} />
+          <Route path="paused" element={<PausedUserPage />} />
+          <Route path="banned" element={<BannedUserPage />} />
         </Route>
-        <Route path="signuplist" element={<HappyinSignupListPage />}></Route>
-        <Route path="singupdetail/:id" element={<SignUpDetail />}></Route>
 
-        <Route path="rankmanage" element={<RankManagePage />}>
-          <Route index element={<RankManageList />}></Route>
-        </Route>
-        <Route
-          path="rankmanagedetail"
-          element={<RankManageDetailPage />}
-        ></Route>
-
-        <Route path="pausedmanage" element={<PausedUserManagePage />}>
-          <Route index element={<PauseUserListPage />} />
-          <Route path="detail" element={<PauseUserDetailPage />} />
+        {/* 게시물 관리 */}
+        <Route path="post" element={<Post />}>
+          <Route path="holpa" element={<HolpaPage />} />
+          <Route path="holpa/detail/:postId" element={<HolpaDetailPage />} />
+          <Route path="catseye" element={<CatsEyePage />} />
           <Route
-            path=":userId/reports/:reportType"
-            element={<ReportListPage />}
+            path="catseye/detail/:postId"
+            element={<CatsEyeDetailPage />}
+          />
+          <Route path="overcome" element={<OvercomePage />} />
+          <Route
+            path="overcome/detail/:postId"
+            element={<OvercomeDetailPage />}
+          />
+          <Route path="reported" element={<ReportedPostPage />} />
+          <Route
+            path="reported/detail/user/:userId/post/:postId"
+            element={<ReportedPostDetailPage />}
+          />
+          <Route path="life" element={<LifeMessagePage />} />
+          <Route path="hope" element={<HopeMessagePage />} />
+          <Route
+            path="congratulatory"
+            element={<CongratulatoryMessagePage />}
           />
         </Route>
 
-        <Route path="banned-manage" element={<BannedUserManagePage />}>
-          <Route index element={<BannedUserListPage />}></Route>
-          <Route path="detail" element={<BannedUserDetailPage />}></Route>
+        {/* 학교 경찰서 / 학교 관리 */}
+        <Route path="school-police" element={<School />}>
+          <Route index element={<SchoolPolicePage />} />
+          <Route path="member-school" element={<MemberSchoolPage />} />
+          <Route
+            path="member-school/detail/:id"
+            element={<MemberSchoolDetailPage />}
+          />
         </Route>
 
-        <Route path="holpa-board" element={<HolpaBoardPage />}>
-          <Route index element={<HolpaBoardTable />} />
-
-          <Route path=":id" element={<HolpaBoardDetailPage />}></Route>
-        </Route>
-
-        <Route path="catseye-truth" element={<CatsEyeTruthNotePage />}>
-          <Route index element={<CatsEyeTable />}></Route>
-          <Route path="cats" element={<CatsEyeTable />}></Route>
-          <Route path="truth" element={<TruthNoteList />}></Route>
-          <Route path="catseye-detail" element={<CatsEyeDetailPage />}></Route>
-        </Route>
-
-        <Route path="overcoming" element={<OverComingPage />}>
-          <Route index element={<OverComingList />} />
-          <Route path="detail" element={<OverComingDetailPage />} />
+        {/* 시스템 관리 */}
+        <Route path="system" element={<System />}>
+          <Route index element={<SystemOverviewPage />} />
+          {/* <Route path="fnq" element={<FnQPage />} />
+          <Route path="helpers" element={<HelpersPage />} /> */}
+          <Route path="admin" element={<AdminPage />} />
         </Route>
       </Route>
 
-      <Route path="announcement" element={<AnnouncementPage />}>
-        <Route index element={<AnnouncementList />}></Route>
-      </Route>
-
-      <Route path="recommendation" element={<RecommendationPage />}>
-        <Route index element={<RecommendationList />}></Route>
-      </Route>
-
-      <Route path="message-list" element={<Message />}>
-        <Route index element={<MessageList />}></Route>
-        <Route path="send" element={<MessageSend />}></Route>
-      </Route>
-
-      <Route path="event-list" element={<Event />}>
-        <Route index element={<EventList />}></Route>
-      </Route>
-
-      {/* 로그인 */}
-      <Route path="login" element={<LoginPage />}></Route>
-      <Route path="auth/kakao/callback" element={<KakaoCallback />}></Route>
-
-      {/* 회원 관리 */}
-      <Route path="user" element={<User />}>
-        <Route path="dream" element={<DreamUserPage />}></Route>
-        <Route
-          path="dream/detail/:id"
-          element={<DreamUserDetailPage />}
-        ></Route>
-
-        <Route path="paused" element={<PausedUserPage />}></Route>
-        <Route path="banned" element={<BannedUserPage />}></Route>
-      </Route>
-
-      {/* 게시물 관리 */}
-      <Route path="post" element={<Post />}>
-        <Route path="life-message" element={<LifeMessagePage />}></Route>
-        <Route path="hope-message" element={<HopeMessagePage />}></Route>
-        <Route
-          path="congratulatory-message"
-          element={<CongratulatoryMessagePage />}
-        ></Route>
-        <Route path="holpa" element={<HolpaPage />}></Route>
-        <Route
-          path="holpa/detail/:postId"
-          element={<HolpaDetailPage />}
-        ></Route>
-        <Route path="cats-eye" element={<CatsEyePage />}></Route>
-
-        <Route path="reported" element={<ReportedPostPage />}></Route>
-        <Route
-          path="reported/detail/:postId"
-          element={<ReportedPostDetailPage />}
-        ></Route>
-      </Route>
-
-      {/* 시스템 관리 */}
-      <Route path="system" element={<System />}>
-        <Route index element={<SystemOverviewPage />}></Route>
-        <Route path="fnq" element={<FnQPage />}></Route>
-        <Route path="helpers" element={<HelpersPage />}></Route>
-        <Route path="school-police" element={<SchoolPolicePage />}></Route>
-        <Route path="admin" element={<AdminPage />}></Route>
-      </Route>
+      {/* 그 외 모든 경로 → 로그인 또는 기본 페이지로 */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

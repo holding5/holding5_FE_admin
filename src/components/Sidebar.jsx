@@ -17,49 +17,54 @@ const Sidebar = () => {
   const [openCounsel, setOpenCounsel] = useState(false); // 홀파 상담실 열림
   const [openEvent, setOpenEvent] = useState(false); // 이벤트 관리 열림
   const [openMessage, setOpenMessage] = useState(false); // 메세지 발송 열림
+  const [openSchool, setOpenSchool] = useState(false); // 시스템 관리 열림
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
 
   const memberMenutItem = [
-    { text: "해피인 관리", path: "/" },
-    { text: "해피인 신청", path: "/signuplist" },
+    { text: "해피인 관리", path: "/user/happy" },
+    { text: "해피인 신청", path: "/user/happy/application" },
     { text: "드림인 관리", path: "/user/dream" },
-    { text: "카운셀러 관리", path: "/" },
-    { text: "등급관리", path: "/rankmanage" },
     { text: "일시정지 회원관리", path: "/user/paused" },
-    { text: "영구탈퇴 회원관리", path: "/user/banned" },
+    { text: "영구정지 회원관리", path: "/user/banned" },
+    // { text: "카운셀러 관리", path: "/" },
+    // { text: "등급관리", path: "/rankmanage" },
   ];
 
   const postMenuItem = [
-    { text: "생명메시지", path: "/post/life-message" },
-    { text: "희망메시지", path: "/post/hope-message" },
-    { text: "축하메시지", path: "/post/congratulatory-message" },
     { text: "홀파담벼락", path: "/post/holpa" },
-    { text: "캣츠아이 / 진실노트", path: "/catseye-truth" },
-    { text: "극복수기", path: "/overcoming" },
-    { text: "공지사항", path: "/announcement" },
-    { text: "운영장에게 건의", path: "/recommendation" },
+    { text: "캣츠아이", path: "/post/catseye" },
+    { text: "극복수기", path: "/post/overcome" },
     { text: "신고된 게시물 보기", path: "/post/reported" },
+    // { text: "생명메시지", path: "/post/life" },
+    // { text: "희망메시지", path: "/post/hope" },
+    // { text: "축하메시지", path: "/post/congratulatory" },
+    // { text: "공지사항", path: "/announcement" },
+    // { text: "운영장에게 건의", path: "/recommendation" },
   ];
 
-  const messageMenuItem = [
-    { text: "메시지 리스트", path: "/message-list" },
-    { text: "메시지 발송", path: "/message-list/send" },
-  ];
+  // const messageMenuItem = [
+  //   { text: "메시지 리스트", path: "/message-list" },
+  //   { text: "메시지 발송", path: "/message-list/send" },
+  // ];
 
-  const eventMenuItem = [
-    { text: "전체", path: "/event-list" },
-    { text: "가입환영인사", path: "/event-join" },
-    { text: "생일축하인사", path: "/event-birth" },
-    { text: "시험격려", path: "event-test" },
+  // const eventMenuItem = [
+  //   { text: "전체", path: "/event-list" },
+  //   { text: "가입환영인사", path: "/event-join" },
+  //   { text: "생일축하인사", path: "/event-birth" },
+  //   { text: "시험격려", path: "event-test" },
+  // ];
+
+  const schoolMenuItem = [
+    { text: "학교, 경찰서 등록", path: "/school-police" },
+    { text: "회원학교 관리", path: "/school-police/member-school" },
   ];
 
   const systemMenuItem = [
-    { text: "시스템 현황", path: "/system" },
-    { text: "F & Q 관리", path: "/system/fnq" },
-    { text: "해피인 안내", path: "/" },
-    { text: "도움주신 분", path: "/system/helpers" },
-    { text: "학교 / 경찰서 등록", path: "/system/school-police" },
-    { text: "생명살림 집계", path: "/" },
+    // { text: "시스템 현황", path: "/system" },
+    // { text: "F & Q 관리", path: "/system/fnq" },
+    // { text: "해피인 안내", path: "/" },
+    // { text: "도움주신 분", path: "/system/helpers" },
+    // { text: "생명살림 집계", path: "/" },
     { text: "관리자 관리", path: "/system/admin" },
   ];
 
@@ -111,7 +116,7 @@ const Sidebar = () => {
             ))}
           </Collapse>
 
-          <ListItemButton onClick={() => setOpenBoat(!openBoat)}>
+          {/* <ListItemButton onClick={() => setOpenBoat(!openBoat)}>
             <ListItemText primary="돛단배" />
             {openBoat ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
@@ -121,9 +126,9 @@ const Sidebar = () => {
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
-          </Collapse>
+          </Collapse> */}
 
-          <ListItemButton onClick={() => setOpenCounsel(!openCounsel)}>
+          {/* <ListItemButton onClick={() => setOpenCounsel(!openCounsel)}>
             <ListItemText primary="홀파 상담실" />
             {openCounsel ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
@@ -133,9 +138,9 @@ const Sidebar = () => {
                 <ListItemText primary={item} />
               </ListItemButton>
             ))}
-          </Collapse>
+          </Collapse> */}
 
-          <ListItemButton onClick={() => setOpenEvent(!openEvent)}>
+          {/* <ListItemButton onClick={() => setOpenEvent(!openEvent)}>
             <ListItemText primary="이벤트 관리" />
             {openEvent ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
@@ -151,14 +156,32 @@ const Sidebar = () => {
                 <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
-          </Collapse>
+          </Collapse> */}
 
-          <ListItemButton onClick={() => setOpenMessage(!openMessage)}>
+          {/* <ListItemButton onClick={() => setOpenMessage(!openMessage)}>
             <ListItemText primary="메시지 발송" />
             {openMessage ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openMessage} timeout="auto" unmountOnExit>
             {messageMenuItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            ))}
+          </Collapse> */}
+
+          <ListItemButton onClick={() => setOpenSchool(!openSchool)}>
+            <ListItemText primary="학교/경찰서 관리" />
+            {openSchool ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openSchool} timeout="auto" unmountOnExit>
+            {schoolMenuItem.map((item) => (
               <ListItemButton
                 key={item.text}
                 sx={{ pl: 4 }}

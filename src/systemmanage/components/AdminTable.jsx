@@ -21,6 +21,7 @@ import {
 import Pagination from "@mui/material/Pagination";
 import { Clear, Search } from "@mui/icons-material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import useAdmins from "../hooks/useAdmin";
 
 const columns = [
   { key: "__manage__", label: "관리", width: "3.5rem" },
@@ -32,68 +33,49 @@ const columns = [
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
 
-// ✅ 목데이터 5개
-const MOCK_ADMINS = [
-  {
-    id: 101,
-    name: "김관리",
-    email: "admin.kim@example.com",
-    phoneNumber: "010-1234-5678",
-  },
-  {
-    id: 102,
-    name: "이다스",
-    email: "idas@example.com",
-    phoneNumber: "010-9876-5432",
-  },
-  {
-    id: 103,
-    name: "박오퍼",
-    email: "operator.park@example.com",
-    phoneNumber: "010-2222-3333",
-  },
-  {
-    id: 104,
-    name: "최매니",
-    email: "manager.choi@example.com",
-    phoneNumber: "010-4444-5555",
-  },
-  {
-    id: 105,
-    name: "정어드",
-    email: "admin.jeong@example.com",
-    phoneNumber: "010-7777-8888",
-  },
-];
-
 export default function AdminTable({ onPick }) {
-  const [loading] = useState(false); // 목이므로 고정
   const [keyword, setKeyword] = useState("");
-  const [size, setSize] = useState(10);
-  const [page, setPage] = useState(1);
 
-  // 키워드 필터 (이름/이메일/전화)
-  const filtered = useMemo(() => {
+  const {
+    rows,
+    loading,
+    totalElements,
+    totalPages,
+    page,
+    setPage,
+    size,
+    setSize,
+    params,
+    setParams,
+  } = useAdmins({
+    initialParams: { onlyActive: true },
+    initialSize: 10,
+  });
+
+  // (선택) 현재 페이지 안에서만 간단 키워드 필터
+  const paged = useMemo(() => {
     const k = keyword.trim().toLowerCase();
-    if (!k) return MOCK_ADMINS;
-    return MOCK_ADMINS.filter((r) => {
-      const hay = `${r.name} ${r.email} ${r.phoneNumber}`.toLowerCase();
+    if (!k) return rows;
+    return rows.filter((r) => {
+      const hay = `${r.name ?? ""} ${r.email ?? ""} ${
+        r.phoneNumber ?? ""
+      }`.toLowerCase();
       return hay.includes(k);
     });
-  }, [keyword]);
+  }, [rows, keyword]);
 
-  // 페이지네이션 계산
-  const totalPages = Math.max(1, Math.ceil(filtered.length / size));
-  const paged = useMemo(() => {
-    const start = (page - 1) * size;
-    return filtered.slice(start, start + size);
-  }, [filtered, page, size]);
+  // 일부 백엔드가 totalPages=0 등 비정상 응답을 줄 때 안전 가드
+  const safeTotalPages = Math.max(
+    1,
+    totalPages || Math.ceil((totalElements || rows.length) / (size || 10)) || 1
+  );
 
   const clearKeyword = () => setKeyword("");
   const resetAll = () => {
     setKeyword("");
     setSize(10);
     setPage(1);
+    setParams({ ...params, onlyActive: true });
   };
 
   return (
@@ -258,9 +240,7 @@ export default function AdminTable({ onPick }) {
                         </TableCell>
                       );
                     }
-
                     let val = row?.[col.key] ?? "";
-
                     if (col.key === "phoneNumber" && val) {
                       val = (
                         <a
@@ -274,7 +254,6 @@ export default function AdminTable({ onPick }) {
                         </a>
                       );
                     }
-
                     return (
                       <TableCell
                         key={col.key}
@@ -303,7 +282,7 @@ export default function AdminTable({ onPick }) {
         <Pagination
           showFirstButton
           showLastButton
-          count={totalPages}
+          count={safeTotalPages}
           page={page}
           onChange={(_, value) => setPage(value)}
           variant="outlined"
