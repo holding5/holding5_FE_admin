@@ -260,27 +260,43 @@ export async function getSchoolDetail(schoolId) {
   return data;
 }
 
-/** 드림인 검색 (닉네임/이름/전화 통합검색), -> 선생 선택시 활용 */
-export async function searchDreamins(
+/** 회원 검색 (닉네임/이름/전화 통합검색) */
+export async function searchMembers({
   q,
   page = 0,
   size = 10,
-  onlyActive = true
-) {
-  const { data } = await axiosInstance.get("/admin/member/dreamins", {
-    params: { q, onlyActive, page, size, sort: "id,desc" },
-  });
-  // Spring Pageable 페이지 형태 가정
+  onlyActive = true,
+  role, // DREAMIN, BASIC_HAPPYIN, ... 선택값 (옵션)
+}) {
+  if (!q?.trim()) return [];
+
+  const params = {
+    q,
+    page,
+    size,
+    onlyActive,
+    sort: "id,desc",
+  };
+  if (role) params.role = role; // 선택한 역할이 있을 때만 전달
+
+  const { data } = await axiosInstance.get("/admin/members", { params });
+
   const content =
     data?.content ?? data?.page?.content ?? data?.page?.data ?? [];
+
   return content.map((u) => ({
-    id: u.id, // 사용자 ID (백엔드가 주는 키 이름에 맞춰 조정)
+    id: u.id,
     nickname: u.nickname,
     name: u.name,
     phoneNumber: u.phoneNumber,
     active: u.active ?? true,
+    roles: u.roles ?? [], // 필요하면 역할도 같이 사용 가능
   }));
 }
+
+// (기존 코드와의 호환이 필요하면)
+export const searchDreamins = (q, page = 0, size = 10, onlyActive = true) =>
+  searchMembers({ q, page, size, onlyActive, role: "DREAMIN" });
 
 /** 6자리 PIN 미리 생성(저장은 안 함) */
 export async function previewPin() {
@@ -500,3 +516,14 @@ export const buildMemberRegisterBody = (form, teachers) =>
     cityOffice: form.cityOffice || undefined,
     districtOffice: form.districtOffice || undefined,
   });
+
+/** 회원학교 선생님 등록 */
+export async function registerSchoolTeachers(schoolId, userIds) {
+  const { data } = await axiosInstance.post(
+    `/admin/system/schools/${schoolId}/teachers`,
+    {
+      userIds: Array.isArray(userIds) ? userIds : [],
+    }
+  );
+  return data;
+}

@@ -14,28 +14,35 @@ import {
   ListItemButton,
   ListItemText,
   Checkbox,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   useSchoolDetail,
-  searchDreamins,
-  registerMemberSchool,
-  buildMemberRegisterBody,
-  previewPin,
+  searchMembers,
+  registerSchoolTeachers,
 } from "../hooks/useSchool";
 
-/* ------- 드림인 검색 팝오버 (복수 선택) ------- */
+/* ------- 회원 검색 팝오버 (복수 선택) ------- */
 function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [checked, setChecked] = useState(new Set());
+  const [role, setRole] = useState(""); // 🔹 선택 역할 (옵션)
 
-  // 드림인 검색 api 연결
+  // 회원 검색 api 연결
   const runSearch = async () => {
     setLoading(true);
     try {
-      const list = await searchDreamins(keyword.trim(), 0, 10, true);
+      const list = await searchMembers({
+        q: keyword,
+        page: 0,
+        size: 20,
+        onlyActive: true,
+        role: role || undefined,
+      });
       setResults(list);
       setChecked(new Set());
     } finally {
@@ -67,7 +74,23 @@ function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
       transformOrigin={{ vertical: "top", horizontal: "left" }}
       PaperProps={{ sx: { width: 560, p: 1.5 } }}
     >
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        {/* 역할 선택 (전체 / DREAMIN / BASIC_HAPPYIN ... ) */}
+        <Select
+          size="small"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          displayEmpty
+          sx={{ minWidth: 150 }}
+        >
+          <MenuItem value="">역할 전체</MenuItem>
+          <MenuItem value="DREAMIN">드림인</MenuItem>
+          <MenuItem value="BASIC_HAPPYIN">해피인</MenuItem>
+          <MenuItem value="STAR_HAPPYIN">스타 해피인</MenuItem>
+          <MenuItem value="GROUP_HAPPYIN">그룹 해피인</MenuItem>
+          <MenuItem value="TEEN_HAPPYIN">또래 해피인</MenuItem>
+        </Select>
+
         <TextField
           size="small"
           placeholder="닉네임/이름/전화로 검색"
@@ -84,9 +107,9 @@ function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
       <Divider sx={{ my: 1 }} />
 
       {results.length === 0 ? (
-        <Box sx={{ py: 1, color: "text.secondary", fontSize: 14 }}>
+        <Typography variant="body2" color="text.secondary">
           {loading ? "로딩 중..." : "검색 결과가 없습니다."}
-        </Box>
+        </Typography>
       ) : (
         <List dense sx={{ maxHeight: 320, overflowY: "auto" }}>
           {results.map((u) => (
@@ -98,7 +121,8 @@ function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
               />
               <ListItemText
                 primary={`${u.nickname ?? ""} (${u.name ?? "-"})`}
-                secondary={`전화: ${u.phoneNumber || "-"}`}
+                secondaryTypographyProps={{ component: "span" }}
+                secondary={<span>전화: {u.phoneNumber || "-"}</span>}
               />
             </ListItemButton>
           ))}
@@ -166,23 +190,22 @@ const MemberSchoolProfile = () => {
     setSaveError(null);
 
     try {
-      // 1️⃣ 새 PIN 코드 생성 (백엔드에서 중복 안 나는 값 내려줌)
-      const newPin = await previewPin();
+      // 선택된 선생님 userId 배열
+      const userIds = Array.isArray(teachers) ? teachers.map((t) => t.id) : [];
 
-      // 2️⃣ form 에도 반영해서 화면에서 바로 보이게
-      const nextForm = { ...form, pinNumber: newPin };
-      setForm(nextForm);
+      // 아무도 선택 안 했으면 그냥 리턴(선택사항)
+      // if (userIds.length === 0) {
+      //   alert("등록할 선생님을 선택해 주세요.");
+      //   return;
+      // }
 
-      // 3️⃣ 새 PIN 이 들어간 form + teachers 로 payload 생성
-      const body = buildMemberRegisterBody(nextForm, teachers);
+      // 🔹 새 API 호출
+      await registerSchoolTeachers(id, userIds);
 
-      // 4️⃣ 회원학교 등록(수정) 요청
-      await registerMemberSchool(id, body);
-
-      // 5️⃣ 성공 후 다시 상세 조회해서 상태 동기화
+      // 저장 후 다시 상세 조회해서 화면 동기화
       await refetch();
 
-      alert(`새 PIN(${newPin})으로 회원학교 정보가 저장되었습니다.`);
+      alert("회원학교 선생님 목록이 저장되었습니다.");
     } catch (e) {
       console.error(e);
       setSaveError(e);
@@ -291,7 +314,7 @@ const MemberSchoolProfile = () => {
           size="small"
           onClick={() => setSearchOpen(true)}
         >
-          드림인 검색
+          회원 검색
         </Button>
       </Stack>
 
@@ -359,11 +382,10 @@ const MemberSchoolProfile = () => {
           onClick={handleSave}
           disabled={saving}
         >
-          {saving ? "저장 중..." : "수정"}
+          {saving ? "저장 중..." : "선생 등록"}
         </Button>
       </Stack>
 
-      {/* 🔎 드림인 검색 팝오버 (나중에 searchDreamins로 교체) */}
       <TeacherSearchPopover
         open={searchOpen}
         anchorEl={searchBtnRef.current}

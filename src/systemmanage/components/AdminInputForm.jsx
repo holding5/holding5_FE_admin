@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ReplayIcon from "@mui/icons-material/Replay";
-import { searchDreamins } from "../hooks/useAdmin"; // ⬅️ 훅에서 API 사용
+import { searchMembers } from "../hooks/useAdmin"; // ⬅️ 훅에서 API 사용
 
 /**
  * props
@@ -182,7 +182,7 @@ export default function AdminInputForm({
       </Stack>
 
       {/* 드림인 선택 다이얼로그 */}
-      <DreaminPickerDialog
+      <MemberPickerDialog
         open={openPicker}
         onClose={() => setOpenPicker(false)}
         onPick={(row) => {
@@ -202,7 +202,7 @@ export default function AdminInputForm({
 /* =========================
    드림인 검색 다이얼로그
    ========================= */
-function DreaminPickerDialog({ open, onClose, onPick }) {
+function MemberPickerDialog({ open, onClose, onPick }) {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
@@ -216,11 +216,15 @@ function DreaminPickerDialog({ open, onClose, onPick }) {
   const search = async () => {
     setLoading(true);
     try {
-      const result = await searchDreamins(q, { page: 0, size: 20 });
+      const result = await searchMembers(q, {
+        page: 0,
+        size: 20,
+        onlyActive: true,
+      });
       setRows(result);
     } catch (e) {
       console.error(e);
-      alert("드림인 검색 중 오류가 발생했습니다.");
+      alert("회원 검색 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
@@ -228,7 +232,7 @@ function DreaminPickerDialog({ open, onClose, onPick }) {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>드림인 검색</DialogTitle>
+      <DialogTitle>회원 검색</DialogTitle>
       <DialogContent>
         <Stack direction="row" spacing={1} sx={{ my: 1 }}>
           <TextField
