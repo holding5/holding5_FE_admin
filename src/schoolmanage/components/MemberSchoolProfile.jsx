@@ -16,7 +16,13 @@ import {
   Checkbox,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useSchoolDetail, searchDreamins } from "../hooks/useSchool";
+import {
+  useSchoolDetail,
+  searchDreamins,
+  registerMemberSchool,
+  buildMemberRegisterBody,
+  previewPin,
+} from "../hooks/useSchool";
 
 /* ------- 드림인 검색 팝오버 (복수 선택) ------- */
 function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
@@ -135,6 +141,8 @@ const MemberSchoolProfile = () => {
     setTeachers((prev) => prev.filter((t) => t.id !== teacherId));
     // 실제 API 붙일 때는 여기서 해제 API 호출 + 성공 시 setTeachers 갱신
   };
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   // ✅ 팝오버에서 선택된 선생님들 추가
   const handleAddTeachers = (picked) => {
@@ -150,6 +158,39 @@ const MemberSchoolProfile = () => {
     return (
       <Box sx={{ p: 3, color: "error.main" }}>불러오기에 실패했습니다.</Box>
     );
+
+  const handleSave = async () => {
+    if (!id) return;
+
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      // 1️⃣ 새 PIN 코드 생성 (백엔드에서 중복 안 나는 값 내려줌)
+      const newPin = await previewPin();
+
+      // 2️⃣ form 에도 반영해서 화면에서 바로 보이게
+      const nextForm = { ...form, pinNumber: newPin };
+      setForm(nextForm);
+
+      // 3️⃣ 새 PIN 이 들어간 form + teachers 로 payload 생성
+      const body = buildMemberRegisterBody(nextForm, teachers);
+
+      // 4️⃣ 회원학교 등록(수정) 요청
+      await registerMemberSchool(id, body);
+
+      // 5️⃣ 성공 후 다시 상세 조회해서 상태 동기화
+      await refetch();
+
+      alert(`새 PIN(${newPin})으로 회원학교 정보가 저장되었습니다.`);
+    } catch (e) {
+      console.error(e);
+      setSaveError(e);
+      alert("저장 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -305,9 +346,20 @@ const MemberSchoolProfile = () => {
 
       <Divider sx={{ my: 3 }} />
 
+      {saveError && (
+        <Box sx={{ mb: 2, color: "error.main", fontSize: 14 }}>
+          저장 중 오류가 발생했습니다.
+        </Box>
+      )}
+
       <Stack direction="row" spacing={2} justifyContent="flex-end">
-        <Button variant="outlined" color="primary">
-          수정
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleSave}
+          disabled={saving}
+        >
+          {saving ? "저장 중..." : "수정"}
         </Button>
       </Stack>
 
