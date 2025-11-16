@@ -438,6 +438,8 @@ const mapSchoolDetailToForm = (d = {}) => ({
   phoneNumber: d.phoneNumber ?? "",
   memberCount: String(d.memberCount ?? ""),
   pinNumber: d.pinCode ?? "",
+  cityOffice: d.cityOffice ?? "",
+  districtOffice: d.districtOffice ?? "",
 });
 
 // 상세 조회 훅
@@ -482,3 +484,19 @@ export function useSchoolDetail(schoolId) {
 
   return { form, setForm, teachers, setTeachers, loading, error, refetch };
 }
+
+// 회원학교 재등록/수정용 payload 빌더
+export const buildMemberRegisterBody = (form, teachers) =>
+  clean({
+    // 🔹 선택된 선생님 userId 배열
+    teacherUserIds: Array.isArray(teachers) ? teachers.map((t) => t.id) : [],
+
+    // 🔹 핀코드: 빈 문자열이면 아예 안 보내서 서버에서 새로 생성하게 할 수도 있음
+    pinCode: form.pinNumber?.trim() || undefined,
+
+    phoneNumber: form.phoneNumber?.trim() || undefined,
+    address: form.address?.trim() || undefined,
+    province: form.province || undefined,
+    cityOffice: form.cityOffice || undefined,
+    districtOffice: form.districtOffice || undefined,
+  });
