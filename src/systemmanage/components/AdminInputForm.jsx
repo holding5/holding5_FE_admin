@@ -45,6 +45,19 @@ export default function AdminInputForm({
     setOpenPicker(false);
   }, [resetSignal]);
 
+  // 🔹 모든 기본 필드가 비면, id도 함께 초기화해서 "신규 모드"로 전환
+  useEffect(() => {
+    if (!form) return;
+    const noName = !form.name || form.name.trim() === "";
+    const noEmail = !form.email || form.email.trim() === "";
+    const noPhone = !form.phoneNumber || form.phoneNumber.trim() === "";
+
+    // 이름/이메일/전화번호가 모두 비어 있는데 id만 남아 있다면 → id 제거
+    if (noName && noEmail && noPhone && form.id) {
+      onChange((prev) => ({ ...prev, id: undefined }));
+    }
+  }, [form?.name, form?.email, form?.phoneNumber, form?.id, onChange]);
+
   const setField = (k, v) => onChange((prev) => ({ ...prev, [k]: v }));
 
   // 전화번호에서 010 제거 후 뒤 8자리 + "!"
@@ -71,6 +84,44 @@ export default function AdminInputForm({
     // actionType은 선택해도 되고 안해도 됨(null 허용)
     const payload = { ...form, actionType }; // 예: 'RELEASE' | 'SUSPEND' | null
     onSubmit?.(payload);
+  };
+
+  //🔹 신규/기존에 따라 유효성 분기
+  const isExistingMember = !!form?.id; // 검색으로 선택한 기존 회원이면 true
+
+  const baseValid = !!form?.name && !!form?.email && !!form?.phoneNumber;
+
+  // 신규 관리자: name/email/phone/password 전부 필요
+  // 기존 회원 승급: name/email/phone만 있으면 OK (password 선택)
+  const isFormValid = isExistingMember
+    ? baseValid
+    : baseValid && !!form?.password;
+
+  const autoFormatPhone = (value) => {
+    // 모든 숫자만 추출 (국가번호 포함)
+    let digits = value.replace(/\D/g, "");
+
+    // +82 처리 → 0으로 변환
+    if (digits.startsWith("82")) {
+      digits = "0" + digits.slice(2);
+    }
+
+    // 이제 국내 번호 규칙으로 포맷한 뒤 반환
+
+    // 010-0000-0000
+    if (digits.startsWith("010")) {
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(
+        7,
+        11
+      )}`;
+    }
+
+    // 011, 016, 017, 018, 019 등의 패턴
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
   return (
@@ -118,7 +169,10 @@ export default function AdminInputForm({
             placeholder="예) 010-1234-5678"
             fullWidth
             value={form.phoneNumber ?? ""}
-            onChange={(e) => setField("phoneNumber", e.target.value)}
+            onChange={(e) => {
+              const formatted = autoFormatPhone(e.target.value);
+              setField("phoneNumber", formatted);
+            }}
           />
         </Grid>
 
@@ -173,9 +227,7 @@ export default function AdminInputForm({
         <Button
           variant="contained"
           onClick={handleSubmit}
-          disabled={
-            !form?.email || !form?.name || !form?.phoneNumber || !form?.password
-          }
+          disabled={!isFormValid}
         >
           등록/수정하기
         </Button>
@@ -188,9 +240,12 @@ export default function AdminInputForm({
         onPick={(row) => {
           onChange((prev) => ({
             ...prev,
+            id: row?.id ?? prev.id,
             name: row?.name ?? prev.name,
             email: row?.email ?? prev.email,
-            phoneNumber: row?.phoneNumber ?? prev.phoneNumber,
+            phoneNumber: autoFormatPhone(
+              row?.phoneNumber ?? prev.phoneNumber ?? ""
+            ),
           }));
           setOpenPicker(false);
         }}

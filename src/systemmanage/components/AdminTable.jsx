@@ -94,6 +94,32 @@ export default function AdminTable({ onPick }) {
     setParams({ ...params, onlyActive: true });
   };
 
+  // +82 → 0 변환 포함 전화번호 포맷
+  const autoFormatPhone = (value) => {
+    if (!value) return "";
+    let digits = String(value).replace(/\D/g, "");
+
+    // +82 → 0XXX... 으로 변환
+    if (digits.startsWith("82")) {
+      digits = "0" + digits.slice(2);
+    }
+
+    // 010-0000-0000
+    if (digits.startsWith("010")) {
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+      return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(
+        7,
+        11
+      )}`;
+    }
+
+    // 011, 016, 017, 018, 019 ...
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
   return (
     <Paper sx={{ overflow: "hidden" }}>
       {/* ====== 컨트롤 바 ====== */}
@@ -264,7 +290,14 @@ export default function AdminTable({ onPick }) {
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => onPick?.(row)}
+                              onClick={() =>
+                                onPick?.({
+                                  ...row,
+                                  phoneNumber: autoFormatPhone(
+                                    row.phoneNumber || ""
+                                  ),
+                                })
+                              }
                             >
                               <ManageAccountsIcon fontSize="small" />
                             </IconButton>
