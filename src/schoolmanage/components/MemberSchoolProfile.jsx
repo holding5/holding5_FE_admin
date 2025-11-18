@@ -22,6 +22,7 @@ import {
   useSchoolDetail,
   searchMembers,
   registerSchoolTeachers,
+  useDeleteSchoolTeachers,
 } from "../hooks/useSchool";
 
 /* ------- 회원 검색 팝오버 (복수 선택) ------- */
@@ -151,6 +152,8 @@ const MemberSchoolProfile = () => {
   const { form, setForm, teachers, setTeachers, loading, error, refetch } =
     useSchoolDetail(id);
 
+  const { deleteSchoolTeachers, loading: deleting } = useDeleteSchoolTeachers();
+
   // 🔍 팝오버 제어
   const [searchOpen, setSearchOpen] = useState(false);
   const searchBtnRef = useRef(null);
@@ -160,11 +163,24 @@ const MemberSchoolProfile = () => {
     setForm((prev) => ({ ...(prev ?? {}), [name]: value }));
   };
 
-  // ✅ 선생 해제 (UI에서만 제거)
-  const handleRemoveTeacher = (teacherId) => {
-    setTeachers((prev) => prev.filter((t) => t.id !== teacherId));
-    // 실제 API 붙일 때는 여기서 해제 API 호출 + 성공 시 setTeachers 갱신
+  // ✅ 선생 해제 (API + UI 제거)
+  const handleRemoveTeacher = async (teacher) => {
+    const ok = window.confirm(
+      `"${teacher.name}" 선생님을 학교에서 삭제하시겠습니까?`
+    );
+    if (!ok) return;
+
+    try {
+      // 백엔드 스펙: { "userIds": [1001] }
+      await deleteSchoolTeachers(id, [teacher.id]);
+
+      // 성공 시 프론트 목록에서도 제거
+      setTeachers((prev) => prev.filter((t) => t.id !== teacher.id));
+    } catch (e) {
+      alert("선생님 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    }
   };
+
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
@@ -357,7 +373,8 @@ const MemberSchoolProfile = () => {
                 <IconButton
                   size="small"
                   color="error"
-                  onClick={() => handleRemoveTeacher(t.id)}
+                  onClick={() => handleRemoveTeacher(t)}
+                  disabled={deleting}
                 >
                   <CloseIcon fontSize="small" />
                 </IconButton>

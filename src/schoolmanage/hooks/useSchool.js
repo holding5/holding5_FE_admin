@@ -527,3 +527,35 @@ export async function registerSchoolTeachers(schoolId, userIds) {
   );
   return data;
 }
+
+/** 회원학교 선생님 삭제 (복수 가능) */
+export function useDeleteSchoolTeachers() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  /**
+   * @param {number|string} schoolId
+   * @param {Array<number|string>} userIds  삭제할 선생님 userId 배열
+   */
+  const deleteSchoolTeachers = async (schoolId, userIds) => {
+    if (!schoolId) throw new Error("schoolId가 없습니다.");
+    const ids = Array.isArray(userIds) ? userIds : [userIds];
+
+    setLoading(true);
+    setError(null);
+    try {
+      await axiosInstance.delete(`/admin/system/schools/${schoolId}/teachers`, {
+        // ⚠️ DELETE + body 는 data 키로 감싸야 함
+        data: { userIds: ids },
+      });
+    } catch (e) {
+      console.error("선생 삭제 실패:", e);
+      setError(e);
+      throw e;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { deleteSchoolTeachers, loading, error };
+}
