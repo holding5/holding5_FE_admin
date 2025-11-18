@@ -42,7 +42,8 @@ const columns = [
     key: "postType",
     label: "분류",
     width: "10rem",
-    valueFormatter: (v) => labelMapper("reportedPostTypeMap", v),
+    valueFormatter: (v, row) =>
+      row.commentId != null ? "댓글" : labelMapper("reportedPostTypeMap", v),
   },
 
   { key: "content", label: "내용", width: "30rem" },
@@ -133,6 +134,12 @@ export default function ReportedPostTable() {
     });
 
     setPage(1); // 필터 바꾸면 1페이지로 이동
+  };
+
+  const statusColorMap = {
+    OPEN: "orange",
+    DISMISSED: "green",
+    RESOLVED: "red",
   };
 
   return (
@@ -247,7 +254,14 @@ export default function ReportedPostTable() {
                       <TableCell
                         key={col.key}
                         align="center"
-                        sx={{ border: "1px solid #ccc", fontSize: "12px" }}
+                        sx={{
+                          border: "1px solid #ccc",
+                          fontSize: "12px",
+                          color:
+                            col.key === "reportStatus"
+                              ? statusColorMap[row.reportStatus] || "inherit"
+                              : "inherit",
+                        }}
                       >
                         {value}
                       </TableCell>

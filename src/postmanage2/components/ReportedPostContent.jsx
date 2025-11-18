@@ -18,6 +18,7 @@ import { labelMapper } from "../../utils/LabelMapper";
  * @param {{
  *  post: {
  *    id: number;
+ *    userId: number;
  *    authorName: string;
  *    category: string;
  *    content: string;
@@ -25,22 +26,20 @@ import { labelMapper } from "../../utils/LabelMapper";
  *    likeCount: number;
  *    reportCount: number;
  *    commentCount: number;
- *    activated: boolean;
+ *    status?: "ACTIVATED" | "DEACTIVATED" | "SUSPENDED" | string;
  *    userInfo?: { serviceRole: string; ageGroup: string; userId?: number };
- *    userId?: number;
  *  } | null;
  *  postReports?: Array<{
  *    reportId: number;
  *    targetId: number;
  *    type: string;
- *    status: string;
+ *    reportStatus: "OPEN" | "DISMISSED" | "RESOLVED" | string;
  *    createdAt: string;
  *  }>;
  *  highlightUserId?: number | string;
  * }} props
  */
 const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
-  // 🔹 post가 null일 수도 있으니 안전하게 기본값 넣어서 구조분해
   const {
     id,
     authorName,
@@ -50,49 +49,69 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
     likeCount,
     reportCount,
     commentCount,
-    activated = false,
+    status,
     userInfo,
     userId,
-  } = post || {};
+  } = post;
 
-  // 🔹 해당 유저의 게시글이면 true
+  // --- 로컬 신고 처리 결과 (무혐의 / 삭제) ---
+  const [localReportResult, setLocalReportResult] = useState(null); // "DISMISSED" | "RESOLVED" | null
+
+  useEffect(() => {
+    setLocalReportResult(null);
+  }, [id]);
+
+  if (!post) return null;
+
+  // --- 작성자 판별 ---
   const targetId = Number(highlightUserId);
   const isAuthor =
     !Number.isNaN(targetId) && userId != null && Number(userId) === targetId;
 
-  // 🔹 로컬 활성 상태
-  const [isActivated, setIsActivated] = useState(activated);
+  // --- 1) status 기반 삭제 배너 ---
+  let statusBannerText = "";
+  if (status === "DEACTIVATED") {
+    statusBannerText = "작성자가 삭제한 글입니다.";
+  } else if (status === "SUSPENDED") {
+    statusBannerText = "관리자가 삭제한 글입니다.";
+  }
+  const showStatusBanner = !!statusBannerText;
 
-  // 🔹 신고 처리 결과 (null | "DISMISSED" | "DELETED")
-  const [actionResult, setActionResult] = useState(null);
+  // --- 2) reportStatus 기반 신고 결과 배너 ---
+  const hasOpenReports = (postReports || []).some(
+    (r) => r.reportStatus === "OPEN"
+  );
+  const hasDismissedReports = (postReports || []).some(
+    (r) => r.reportStatus === "DISMISSED"
+  );
+  const hasResolvedReports = (postReports || []).some(
+    (r) => r.reportStatus === "RESOLVED"
+  );
 
-  const hasOpenReports = (postReports || []).some((r) => r.status === "OPEN");
-  const isDismissedOnServer = (postReports || []).length > 0 && !hasOpenReports; // 모두 DISMISSED 인 경우
+  let reportBannerText = null;
 
-  // 🔹 다른 게시글로 넘어갈 때마다 초기값 다시 맞춰주기
-  useEffect(() => {
-    setIsActivated(activated);
-    // 서버에서 이미 무혐의 처리된 상태라면 로컬 플래그도 같이 맞춰준다
-    setActionResult(isDismissedOnServer ? "DISMISSED" : null);
-  }, [id, activated, isDismissedOnServer]);
+  if (localReportResult === "DISMISSED") {
+    reportBannerText = "처리결과 무혐의 처리된 글입니다.";
+  } else if (localReportResult === "RESOLVED") {
+    reportBannerText = "처리결과 삭제처리된 글입니다.";
+  } else if (!hasOpenReports && postReports.length > 0) {
+    if (hasResolvedReports) {
+      reportBannerText = "처리결과 삭제처리된 글입니다.";
+    } else if (hasDismissedReports) {
+      reportBannerText = "처리결과 무혐의 처리된 글입니다.";
+    }
+  }
+  const showReportBanner = !!reportBannerText;
 
-  // 🔹 여기서야 post 유무에 따라 렌더링 결정 (훅 호출 뒤라서 OK)
-  if (!post) return null;
-
-  const showDeletedBanner = !isActivated;
-  const showDismissedBanner =
-    actionResult === "DISMISSED" || isDismissedOnServer;
-
-  const isActionLocked = showDeletedBanner || showDismissedBanner;
+  // --- 3) 버튼 노출 조건: isAuthor + OPEN 신고 ---
+  const canModerate = isAuthor && hasOpenReports && !localReportResult;
 
   const handleDelete = async () => {
     if (!window.confirm("정말로 게시글을 삭제하시겠습니까?")) return;
-
     try {
       await deleteReportedPost(id);
       alert("삭제 처리가 완료되었습니다.");
-      setIsActivated(false);
-      setActionResult("DELETED");
+      setLocalReportResult("RESOLVED"); // 삭제 처리 배너
     } catch (e) {
       console.error("삭제 실패:", e);
       alert("삭제 중 오류가 발생했습니다.");
@@ -107,7 +126,7 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
     try {
       await dismissReportedPost(id);
       alert("무혐의 처리가 완료되었습니다.");
-      setActionResult("DISMISSED");
+      setLocalReportResult("DISMISSED"); // 무혐의 배너
     } catch (e) {
       console.error("무혐의 처리 실패:", e);
       alert("무혐의 처리 중 오류가 발생했습니다.");
@@ -121,10 +140,9 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
       p={3}
       mb={4}
       sx={{
-        bgcolor: isAuthor ? "rgba(255, 243, 224, 0.9)" : "background.paper", // 🔹 해당 유저 글 하이라이트
+        bgcolor: isAuthor ? "rgba(227, 242, 253, 0.9)" : "background.paper",
       }}
     >
-      {/* 카테고리 + 삭제 안내 + 신고 요약 */}
       <Stack direction="row" justifyContent="space-between" mb={2}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <Chip
@@ -132,42 +150,48 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
             color="primary"
             size="medium"
           />
-          {showDeletedBanner && (
+
+          {showStatusBanner && (
             <Alert
               severity="warning"
               variant="outlined"
               sx={{ fontWeight: "bold", px: 2 }}
             >
-              관리자가 삭제한 글입니다.
+              {statusBannerText}
             </Alert>
           )}
 
-          {showDismissedBanner && (
+          {showReportBanner && (
             <Alert
               severity="info"
               variant="outlined"
               sx={{ fontWeight: "bold", px: 2 }}
             >
-              신고 검토 결과 무혐의 처리된 글입니다.
+              {reportBannerText}
             </Alert>
           )}
         </Stack>
 
         {postReports.length > 0 && (
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            flexWrap="wrap"
+          >
             {postReports.map((r) => (
               <Chip
                 key={r.reportId}
-                label={`${r.type}`}
+                label={r.type}
                 size="medium"
                 color="error"
+                sx={{ mb: 0.5 }}
               />
             ))}
           </Stack>
         )}
       </Stack>
 
-      {/* 작성자 + 역할 */}
       <Stack direction="row" spacing={4} mb={2}>
         <Typography variant="subtitle1" fontWeight="bold">
           {authorName}
@@ -181,43 +205,27 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
         )}
       </Stack>
 
-      {/* 본문 */}
       <Typography variant="body1" whiteSpace="pre-line" mb={2}>
         {content}
       </Typography>
 
-      {/* 이미지 섹션 자리 (임시) */}
       <Typography variant="body2" color="text.disabled" mb={1}>
-        준비된 사진이 없습니다. / 이미지 섹션 (임시Typography)
+        준비된 사진이 없습니다. / 이미지 섹션 (임시 Typography)
       </Typography>
 
       <Divider sx={{ my: 2 }} />
 
-      {/* 버튼 영역 */}
-      <Stack direction="row" spacing={1} justifyContent="flex-end">
-        {isActivated && (
-          <>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleDismiss}
-              disabled={isActionLocked}
-            >
-              무혐의
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleDelete}
-              disabled={isActionLocked}
-            >
-              삭제
-            </Button>
-          </>
-        )}
-      </Stack>
+      {canModerate && (
+        <Stack direction="row" spacing={1} justifyContent="flex-end">
+          <Button variant="outlined" color="primary" onClick={handleDismiss}>
+            무혐의
+          </Button>
+          <Button variant="outlined" color="error" onClick={handleDelete}>
+            삭제
+          </Button>
+        </Stack>
+      )}
 
-      {/* 부가 정보 */}
       <Stack direction="row" spacing={4} mt={2} justifyContent="flex-end">
         <Typography variant="caption">
           작성일: {new Date(createdAt).toLocaleString()}
