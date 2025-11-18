@@ -354,6 +354,8 @@ export default function DreamUserTable({ filters = {} }) {
                                 ? "orange" // 일시정지
                                 : row[col.key] === "BANNED"
                                 ? "red" // 영구정지
+                                : row[col.key] === "ACTIVATED"
+                                ? "green" // 활동중
                                 : "inherit"
                               : "inherit",
                         }}

@@ -174,5 +174,4 @@ export const reportedPostTypeMap = {
   HOLPAWALL: "홀파담벼락",
   CATSEYE: "캣츠아이",
   OVERCOME: "극복수기",
-  COMMENT: "댓글",
 };
