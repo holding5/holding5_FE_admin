@@ -331,6 +331,7 @@ export function useHappyinForceCreate() {
    * {
    *   email: "newhappyin@test.com",
    *   password: "happyin123!",
+   *   name: "홍길동",
    *   nickname: "용기있는별",
    *   gender: "MAN",
    *   birthDate: "1998-01-15",

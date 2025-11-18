@@ -91,6 +91,29 @@ const HappyUserApplicationProfile = () => {
     fullWidth: true,
   };
 
+  // URL에서 마지막 파일명만 뽑고, 한글 디코딩까지
+  const getFileNameFromUrl = (url) => {
+    if (!url) return "";
+
+    try {
+      // 정식 URL이면
+      const u = new URL(url);
+      const pathname = u.pathname || "";
+      const segments = pathname.split("/");
+      const last = segments[segments.length - 1] || "";
+      return decodeURIComponent(last);
+    } catch (e) {
+      // 혹시 URL 생성에서 에러 나면 그냥 문자열 기준으로 처리
+      const parts = String(url).split("/");
+      const last = parts[parts.length - 1] || url;
+      try {
+        return decodeURIComponent(last);
+      } catch {
+        return last;
+      }
+    }
+  };
+
   return (
     <Paper sx={{ p: 3 }}>
       {/* ===== 기본 정보 ===== */}
@@ -213,17 +236,25 @@ const HappyUserApplicationProfile = () => {
               첨부된 파일이 없습니다.
             </Box>
           )}
-          {(form.mediaUrls ?? []).map((url, idx) => (
-            <Button
-              key={idx}
-              sx={{ justifyContent: "flex-start", textTransform: "none" }}
-              size="small"
-              href={url}
-              target="_blank"
-            >
-              {url}
-            </Button>
-          ))}
+          {(form.mediaUrls ?? []).map((url, idx) => {
+            const fileName = getFileNameFromUrl(url);
+            return (
+              <Button
+                key={idx}
+                sx={{
+                  justifyContent: "flex-start",
+                  textTransform: "none",
+                  fontSize: 14,
+                }}
+                size="small"
+                href={url}
+                target="_blank"
+                title={url} // 툴팁으로 전체 URL 보고 싶으면
+              >
+                {fileName || url}
+              </Button>
+            );
+          })}
         </Stack>
       </Box>
 
