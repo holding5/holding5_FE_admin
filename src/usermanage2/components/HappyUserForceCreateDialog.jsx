@@ -29,6 +29,7 @@ const genderOptions = [
 const defaultForm = {
   email: "",
   password: "",
+  name: "",
   nickname: "",
   gender: "MAN",
   birthDate: "",
@@ -67,6 +68,7 @@ export default function HappyUserForceCreateDialog({
     const next = {};
     if (!form.email) next.email = "이메일을 입력하세요.";
     if (!form.password) next.password = "초기 비밀번호를 입력하세요.";
+    if (!form.name) next.name = "이름을 입력하세요.";
     if (!form.nickname) next.nickname = "닉네임을 입력하세요.";
     if (!form.gender) next.gender = "성별을 선택하세요.";
     if (!form.birthDate) next.birthDate = "생년월일을 선택하세요.";
@@ -94,6 +96,30 @@ export default function HappyUserForceCreateDialog({
 
   const handleClose = () => {
     if (!loading) onClose();
+  };
+
+  // ----------------- 전화번호 자동 하이픈 util -----------------
+  function formatPhone(raw) {
+    raw = raw.replace(/\D/g, "");
+
+    let formatted = raw;
+
+    if (raw.startsWith("01")) {
+      if (raw.length > 3 && raw.length <= 7)
+        formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+      else if (raw.length > 7)
+        formatted = `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
+    }
+
+    return formatted;
+  }
+
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhone(e.target.value);
+    setForm((prev) => ({
+      ...prev,
+      phoneNumber: formatted,
+    }));
   };
 
   return (
@@ -127,6 +153,15 @@ export default function HappyUserForceCreateDialog({
           {/* 기본 정보 */}
           <Stack direction="row" spacing={2}>
             <TextField
+              label="이름"
+              fullWidth
+              value={form.name}
+              onChange={handleChange("name")}
+              error={!!errors.name}
+              helperText={errors.name}
+              size="small"
+            />
+            <TextField
               label="닉네임"
               fullWidth
               value={form.nickname}
@@ -135,6 +170,9 @@ export default function HappyUserForceCreateDialog({
               helperText={errors.nickname}
               size="small"
             />
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
             <FormControl fullWidth size="small" error={!!errors.gender}>
               <InputLabel>성별</InputLabel>
               <Select
@@ -150,6 +188,24 @@ export default function HappyUserForceCreateDialog({
               </Select>
               {errors.gender && (
                 <FormHelperText>{errors.gender}</FormHelperText>
+              )}
+            </FormControl>
+
+            <FormControl fullWidth size="small" error={!!errors.religion}>
+              <InputLabel>종교</InputLabel>
+              <Select
+                value={form.religion}
+                label="종교"
+                onChange={handleChange("religion")}
+              >
+                {Object.entries(religionMap).map(([key, label]) => (
+                  <MenuItem key={key} value={key}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.religion && (
+                <FormHelperText>{errors.religion}</FormHelperText>
               )}
             </FormControl>
           </Stack>
@@ -170,7 +226,7 @@ export default function HappyUserForceCreateDialog({
               label="전화번호"
               fullWidth
               value={form.phoneNumber}
-              onChange={handleChange("phoneNumber")}
+              onChange={handlePhoneChange}
               error={!!errors.phoneNumber}
               helperText={errors.phoneNumber || "예: 010-1234-5678"}
               size="small"
@@ -225,24 +281,6 @@ export default function HappyUserForceCreateDialog({
               )}
             </FormControl>
           </Stack>
-
-          <FormControl fullWidth size="small" error={!!errors.religion}>
-            <InputLabel>종교</InputLabel>
-            <Select
-              value={form.religion}
-              label="종교"
-              onChange={handleChange("religion")}
-            >
-              {Object.entries(religionMap).map(([key, label]) => (
-                <MenuItem key={key} value={key}>
-                  {label}
-                </MenuItem>
-              ))}
-            </Select>
-            {errors.religion && (
-              <FormHelperText>{errors.religion}</FormHelperText>
-            )}
-          </FormControl>
 
           {error && (
             <Box sx={{ color: "error.main", fontSize: 12 }}>
