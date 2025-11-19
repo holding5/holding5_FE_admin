@@ -21,20 +21,20 @@ const Sidebar = () => {
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
 
   const memberMenutItem = [
-    { text: "해피인 관리", path: "/user/happy" },
-    { text: "해피인 신청", path: "/user/happy/application" },
-    { text: "드림인 관리", path: "/user/dream" },
-    { text: "일시정지 회원관리", path: "/user/paused" },
-    { text: "영구정지 회원관리", path: "/user/banned" },
+    { text: "해피인 관리", path: "/admin/user/happy" },
+    { text: "해피인 신청", path: "/admin/user/happy/application" },
+    { text: "드림인 관리", path: "/admin/user/dream" },
+    { text: "일시정지 회원관리", path: "/admin/user/paused" },
+    { text: "영구정지 회원관리", path: "/admin/user/banned" },
     // { text: "카운셀러 관리", path: "/" },
     // { text: "등급관리", path: "/rankmanage" },
   ];
 
   const postMenuItem = [
-    { text: "홀파담벼락", path: "/post/holpa" },
-    { text: "캣츠아이", path: "/post/catseye" },
-    { text: "극복수기", path: "/post/overcome" },
-    { text: "신고된 게시물 보기", path: "/post/reported" },
+    { text: "홀파담벼락", path: "/admin/post/holpa" },
+    { text: "캣츠아이", path: "/admin/post/catseye" },
+    { text: "극복수기", path: "/admin/post/overcome" },
+    { text: "신고된 게시물 보기", path: "/admin/post/reported" },
     // { text: "생명메시지", path: "/post/life" },
     // { text: "희망메시지", path: "/post/hope" },
     // { text: "축하메시지", path: "/post/congratulatory" },
@@ -55,8 +55,8 @@ const Sidebar = () => {
   // ];
 
   const schoolMenuItem = [
-    { text: "학교, 경찰서 등록", path: "/school-police" },
-    { text: "회원학교 관리", path: "/school-police/member-school" },
+    { text: "학교, 경찰서 등록", path: "/admin/school-police" },
+    { text: "회원학교 관리", path: "/admin/school-police/member-school" },
   ];
 
   const systemMenuItem = [
@@ -65,7 +65,7 @@ const Sidebar = () => {
     // { text: "해피인 안내", path: "/" },
     // { text: "도움주신 분", path: "/system/helpers" },
     // { text: "생명살림 집계", path: "/" },
-    { text: "관리자 관리", path: "/system/admin" },
+    { text: "관리자 관리", path: "/admin/system/admin" },
   ];
 
   return (

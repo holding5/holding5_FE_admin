@@ -82,7 +82,7 @@ export default function LoginPage() {
       login(accessToken, user);
 
       setHint("로그인 성공!");
-      nav("/");
+      nav("/admin");
     } catch (err) {
       console.error("로그인 실패:", err);
 

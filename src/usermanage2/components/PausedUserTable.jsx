@@ -335,7 +335,7 @@ const PausedUserTable = ({ itemsPerPage = 25 }) => {
                       }}
                       onClick={
                         col.key === "nickname"
-                          ? () => nav(`/user/dream/detail/${row.id}`)
+                          ? () => nav(`/admin/user/dream/detail/${row.id}`)
                           : undefined
                       }
                     >

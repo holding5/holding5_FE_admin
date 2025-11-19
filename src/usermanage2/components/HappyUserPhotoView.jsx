@@ -154,7 +154,7 @@ const HappyUserPhotoView = () => {
   };
 
   const handleCardClick = (id) => {
-    navigate(`/user/happy/detail/${id}`);
+    navigate(`/admin/user/happy/detail/${id}`);
   };
 
   const list = rows || [];

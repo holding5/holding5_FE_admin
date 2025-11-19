@@ -70,7 +70,7 @@ function RequireAuth() {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <Outlet />;
@@ -80,15 +80,15 @@ function App() {
   return (
     <Routes>
       {/* 공개 라우트: 로그인 페이지 */}
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/admin/login" element={<LoginPage />} />
 
       {/* 이 아래는 전부 로그인 필요 */}
-      <Route element={<RequireAuth />}>
+      <Route path="/admin" element={<RequireAuth />}>
         {/* 🔹 로그인 후 기본 진입: 해피인 관리 */}
-        <Route path="/" element={<Navigate to="/user/happy" replace />} />
+        <Route index element={<Navigate to="user/happy" replace />} />
 
         {/* 필요하면 대시보드용 메인 페이지도 보호된 경로로 남겨둠 */}
-        <Route path="/main" element={<Main />} />
+        <Route path="main" element={<Main />} />
 
         {/* 공지/추천 */}
         {/* <Route path="announcement" element={<AnnouncementPage />}>
@@ -175,7 +175,7 @@ function App() {
       </Route>
 
       {/* 그 외 모든 경로 → 로그인 또는 기본 페이지로 */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/admin/login" replace />} />
     </Routes>
   );
 }

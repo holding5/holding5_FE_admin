@@ -284,7 +284,9 @@ export default function MemberSchoolTable({
                   hover
                   onClick={() =>
                     row?.id &&
-                    navigate(`/school-police/member-school/detail/${row.id}`)
+                    navigate(
+                      `/admin/school-police/member-school/detail/${row.id}`
+                    )
                   }
                   tabIndex={0}
                   sx={{ cursor: "pointer" }}
