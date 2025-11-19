@@ -175,3 +175,9 @@ export const reportedPostTypeMap = {
   CATSEYE: "캣츠아이",
   OVERCOME: "극복수기",
 };
+
+export const postCategoryTypeMap = {
+  HOLPAWALL: "홀파담벼락",
+  CATSEYE: "캣츠아이",
+  OVERCOME: "극복수기",
+};

@@ -1,4 +1,4 @@
-// src/pages/components/OvercomeComments.jsx  (현재 파일 이름은 그대로 두고 내용 교체)
+// src/pages/components/OvercomeComments.jsx
 import React, { useState } from "react";
 import {
   Box,
@@ -25,7 +25,7 @@ const formatDateTime = (value) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
+  const hh = String(date.getHours() + 0).padStart(2, "0");
   const mm = String(date.getMinutes()).padStart(2, "0");
   return `${y}-${m}-${d} ${hh}:${mm}`;
 };
@@ -52,7 +52,9 @@ const OvercomeComments = ({ comments = [] }) => {
       alert("댓글이 삭제되었습니다.");
       setLocalComments((prev) =>
         prev.map((c) =>
-          c.id === commentId ? { ...c, status: "DEACTIVATED" } : c
+          c.id === commentId
+            ? { ...c, status: "SUSPENDED" } // 🔹 관리자 삭제 → SUSPENDED
+            : c
         )
       );
     } catch (e) {
@@ -86,7 +88,20 @@ const OvercomeComments = ({ comments = [] }) => {
 
       {/* 댓글 목록 */}
       {sortedComments.map((comment) => {
-        const isDeleted = comment.status === "DEACTIVATED";
+        // 🔹 status 기준 + fallback (activated가 false면 SUSPENDED로 추정)
+        const status =
+          comment.status ??
+          (comment.activated === false ? "SUSPENDED" : "ACTIVATED");
+
+        const isActive = status === "ACTIVATED";
+        const isDeleted = !isActive;
+
+        let bannerText = null;
+        if (status === "DEACTIVATED") {
+          bannerText = "작성자가 삭제한 댓글입니다.";
+        } else if (status === "SUSPENDED") {
+          bannerText = "관리자가 삭제한 댓글입니다.";
+        }
 
         return (
           <Box
@@ -102,7 +117,7 @@ const OvercomeComments = ({ comments = [] }) => {
             }}
           >
             {/* 삭제 배너 */}
-            {isDeleted && (
+            {bannerText && (
               <Alert
                 severity="warning"
                 variant="outlined"
@@ -117,7 +132,7 @@ const OvercomeComments = ({ comments = [] }) => {
                   width: "fit-content",
                 }}
               >
-                관리자가 삭제한 댓글입니다.
+                {bannerText}
               </Alert>
             )}
 
@@ -151,14 +166,14 @@ const OvercomeComments = ({ comments = [] }) => {
             </Typography>
 
             <Stack direction="row" alignItems="center" spacing={1} mt={2}>
-              <IconButton size="small" aria-label="like" disabled={isDeleted}>
+              <IconButton size="small" aria-label="like" disabled={!isActive}>
                 <ThumbUpIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.likeCount}
                 </Typography>
               </IconButton>
 
-              <IconButton size="small" aria-label="report" disabled={isDeleted}>
+              <IconButton size="small" aria-label="report" disabled={!isActive}>
                 <ReportIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.reportCount}
@@ -167,7 +182,8 @@ const OvercomeComments = ({ comments = [] }) => {
 
               <Box flexGrow={1} />
 
-              {!isDeleted && (
+              {/* 🔹 활성 상태일 때만 삭제 버튼 노출 */}
+              {isActive && (
                 <Button
                   variant="outlined"
                   color="error"

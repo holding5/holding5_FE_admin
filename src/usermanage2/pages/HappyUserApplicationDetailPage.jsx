@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { useState } from "react";
 import HappyUserApplicationTabsNav from "../components/HappyUserApplicationTabsNav";
 import HappyUserApplicationProfile from "../components/HappyUserApplicationProfile";
-import HappyUserProfile from "../components/HappyUserProfile";
+import DreamUserProfile from "../components/DreamUserProfile";
 import HappyUserPosts from "../components/HappyUserPosts";
 import DreamUserEvaluation from "../components/DreamUserEvaluation";
 
@@ -18,7 +18,7 @@ const HappyUserApplicationDetailPage = () => {
         />
 
         <Box sx={{ mt: 2 }}>
-          {activeTab === "profile" && <HappyUserProfile />}
+          {activeTab === "profile" && <DreamUserProfile />}
           {activeTab === "posts" && <HappyUserPosts />}
           {activeTab === "evaluation" && <DreamUserEvaluation />}
           {activeTab === "application" && <HappyUserApplicationProfile />}

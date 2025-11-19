@@ -38,7 +38,15 @@ const HolpaComments = ({ comments = [] }) => {
       await deleteHolpaPostComment(commentId);
       alert("댓글이 삭제되었습니다.");
       setLocalComments((prev) =>
-        prev.map((c) => (c.id === commentId ? { ...c, activated: false } : c))
+        prev.map((c) =>
+          c.id === commentId
+            ? {
+                ...c,
+                activated: false,
+                status: "SUSPENDED", // 🔹 관리자가 삭제했으므로 SUSPENDED
+              }
+            : c
+        )
       );
     } catch (e) {
       console.error("댓글 삭제 실패:", e);
@@ -71,7 +79,19 @@ const HolpaComments = ({ comments = [] }) => {
 
       {/* 댓글 목록 */}
       {sortedComments.map((comment) => {
-        const isDeleted = comment.activated === false;
+        const status =
+          comment.status ??
+          (comment.activated === false ? "SUSPENDED" : "ACTIVATED");
+
+        const isActive = status === "ACTIVATED";
+        const isDeleted = !isActive;
+
+        let bannerText = null;
+        if (status === "DEACTIVATED") {
+          bannerText = "작성자가 삭제한 댓글입니다.";
+        } else if (status === "SUSPENDED") {
+          bannerText = "관리자가 삭제한 댓글입니다.";
+        }
 
         return (
           <Box
@@ -86,8 +106,8 @@ const HolpaComments = ({ comments = [] }) => {
               opacity: isDeleted ? 0.9 : 1,
             }}
           >
-            {/* 🔸 작은 배너만 표시 (내용은 계속 보임) */}
-            {isDeleted && (
+            {/* 🔸 삭제 배너 (status 기준) */}
+            {bannerText && (
               <Alert
                 severity="warning"
                 variant="outlined"
@@ -102,7 +122,7 @@ const HolpaComments = ({ comments = [] }) => {
                   width: "fit-content",
                 }}
               >
-                관리자가 삭제한 댓글입니다.
+                {bannerText}
               </Alert>
             )}
 
@@ -125,7 +145,7 @@ const HolpaComments = ({ comments = [] }) => {
               </Typography>
             </Stack>
 
-            {/* 본문: 삭제되어도 그대로 보이게 */}
+            {/* 본문 */}
             <Typography
               mt={1}
               whiteSpace="pre-line"
@@ -142,14 +162,14 @@ const HolpaComments = ({ comments = [] }) => {
                 <Chip label="신고됨" color="error" size="small" />
               )}
 
-              <IconButton size="small" disabled={isDeleted} aria-label="like">
+              <IconButton size="small" disabled={!isActive} aria-label="like">
                 <ThumbUpIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.likeCount}
                 </Typography>
               </IconButton>
 
-              <IconButton size="small" disabled={isDeleted} aria-label="report">
+              <IconButton size="small" disabled={!isActive} aria-label="report">
                 <ReportIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.reportCount}
@@ -158,8 +178,8 @@ const HolpaComments = ({ comments = [] }) => {
 
               <Box flexGrow={1} />
 
-              {/* 삭제된 경우에는 버튼 숨김 (HolpaContent와 동일한 UX) */}
-              {!isDeleted && (
+              {/* 🔹 활성 상태일 때만 삭제 버튼 노출 */}
+              {isActive && (
                 <Button
                   variant="outlined"
                   color="error"

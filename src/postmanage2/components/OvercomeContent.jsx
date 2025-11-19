@@ -27,9 +27,6 @@ const formatDateTime = (value) => {
 
 const OvercomeContent = ({ post }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [status, setStatus] = useState(post?.status ?? "ACTIVATED"); // ✅ 삭제 상태 로컬로 관리
-
-  if (!post) return null;
 
   const {
     id,
@@ -43,13 +40,33 @@ const OvercomeContent = ({ post }) => {
     commentCount,
     group,
     beforeStories = [],
+    status: initialStatus,
+    activated, // 혹시 백에서 같이 내려올 수 있으니 보존
   } = post;
+
+  // 🔹 status 기준으로 상태 관리 (fallback: activated 여부로 추정)
+  const [status, setStatus] = useState(
+    initialStatus ?? (activated === false ? "SUSPENDED" : "ACTIVATED")
+  );
+
+  if (!post) return null;
 
   const hasBeforeStories =
     Array.isArray(beforeStories) && beforeStories.length > 0;
 
   const isActivated = status === "ACTIVATED";
-  const showDeletedBanner = !isActivated;
+
+  // 🔹 배너 텍스트/스타일 계산
+  let bannerText = null;
+  let bannerSeverity = "warning";
+
+  if (status === "DEACTIVATED") {
+    bannerText = "작성자가 삭제한 글입니다.";
+    bannerSeverity = "info";
+  } else if (status === "SUSPENDED") {
+    bannerText = "관리자가 삭제한 글입니다.";
+    bannerSeverity = "warning";
+  }
 
   const handleDelete = async () => {
     if (!window.confirm("정말로 게시글을 삭제하시겠습니까?")) return;
@@ -57,7 +74,8 @@ const OvercomeContent = ({ post }) => {
     try {
       await deleteOvercomePost(id); // DELETE /admin/posts/{postId}
       alert("삭제 처리가 완료되었습니다.");
-      setStatus("DEACTIVATED"); // 화면 상에서 비활성 상태로 변경
+      // 🔹 관리자에 의한 삭제 → SUSPENDED
+      setStatus("SUSPENDED");
     } catch (e) {
       console.error("극복수기 게시글 삭제 실패:", e);
       alert("삭제 중 오류가 발생했습니다.");
@@ -83,13 +101,13 @@ const OvercomeContent = ({ post }) => {
           />
         ))}
 
-        {showDeletedBanner && (
+        {bannerText && (
           <Alert
-            severity="warning"
+            severity={bannerSeverity}
             variant="outlined"
             sx={{ fontWeight: "bold", px: 2 }}
           >
-            관리자가 삭제한 글입니다.
+            {bannerText}
           </Alert>
         )}
       </Stack>
@@ -122,7 +140,8 @@ const OvercomeContent = ({ post }) => {
             이전 사연보기
           </Button>
         )}
-        {isActivated && ( // ✅ 삭제되면 버튼 숨김
+        {/* 🔹 활성 상태일 때만 삭제 버튼 노출 */}
+        {isActivated && (
           <Button variant="outlined" color="error" onClick={handleDelete}>
             삭제
           </Button>
@@ -131,7 +150,7 @@ const OvercomeContent = ({ post }) => {
 
       <Divider sx={{ my: 2 }} />
 
-      {/* 하단 정보 (홀파랑 공통 패턴) */}
+      {/* 하단 정보 */}
       <Stack direction="row" spacing={4} justifyContent="flex-end">
         <Typography variant="caption">
           작성일: {formatDateTime(createdAt)}
