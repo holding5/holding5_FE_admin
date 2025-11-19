@@ -137,13 +137,14 @@ export function useDreaminPosts(dreaminId, options = {}) {
     initialParams: options.initialParams ?? {},
     initialSort: { key: "createdAt", dir: "desc", ...options.initialSort },
     initialPage: options.initialPage ?? 1,
-    initialSize: options.initialSize ?? 10,
+    initialSize: options.initialSize ?? 25,
 
     mapItem: (item) => ({
-      no: item.no,
+      id: item.no,
       category: item.category,
       topic: item.topic,
       type: item.type,
+      postId: item.postId,
       content: item.content,
       holpaScore: item.holpaScore ?? 0,
       reportCount: item.reportCount,

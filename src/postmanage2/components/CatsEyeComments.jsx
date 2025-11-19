@@ -51,7 +51,12 @@ const CatsEyeComments = ({ comments = [] }) => {
       alert("댓글이 삭제되었습니다.");
       setLocalComments((prev) =>
         prev.map((c) =>
-          c.id === commentId ? { ...c, status: "DEACTIVATED" } : c
+          c.id === commentId
+            ? {
+                ...c,
+                status: "SUSPENDED", // 🔹 관리자 삭제 → SUSPENDED
+              }
+            : c
         )
       );
     } catch (e) {
@@ -85,7 +90,20 @@ const CatsEyeComments = ({ comments = [] }) => {
 
       {/* 댓글 목록 */}
       {sortedComments.map((comment) => {
-        const isDeleted = comment.status === "DEACTIVATED";
+        // 🔹 status fallback: activated false면 SUSPENDED 로 추정
+        const status =
+          comment.status ??
+          (comment.activated === false ? "SUSPENDED" : "ACTIVATED");
+
+        const isActive = status === "ACTIVATED";
+        const isDeleted = !isActive;
+
+        let bannerText = null;
+        if (status === "DEACTIVATED") {
+          bannerText = "작성자가 삭제한 댓글입니다.";
+        } else if (status === "SUSPENDED") {
+          bannerText = "관리자가 삭제한 댓글입니다.";
+        }
 
         return (
           <Box
@@ -100,8 +118,8 @@ const CatsEyeComments = ({ comments = [] }) => {
               opacity: isDeleted ? 0.9 : 1,
             }}
           >
-            {/* 🔸 삭제 배너 (내용은 계속 보임) */}
-            {isDeleted && (
+            {/* 🔸 삭제 배너 */}
+            {bannerText && (
               <Alert
                 severity="warning"
                 variant="outlined"
@@ -116,7 +134,7 @@ const CatsEyeComments = ({ comments = [] }) => {
                   width: "fit-content",
                 }}
               >
-                관리자가 삭제한 댓글입니다.
+                {bannerText}
               </Alert>
             )}
 
@@ -157,14 +175,14 @@ const CatsEyeComments = ({ comments = [] }) => {
 
             {/* 상태 및 버튼 */}
             <Stack direction="row" alignItems="center" spacing={1} mt={2}>
-              <IconButton size="small" aria-label="like" disabled={isDeleted}>
+              <IconButton size="small" aria-label="like" disabled={!isActive}>
                 <ThumbUpIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.likeCount}
                 </Typography>
               </IconButton>
 
-              <IconButton size="small" aria-label="report" disabled={isDeleted}>
+              <IconButton size="small" aria-label="report" disabled={!isActive}>
                 <ReportIcon fontSize="small" />
                 <Typography variant="caption" ml={0.5}>
                   {comment.reportCount}
@@ -173,8 +191,8 @@ const CatsEyeComments = ({ comments = [] }) => {
 
               <Box flexGrow={1} />
 
-              {/* 삭제된 경우 버튼 숨김 (Holpa와 동일 UX) */}
-              {!isDeleted && (
+              {/* 🔹 활성 상태일 때만 삭제 버튼 노출 */}
+              {isActive && (
                 <Button
                   variant="outlined"
                   color="error"

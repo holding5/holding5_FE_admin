@@ -96,9 +96,10 @@ export default function HappyUserTable({ filters = {} }) {
   // ✅ 역할 필터 상태
   const [roleFilter, setRoleFilter] = useState("");
 
-  // ✅ 필터 유무에 따라 엔드포인트 스위치
-  //   (나중에 /admin/happyin/search 생기면 그때 분기 추가)
-  const endpoint = "/admin/happyin/table";
+  // ✅ 기본은 /table, 상세조건 있으면 /table/search 사용
+  const endpoint = useSearch
+    ? "/admin/happyin/table/search"
+    : "/admin/happyin/table";
 
   const {
     rows,
@@ -196,6 +197,7 @@ export default function HappyUserTable({ filters = {} }) {
   // ✅ 상세검색 적용: 파라미터 합치고 /search 전환
   const applyDetailFilters = (f) => {
     setDetailFilters(f);
+
     const hasFilter = Object.keys(f || {}).length > 0;
     setUseSearch(hasFilter);
     // createdFrom/createdTo, gender, religion, status, ageGroup(이미 ENUM으로 변환됨) 들어옴

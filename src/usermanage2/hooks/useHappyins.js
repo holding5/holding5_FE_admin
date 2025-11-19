@@ -207,6 +207,7 @@ export function useHappyinPosts(happyinId, options = {}) {
       category: it.category, // "홀파담벼락", "댓글"
       topic: it.topic, // "LIGHT_STORY" ...
       type: it.type, // "POST" | "COMMENT"
+      postId: it.postId,
       content: it.content,
       holpaScore: it.holpaScore,
       reportCount: it.reportCount,

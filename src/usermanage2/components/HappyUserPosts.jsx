@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useHappyinPosts } from "../hooks/useHappyins";
 import { labelMapper } from "../../utils/LabelMapper";
 
@@ -36,7 +36,12 @@ const formatDateTime = (value) => {
 
 const columns = [
   { key: "id", label: "번호", width: "2rem" },
-  { key: "category", label: "카테고리", width: "4rem" },
+  {
+    key: "category",
+    label: "카테고리",
+    width: "4rem",
+    valueFormatter: (v) => (v ? labelMapper("postCategoryTypeMap", v) : "-"),
+  },
   {
     key: "topic",
     label: "분류",
@@ -68,6 +73,36 @@ const sortableKeys = ["createdAt"];
 export default function HappyUserPosts() {
   const { id } = useParams();
   const happyinId = id;
+  const nav = useNavigate();
+
+  // ✅ 카테고리에 따라 디테일 페이지 path 계산
+  const getDetailPath = (row) => {
+    const cat = row.category;
+
+    switch (cat) {
+      case "HOLPA_WALL":
+      case "홀파담벼락":
+        return `/post/holpa/detail/${row.postId}`;
+
+      case "CATS_EYE":
+      case "캣츠아이":
+        return `/post/catseye/detail/${row.postId}`;
+
+      case "OVERCOME":
+      case "극복수기":
+        return `/post/overcome/detail/${row.postId}`;
+
+      default:
+        return null; // 알 수 없는 카테고리면 이동 안 함
+    }
+  };
+
+  const handleRowClick = (row) => {
+    const path = getDetailPath(row);
+    if (path) {
+      nav(path);
+    }
+  };
 
   const [sortConfig, setSortConfig] = useState({
     key: "createdAt",
@@ -161,7 +196,7 @@ export default function HappyUserPosts() {
             alignItems="center"
             sx={{ flexGrow: 1 }}
           >
-            {/* ✅ 카테고리 셀렉트 */}
+            {/* category */}
             <Select
               size="small"
               value={categoryFilter}
@@ -170,15 +205,16 @@ export default function HappyUserPosts() {
                 setPage(1);
               }}
               displayEmpty
-              sx={{ minWidth: 120, fontSize: "0.8rem" }}
+              sx={{ minWidth: 140, fontSize: "0.8rem" }}
             >
               <MenuItem value="">
                 <em>카테고리 전체</em>
               </MenuItem>
-              <MenuItem value="GROUP_HAPPYIN">그룹해피인</MenuItem>
-              <MenuItem value="BASIC_HAPPYIN">해피인</MenuItem>
-              <MenuItem value="STAR_HAPPYIN">스타해피인</MenuItem>
-              <MenuItem value="TEEN_HAPPYIN">또래해피인</MenuItem>
+              {categoryOptions.map((t) => (
+                <MenuItem key={t} value={t}>
+                  {labelMapper("postCategoryTypeMap", t)}
+                </MenuItem>
+              ))}
             </Select>
 
             {/* topic */}
@@ -296,7 +332,12 @@ export default function HappyUserPosts() {
                   </TableRow>
                 ) : (
                   filteredRows.map((row) => (
-                    <TableRow key={row.id} hover sx={{ cursor: "pointer" }}>
+                    <TableRow
+                      key={row.id}
+                      hover
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => handleRowClick(row)}
+                    >
                       {columns.map((col) => (
                         <TableCell
                           key={col.key}
