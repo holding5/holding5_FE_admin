@@ -339,7 +339,7 @@ export default function DreamUserTable({ filters = {} }) {
                     key={row.id}
                     hover
                     sx={{ cursor: "pointer" }}
-                    onClick={() => nav(`/user/dream/detail/${row.id}`)}
+                    onClick={() => nav(`/admin/user/dream/detail/${row.id}`)}
                   >
                     {columns.map((col) => (
                       <TableCell

@@ -382,7 +382,7 @@ export default function HappyUserTable({ filters = {} }) {
                     key={row.id}
                     hover
                     sx={{ cursor: "pointer" }}
-                    onClick={() => nav(`/user/happy/detail/${row.id}`)}
+                    onClick={() => nav(`/admin/user/happy/detail/${row.id}`)}
                   >
                     {columns.map((col) => (
                       <TableCell

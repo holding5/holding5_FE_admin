@@ -80,15 +80,15 @@ export default function DreamUserPosts() {
     switch (cat) {
       case "HOLPA_WALL":
       case "홀파담벼락":
-        return `/post/holpa/detail/${row.postId}`;
+        return `/admin/post/holpa/detail/${row.postId}`;
 
       case "CATS_EYE":
       case "캣츠아이":
-        return `/post/catseye/detail/${row.postId}`;
+        return `/admin/post/catseye/detail/${row.postId}`;
 
       case "OVERCOME":
       case "극복수기":
-        return `/post/overcome/detail/${row.postId}`;
+        return `/admin/post/overcome/detail/${row.postId}`;
 
       default:
         return null; // 알 수 없는 카테고리면 이동 안 함

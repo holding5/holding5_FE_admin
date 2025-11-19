@@ -334,7 +334,9 @@ export default function HappyUserApplicationTable() {
                       hover
                       sx={{ cursor: "pointer" }}
                       onClick={() =>
-                        nav(`/user/happy/application/detail/${row.userId}`)
+                        nav(
+                          `/admin/user/happy/application/detail/${row.userId}`
+                        )
                       }
                     >
                       {columns.map((col) => (
