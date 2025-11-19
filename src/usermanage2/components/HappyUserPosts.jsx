@@ -61,7 +61,25 @@ const columns = [
     width: "6rem",
     valueFormatter: formatDateTime,
   },
-  { key: "mediaFiles", label: "미디어", width: "80px" },
+  {
+    key: "mediaFiles",
+    label: "미디어",
+    width: "80px",
+    valueFormatter: (files) => {
+      if (!files || files.length === 0) return "-";
+      // 예: "이미지 2, 오디오 1" 같이 보여주기
+      const imageCount = files.filter((f) => f.kind === "IMAGE").length;
+      const audioCount = files.filter((f) => f.kind === "AUDIO").length;
+      const videoCount = files.filter((f) => f.kind === "VIDEO").length;
+
+      const parts = [];
+      if (imageCount) parts.push(`이미지 ${imageCount}`);
+      if (audioCount) parts.push(`오디오 ${audioCount}`);
+      if (videoCount) parts.push(`영상 ${videoCount}`);
+
+      return parts.join(", ");
+    },
+  },
   { key: "holpaScore", label: "홀파스코어", width: "3rem" },
   { key: "reportCount", label: "신고 수", width: "3rem" },
 

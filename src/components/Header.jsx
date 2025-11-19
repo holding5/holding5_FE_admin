@@ -11,12 +11,12 @@ const Header = () => {
   const { user, logout } = useAuth(); // 🔹 로그인 정보 / 로그아웃 함수
 
   const onClickHome = () => {
-    nav("/"); // "/" → App에서 /user/happy 로 리다이렉트 되도록 이미 설정
+    nav("/admin"); // "/" → App에서 /user/happy 로 리다이렉트 되도록 이미 설정
   };
 
   const handleLogout = () => {
     logout(); // 토큰/유저 정보 제거
-    nav("/login", { replace: true });
+    nav("/admin/login", { replace: true });
   };
 
   const displayName = user?.email || "관리자";
