@@ -86,7 +86,7 @@ const columns = [
   { key: "authorNickname", label: "작성자", width: "5rem" },
 ];
 
-const sortableKeys = ["createdAt"];
+const sortableKeys = [""];
 
 export default function HappyUserPosts() {
   const { id } = useParams();
@@ -150,15 +150,15 @@ export default function HappyUserPosts() {
   // 옵션은 현재 rows 기준으로 동적 생성 (필요하면 하드코딩도 가능)
   const categoryOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.category).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
   const topicOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.topic).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
   const typeOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.type).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
 
   // 🔍 셀렉트로 클라이언트 필터링
@@ -170,7 +170,7 @@ export default function HappyUserPosts() {
         if (typeFilter && row.type !== typeFilter) return false;
         return true;
       }),
-    [rows, categoryFilter, topicFilter, typeFilter]
+    [rows, categoryFilter, topicFilter, typeFilter],
   );
 
   const handleSort = (key) => {
@@ -367,7 +367,7 @@ export default function HappyUserPosts() {
                         >
                           {col.valueFormatter
                             ? col.valueFormatter(row[col.key])
-                            : row[col.key] ?? "-"}
+                            : (row[col.key] ?? "-")}
                         </TableCell>
                       ))}
                     </TableRow>

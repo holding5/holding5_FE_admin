@@ -1,5 +1,5 @@
-// src/hooks/useHolpaPosts.js
 import usePaginatedList from "../../hooks/usePaginatedList";
+import { formatDateTime } from "../../utils/formatDate";
 
 /**
  * 홀파 담벼락 게시물 목록 조회 훅
@@ -18,7 +18,7 @@ export default function useHolpaPosts(options = {}) {
       category: item.category,
       content: item.content,
       authorName: item.authorName,
-      createdAt: item.createdAt,
+      createdAt: formatDateTime(item.createdAt),
       likeCount: item.likeCount ?? 0,
       reportCount: item.reportCount ?? 0,
       commentCount: item.commentCount ?? 0,

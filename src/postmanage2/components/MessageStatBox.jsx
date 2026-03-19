@@ -11,7 +11,7 @@ const MessageStatBox = ({ label, count, color = "#1976d2" }) => {
         display: "inline-flex",
         alignItems: "center",
         gap: 1,
-        minWidth: 180,
+        minWidth: 130,
       }}
     >
       <Typography sx={{ fontWeight: 500 }}>{label}</Typography>

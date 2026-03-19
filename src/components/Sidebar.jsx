@@ -35,11 +35,15 @@ const Sidebar = () => {
     { text: "캣츠아이", path: "/admin/post/catseye" },
     { text: "극복수기", path: "/admin/post/overcome" },
     { text: "신고된 게시물 보기", path: "/admin/post/reported" },
-    // { text: "생명메시지", path: "/post/life" },
-    // { text: "희망메시지", path: "/post/hope" },
+    { text: "희망메시지", path: "/admin/post/hope" },
+    { text: "생명메시지", path: "/admin/post/life" },
     // { text: "축하메시지", path: "/post/congratulatory" },
     // { text: "공지사항", path: "/announcement" },
     // { text: "운영장에게 건의", path: "/recommendation" },
+  ];
+
+  const boatMenuItem = [
+    { text: "돛단배 리스트", path: "/admin/boat/boat-list" },
   ];
 
   // const messageMenuItem = [
@@ -116,17 +120,23 @@ const Sidebar = () => {
             ))}
           </Collapse>
 
-          {/* <ListItemButton onClick={() => setOpenBoat(!openBoat)}>
+          <ListItemButton onClick={() => setOpenBoat(!openBoat)}>
             <ListItemText primary="돛단배" />
             {openBoat ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openBoat} timeout="auto" unmountOnExit>
-            {["돛단배 리스트"].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
+            {boatMenuItem.map((item) => (
+              <ListItemButton
+                key={item.text}
+                sx={{ pl: 4 }}
+                onClick={() => {
+                  nav(item.path);
+                }}
+              >
+                <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
-          </Collapse> */}
+          </Collapse>
 
           {/* <ListItemButton onClick={() => setOpenCounsel(!openCounsel)}>
             <ListItemText primary="홀파 상담실" />

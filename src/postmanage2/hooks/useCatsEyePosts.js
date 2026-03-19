@@ -1,4 +1,5 @@
 import usePaginatedList from "../../hooks/usePaginatedList";
+import { formatDateTime } from "../../utils/formatDate";
 
 /**
  * 캣츠아이 게시물 목록 조회 훅
@@ -25,7 +26,7 @@ export default function useCatsEyePosts({
       address: item.address,
       content: item.content,
       nickname: item.nickname,
-      createdAt: item.createdAt,
+      createdAt: formatDateTime(item.createdAt),
       likeCount: item.likeCount,
       reportCount: item.reportCount,
       commentCount: item.commentCount,

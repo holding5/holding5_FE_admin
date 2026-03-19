@@ -37,8 +37,6 @@ import BannedUserPage from "./usermanage2/pages/BannedUserPage";
 
 // 게시물 관리
 import Post from "./postmanage2/pages/Post";
-import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
-import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
 import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessagePage";
 import HolpaPage from "./postmanage2/pages/HolpaPage";
 import HolpaDetailPage from "./postmanage2/pages/HolpaDetailPage";
@@ -48,6 +46,12 @@ import OvercomePage from "./postmanage2/pages/OvercomePage";
 import OvercomeDetailPage from "./postmanage2/pages/OvercomeDetailPage";
 import ReportedPostPage from "./postmanage2/pages/ReportedPostPage";
 import ReportedPostDetailPage from "./postmanage2/pages/ReportedPostDetailPage";
+import HopeMessagePage from "./postmanage2/pages/HopeMessagePage";
+import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
+
+// 돛단배 관리
+import Boat from "./boat/pages/Boat";
+import BoatPage from "./boat/pages/BoatPage";
 
 // 학교 관리
 import School from "./schoolmanage/pages/School";
@@ -153,6 +157,11 @@ function App() {
             path="congratulatory"
             element={<CongratulatoryMessagePage />}
           />
+        </Route>
+
+        {/* 학교 경찰서 / 학교 관리 */}
+        <Route path="boat" element={<Boat />}>
+          <Route path="boat-list" element={<BoatPage />}></Route>
         </Route>
 
         {/* 학교 경찰서 / 학교 관리 */}

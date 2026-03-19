@@ -1,5 +1,6 @@
 // src/pages/hooks/useOvercomePosts.js
 import usePaginatedList from "../../hooks/usePaginatedList";
+import { formatDateTime } from "../../utils/formatDate";
 
 /**
  * 극복수기 목록 조회 훅
@@ -28,7 +29,7 @@ export default function useOvercomePosts(options = {}) {
       content: item.content,
       // 테이블은 nickname 컬럼을 쓰고, API는 authorName을 주므로 이름 변경
       nickname: item.authorName,
-      createdAt: item.createdAt,
+      createdAt: formatDateTime(item.createdAt),
       likeCount: item.likeCount,
       commentCount: item.commentCount,
       reportCount: item.reportCount,
