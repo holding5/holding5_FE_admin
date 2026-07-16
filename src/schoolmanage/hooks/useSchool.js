@@ -1,5 +1,3 @@
-// useSchool.js
-
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { EDU_OFFICES, getSupportOffices } from "../utils/eduSupportData";
@@ -95,7 +93,7 @@ export function useSchoolList(options = {}) {
   const [page, setPage] = useState(options.initialPage ?? 1); // 1-base
   const [size, setSize] = useState(options.initialSize ?? 10);
   const [sort, setSort] = useState(
-    options.initialSort ?? { key: "name", dir: "asc" }
+    options.initialSort ?? { key: "name", dir: "asc" },
   );
 
   // 데이터
@@ -244,18 +242,21 @@ export function useCreateSchool() {
 /* *********************************************************************************** */
 
 /** 학교명 검색 */
-export async function searchSchools(keyword, limit = 20) {
+export async function searchSchools(
+  keyword,
+  limit = 20,
+  onlyWithoutPin = false,
+) {
   if (!keyword?.trim()) return [];
   const { data } = await axiosInstance.get("/admin/system/schools/search", {
-    params: { keyword, limit },
+    params: { keyword, limit, onlyWithoutPin },
   });
   return Array.isArray(data) ? data : [];
 }
-
 /** 학교 상세(선생 목록, 현재 PIN 포함) */
 export async function getSchoolDetail(schoolId) {
   const { data } = await axiosInstance.get(
-    `/admin/system/schools/${schoolId}/detail`
+    `/admin/system/schools/${schoolId}/detail`,
   );
   return data;
 }
@@ -301,7 +302,7 @@ export const searchDreamins = (q, page = 0, size = 10, onlyActive = true) =>
 /** 6자리 PIN 미리 생성(저장은 안 함) */
 export async function previewPin() {
   const { data } = await axiosInstance.post(
-    "/admin/system/schools/pin/preview"
+    "/admin/system/schools/pin/preview",
   );
   return data?.pinCode ?? "";
 }
@@ -310,7 +311,7 @@ export async function previewPin() {
 export async function registerMemberSchool(schoolId, body) {
   const { data } = await axiosInstance.post(
     `/admin/system/schools/${schoolId}/member-register`,
-    body
+    body,
   );
   return data;
 }
@@ -333,7 +334,7 @@ export function useMemberSchoolList(options = {}) {
   const [page, setPage] = useState(options.initialPage ?? 1); // 1-base UI
   const [size, setSize] = useState(options.initialSize ?? 25);
   const [sort, setSort] = useState(
-    options.initialSort ?? { key: "name", dir: "asc" }
+    options.initialSort ?? { key: "name", dir: "asc" },
   );
 
   // 데이터 상태
@@ -381,7 +382,7 @@ export function useMemberSchoolList(options = {}) {
     try {
       const res = await axiosInstance.get(
         "/admin/system/schools/overview/member",
-        { params, signal: controller.signal }
+        { params, signal: controller.signal },
       );
 
       // 응답 모양 두 가지 모두 지원:
@@ -390,7 +391,7 @@ export function useMemberSchoolList(options = {}) {
       const root = res?.data ?? {};
       const pageObj = Array.isArray(root.content)
         ? root
-        : root.schoolPage ?? {};
+        : (root.schoolPage ?? {});
 
       const content = Array.isArray(pageObj.content) ? pageObj.content : [];
       const mapped = content.filter(Boolean).map((it) => ({
@@ -484,7 +485,7 @@ export function useSchoolDetail(schoolId) {
           nickname: t.uid ?? t.nickname ?? "",
           name: t.name ?? "",
           phoneNumber: t.phoneNumber ?? "",
-        }))
+        })),
       );
     } catch (e) {
       if (e.name !== "CanceledError" && e.code !== "ERR_CANCELED") setError(e);
@@ -523,7 +524,7 @@ export async function registerSchoolTeachers(schoolId, userIds) {
     `/admin/system/schools/${schoolId}/teachers`,
     {
       userIds: Array.isArray(userIds) ? userIds : [],
-    }
+    },
   );
   return data;
 }

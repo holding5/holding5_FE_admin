@@ -24,6 +24,7 @@ import {
   registerSchoolTeachers,
   useDeleteSchoolTeachers,
 } from "../hooks/useSchool";
+import { formatPhone } from "../../utils/formatPhone";
 
 /* ------- 회원 검색 팝오버 (복수 선택) ------- */
 function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
@@ -123,7 +124,9 @@ function TeacherSearchPopover({ open, anchorEl, onClose, onPickMany }) {
               <ListItemText
                 primary={`${u.nickname ?? ""} (${u.name ?? "-"})`}
                 secondaryTypographyProps={{ component: "span" }}
-                secondary={<span>전화: {u.phoneNumber || "-"}</span>}
+                secondary={
+                  <span>전화: {formatPhone(u.phoneNumber) || "-"}</span>
+                }
               />
             </ListItemButton>
           ))}
@@ -166,7 +169,7 @@ const MemberSchoolProfile = () => {
   // ✅ 선생 해제 (API + UI 제거)
   const handleRemoveTeacher = async (teacher) => {
     const ok = window.confirm(
-      `"${teacher.name}" 선생님을 학교에서 삭제하시겠습니까?`
+      `"${teacher.name}" 선생님을 학교에서 삭제하시겠습니까?`,
     );
     if (!ok) return;
 
@@ -366,7 +369,9 @@ const MemberSchoolProfile = () => {
               >
                 <Box sx={{ minWidth: 100 }}>{t.nickname}</Box>
                 <Box sx={{ minWidth: 80 }}>{t.name}</Box>
-                <Box sx={{ minWidth: 140 }}>{t.phoneNumber}</Box>
+                <Box sx={{ minWidth: 140 }}>
+                  {formatPhone(t.phoneNumber) || "-"}
+                </Box>
 
                 <Box sx={{ flexGrow: 1 }} />
 

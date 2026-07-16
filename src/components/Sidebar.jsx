@@ -14,9 +14,7 @@ const Sidebar = () => {
   const [openMember, setOpenMember] = useState(false); // 회원 관리 열림
   const [openPost, setOpenPost] = useState(false); // 게시물 관리 열림
   const [openBoat, setOpenBoat] = useState(false); // 돛단배 열림
-  const [openCounsel, setOpenCounsel] = useState(false); // 홀파 상담실 열림
-  const [openEvent, setOpenEvent] = useState(false); // 이벤트 관리 열림
-  const [openMessage, setOpenMessage] = useState(false); // 메세지 발송 열림
+  const [openNote, setOpenNote] = useState(false); // 미카엘 노트 열림
   const [openSchool, setOpenSchool] = useState(false); // 시스템 관리 열림
   const [openSystem, setOpenSystem] = useState(false); // 시스템 관리 열림
 
@@ -26,8 +24,6 @@ const Sidebar = () => {
     { text: "드림인 관리", path: "/admin/user/dream" },
     { text: "일시정지 회원관리", path: "/admin/user/paused" },
     { text: "영구정지 회원관리", path: "/admin/user/banned" },
-    // { text: "카운셀러 관리", path: "/" },
-    // { text: "등급관리", path: "/rankmanage" },
   ];
 
   const postMenuItem = [
@@ -37,26 +33,17 @@ const Sidebar = () => {
     { text: "신고된 게시물 보기", path: "/admin/post/reported" },
     { text: "희망메시지", path: "/admin/post/hope" },
     { text: "생명메시지", path: "/admin/post/life" },
-    // { text: "축하메시지", path: "/post/congratulatory" },
-    // { text: "공지사항", path: "/announcement" },
-    // { text: "운영장에게 건의", path: "/recommendation" },
+    { text: "축하메시지", path: "/admin/post/congratulatory" },
+    { text: "공지사항", path: "/admin/post/notice" },
   ];
 
   const boatMenuItem = [
     { text: "돛단배 리스트", path: "/admin/boat/boat-list" },
   ];
 
-  // const messageMenuItem = [
-  //   { text: "메시지 리스트", path: "/message-list" },
-  //   { text: "메시지 발송", path: "/message-list/send" },
-  // ];
-
-  // const eventMenuItem = [
-  //   { text: "전체", path: "/event-list" },
-  //   { text: "가입환영인사", path: "/event-join" },
-  //   { text: "생일축하인사", path: "/event-birth" },
-  //   { text: "시험격려", path: "event-test" },
-  // ];
+  const noteMenuItem = [
+    { text: "미카엘 노트", path: "/admin/note/michaelnote" },
+  ];
 
   const schoolMenuItem = [
     { text: "학교, 경찰서 등록", path: "/admin/school-police" },
@@ -64,12 +51,9 @@ const Sidebar = () => {
   ];
 
   const systemMenuItem = [
-    // { text: "시스템 현황", path: "/system" },
-    // { text: "F & Q 관리", path: "/system/fnq" },
-    // { text: "해피인 안내", path: "/" },
-    // { text: "도움주신 분", path: "/system/helpers" },
-    // { text: "생명살림 집계", path: "/" },
     { text: "관리자 관리", path: "/admin/system/admin" },
+    { text: "건의하기 관리", path: "/admin/system/suggestion" },
+    { text: "도움주신 분 관리", path: "/admin/system/contributor" },
   ];
 
   return (
@@ -138,24 +122,12 @@ const Sidebar = () => {
             ))}
           </Collapse>
 
-          {/* <ListItemButton onClick={() => setOpenCounsel(!openCounsel)}>
-            <ListItemText primary="홀파 상담실" />
-            {openCounsel ? <ExpandLess /> : <ExpandMore />}
+          <ListItemButton onClick={() => setOpenNote(!openNote)}>
+            <ListItemText primary="미카엘 노트" />
+            {openNote ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <Collapse in={openCounsel} timeout="auto" unmountOnExit>
-            {["홀파상담실 리스트"].map((item) => (
-              <ListItemButton key={item} sx={{ pl: 4 }}>
-                <ListItemText primary={item} />
-              </ListItemButton>
-            ))}
-          </Collapse> */}
-
-          {/* <ListItemButton onClick={() => setOpenEvent(!openEvent)}>
-            <ListItemText primary="이벤트 관리" />
-            {openEvent ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={openEvent} timeout="auto" unmountOnExit>
-            {eventMenuItem.map((item) => (
+          <Collapse in={openNote} timeout="auto" unmountOnExit>
+            {noteMenuItem.map((item) => (
               <ListItemButton
                 key={item.text}
                 sx={{ pl: 4 }}
@@ -166,25 +138,7 @@ const Sidebar = () => {
                 <ListItemText primary={item.text} />
               </ListItemButton>
             ))}
-          </Collapse> */}
-
-          {/* <ListItemButton onClick={() => setOpenMessage(!openMessage)}>
-            <ListItemText primary="메시지 발송" />
-            {openMessage ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={openMessage} timeout="auto" unmountOnExit>
-            {messageMenuItem.map((item) => (
-              <ListItemButton
-                key={item.text}
-                sx={{ pl: 4 }}
-                onClick={() => {
-                  nav(item.path);
-                }}
-              >
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            ))}
-          </Collapse> */}
+          </Collapse>
 
           <ListItemButton onClick={() => setOpenSchool(!openSchool)}>
             <ListItemText primary="학교/경찰서 관리" />

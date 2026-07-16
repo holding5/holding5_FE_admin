@@ -1,38 +1,25 @@
-import { Stack, Box } from "@mui/material";
+import { Stack, Box, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
 import CongratulatoryMessageTabsNav from "../components/CongratulatoryMessageTabsNav";
 import MessageStatBox from "../components/MessageStatBox";
-import CongratulatoryMessageTable from "../components/CongratulatoryMessageTable"; // ✅ 테이블 import
-import CongratulatoryMessageInputForm from "../components/CongratulatoryMessageInputForm"; // ✅ 입력폼 import
-import { congratulatoryMessageMock } from "../utils/CongratulatoryMessageMock";
-
-const allCount = congratulatoryMessageMock.length;
-const accessionCount = congratulatoryMessageMock.filter(
-  (msg) => msg.classification === "가입환영"
-).length;
-const birthCount = congratulatoryMessageMock.filter(
-  (msg) => msg.classification === "생일축하"
-).length;
-const testCount = congratulatoryMessageMock.filter(
-  (msg) => msg.classification === "시험격려"
-).length;
+import CongratulatoryMessageTable from "../components/CongratulatoryMessageTable";
+import CongratulatoryMessageInputForm from "../components/CongratulatoryMessageInputForm";
+import { useCelebrationCounts } from "../hooks/useCelebrationMessages";
 
 const CongratulatoryMessagePage = () => {
   const [activeTab, setActiveTab] = useState("all");
 
+  // ✅ 유형별 건수 통계 (실 API)
+  const { counts, countsLoading, countsError, refetchCounts } = useCelebrationCounts();
+
   return (
     <Box component="section" sx={{ flexGrow: 1, mt: 3 }}>
-      {/* 탭 메뉴 */}
       <Box sx={{ mt: 3 }}>
-        <CongratulatoryMessageTabsNav
-          value={activeTab}
-          onChange={setActiveTab}
-        />
+        <CongratulatoryMessageTabsNav value={activeTab} onChange={setActiveTab} />
 
-        {/* create 탭이면 입력폼 렌더 */}
         {activeTab === "create" ? (
           <Box sx={{ mt: 3 }}>
-            <CongratulatoryMessageInputForm />
+            <CongratulatoryMessageInputForm onSuccess={() => refetchCounts()} />
           </Box>
         ) : (
           <>
@@ -42,30 +29,19 @@ const CongratulatoryMessagePage = () => {
               alignItems="center"
               sx={{ mt: 2, ml: 2 }}
             >
-              <MessageStatBox
-                label="전체 축하메시지"
-                count={allCount}
-                color="#1976d2"
-              />
-              <MessageStatBox
-                label="가입환영인사"
-                count={accessionCount}
-                color="#f39c12"
-              />
-              <MessageStatBox
-                label="생일축하인사"
-                count={birthCount}
-                color="#c0392b"
-              />
-              <MessageStatBox
-                label="시험격려"
-                count={testCount}
-                color="#29e913ff"
-              />
+              <MessageStatBox label="전체 축하메시지" count={counts.all} color="#1976d2" />
+              <MessageStatBox label="가입환영인사" count={counts.signup} color="#f39c12" />
+              <MessageStatBox label="생일축하인사" count={counts.birthday} color="#c0392b" />
+              <MessageStatBox label="시험격려" count={counts.exam} color="#29e913ff" />
+              {countsLoading && <CircularProgress size={18} />}
+              {countsError && (
+                <Typography sx={{ fontSize: 12, color: "error.main" }}>
+                  통계 조회 실패
+                </Typography>
+              )}
             </Stack>
 
             <Box sx={{ mt: 2 }}>
-              {/* ✅ 테이블에 필터값 전달 */}
               <CongratulatoryMessageTable filter={activeTab} />
             </Box>
           </>

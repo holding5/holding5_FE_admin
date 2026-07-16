@@ -5,29 +5,65 @@ import {
   TextField,
   Button,
   Stack,
-  IconButton,
+  CircularProgress,
+  Link,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
-import SkipNextIcon from "@mui/icons-material/SkipNext";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import {
+  useCelebrationUpdate,
+  useCelebrationDelete,
+  useCelebrationDetail,
+} from "../hooks/useCelebrationMessages";
 
-const CongratulatoryMessageDetail = ({ anchorEl, onClose, row }) => {
+/**
+ * 축하/시험격려 메시지 상세 팝오버.
+ * - 제목/내용 조회 및 수정(PUT), 삭제(DELETE)
+ * - 상세 조회(GET /{id})로 첨부파일 로드 후 재생/열기
+ */
+const CongratulatoryMessageDetail = ({ anchorEl, onClose, row, onChanged }) => {
   const open = Boolean(anchorEl);
 
-  // ✅ row 변경 시 폼 값 세팅
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState(`잠깐만 내 이야기를 한번 들어 보실래요.\n내 음성파일이 여러분에게 도움이 되었기를 바라며 녹음 했습니다.`);
+  const [content, setContent] = useState("");
+  const [media, setMedia] = useState([]);
+
+  const { updateCelebration, updating } = useCelebrationUpdate();
+  const { deleteCelebration, deleting } = useCelebrationDelete();
+  const { fetchDetail, loading: detailLoading } = useCelebrationDetail();
 
   useEffect(() => {
-    if (row) {
-      setTitle(row.title || "");
-      // content는 서버 데이터가 생기면 row.content로 교체
-    }
+    if (!row) return;
+    setTitle(row.title || "");
+    setContent(row.raw?.content ?? row.content ?? "");
+    setMedia([]);
+    fetchDetail(row.id)
+      .then((d) => setMedia(d?.mediaFiles ?? []))
+      .catch(() => setMedia([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row]);
 
+  const handleUpdate = async () => {
+    try {
+      await updateCelebration(row.id, { title, content });
+      onChanged?.();
+      onClose?.();
+    } catch (e) {
+      alert("수정에 실패했습니다.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("이 축하메시지를 삭제하시겠습니까?")) return;
+    try {
+      await deleteCelebration(row.id);
+      onChanged?.();
+      onClose?.();
+    } catch (e) {
+      alert("삭제에 실패했습니다.");
+    }
+  };
+
   if (!row) {
-    // anchor는 있는데 row가 아직 없을 때 깔끔히 처리
     return (
       <Popover open={open} anchorEl={anchorEl} onClose={onClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}>
@@ -46,23 +82,28 @@ const CongratulatoryMessageDetail = ({ anchorEl, onClose, row }) => {
       <Box sx={{ p: 2, minWidth: 650, maxWidth: 800 }}>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
           <Typography>분류: <b>{row.classification}</b></Typography>
-          <Typography>종교: <b>{row.religion}</b></Typography>
-          <IconButton size="small"><SkipPreviousIcon /></IconButton>
-          <IconButton size="small"><SkipNextIcon /></IconButton>
         </Stack>
 
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-          <Typography>
-            파일명:{" "}
-            <span style={{ color: "#1976d2", cursor: "pointer" }}>
-              {row.file}
-            </span>
-          </Typography>
-          <IconButton size="small"><PlayArrowIcon /></IconButton>
-          <Typography>파일크기: -</Typography>
-          <Typography>시간: -</Typography>
-          <Button variant="outlined" size="small">파일찾기</Button>
-        </Stack>
+        {/* 첨부파일 */}
+        <Box sx={{ mb: 1 }}>
+          <Typography sx={{ mb: 0.5 }}>첨부파일</Typography>
+          {detailLoading && <CircularProgress size={16} />}
+          {!detailLoading && media.length === 0 && (
+            <Typography sx={{ fontSize: 13, color: "text.secondary" }}>첨부파일 없음</Typography>
+          )}
+          {!detailLoading && media.map((m) => (
+            <Stack key={m.id} direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+              <Typography sx={{ fontSize: 13 }}>{m.originalFilename}</Typography>
+              {String(m.mediaType || "").startsWith("audio") ? (
+                <audio controls src={m.storageUrl} style={{ height: 28 }} />
+              ) : String(m.mediaType || "").startsWith("image") ? (
+                <img src={m.storageUrl} alt={m.originalFilename} style={{ maxHeight: 60 }} />
+              ) : (
+                <Link href={m.storageUrl} target="_blank" rel="noreferrer">열기</Link>
+              )}
+            </Stack>
+          ))}
+        </Box>
 
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
           <Typography>등록일시: {row.date}</Typography>
@@ -91,11 +132,22 @@ const CongratulatoryMessageDetail = ({ anchorEl, onClose, row }) => {
         </Box>
 
         <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 2 }}>
-          <Button variant="contained" sx={{ backgroundColor: "#2e3b4e" }}>수정</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#d35400" }}>삭제</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#f1c40f", color: "#000" }}>보류</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#c0392b" }}>거절</Button>
-          <Button variant="contained" sx={{ backgroundColor: "#27ae60" }}>승인</Button>
+          <Button
+            variant="contained"
+            onClick={handleUpdate}
+            disabled={updating || deleting}
+            sx={{ backgroundColor: "#2e3b4e" }}
+          >
+            {updating ? <CircularProgress size={18} sx={{ color: "#fff" }} /> : "수정"}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleDelete}
+            disabled={updating || deleting}
+            sx={{ backgroundColor: "#d35400" }}
+          >
+            {deleting ? <CircularProgress size={18} sx={{ color: "#fff" }} /> : "삭제"}
+          </Button>
           <Button
             variant="contained"
             onClick={onClose}

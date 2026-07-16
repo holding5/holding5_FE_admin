@@ -28,6 +28,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useHappyinApplications } from "../hooks/useHappyins";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatPhone } from "../../utils/formatPhone";
 import HappyUserForceCreateDialog from "../components/HappyUserForceCreateDialog";
 
 const columns = [
@@ -46,18 +47,47 @@ const columns = [
   },
   { key: "nickname", label: "닉네임", width: "100px" },
   { key: "birthDate", label: "생년월일", width: "100px" },
-  { key: "phoneNumber", label: "전화번호", width: "150px" },
+  {
+    key: "phoneNumber",
+    label: "전화번호",
+    width: "150px",
+    valueFormatter: (v) => formatPhone(v) || "-",
+  },
 
-  { key: "jobTitle", label: "직장명", width: "80px" },
-  { key: "career", label: "경력사항", width: "100px" },
-  { key: "selfIntroduction", label: "자기소개", width: "100px" },
-  { key: "motivation", label: "동기", width: "100px" },
+  {
+    key: "jobTitle",
+    label: "직장명",
+    width: "80px",
+    valueFormatter: (v) =>
+      v ? (v.length > 15 ? v.slice(0, 15) + "..." : v) : "-",
+  },
+  {
+    key: "career",
+    label: "경력사항",
+    width: "100px",
+    valueFormatter: (v) =>
+      v ? (v.length > 15 ? v.slice(0, 15) + "..." : v) : "-",
+  },
+  {
+    key: "selfIntroduction",
+    label: "자기소개",
+    width: "100px",
+    valueFormatter: (v) =>
+      v ? (v.length > 15 ? v.slice(0, 15) + "..." : v) : "-",
+  },
+  {
+    key: "motivation",
+    label: "동기",
+    width: "100px",
+    valueFormatter: (v) =>
+      v ? (v.length > 15 ? v.slice(0, 15) + "..." : v) : "-",
+  },
   { key: "createdAt", label: "신청일자", width: "100px" },
   {
     key: "hasAttachment",
     label: "첨부파일",
     width: "90px",
-    valueFormatter: (v) => (v ? "있음" : "없음"),
+    valueFormatter: (v) => (v ? "O" : "X"),
   },
 ];
 
@@ -335,7 +365,7 @@ export default function HappyUserApplicationTable() {
                       sx={{ cursor: "pointer" }}
                       onClick={() =>
                         nav(
-                          `/admin/user/happy/application/detail/${row.userId}`
+                          `/admin/user/happy/application/detail/${row.userId}`,
                         )
                       }
                     >
@@ -346,23 +376,27 @@ export default function HappyUserApplicationTable() {
                           sx={{
                             border: "1px solid #ccc",
                             fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: col.width,
                             color:
                               col.key === "status"
                                 ? row.status === "DIP"
                                   ? "#9E9E9E" // 대기 - 회색
                                   : row.status === "ACTIVATED"
-                                  ? "#4CAF50" // 승인 - 초록
-                                  : row.status === "SUSPENDED"
-                                  ? "#FB8C00" // 보류 - 주황
-                                  : row.status === "DEACTIVATED"
-                                  ? "#F44336" // 거절 - 빨강
-                                  : "inherit"
+                                    ? "#4CAF50" // 승인 - 초록
+                                    : row.status === "SUSPENDED"
+                                      ? "#FB8C00" // 보류 - 주황
+                                      : row.status === "DEACTIVATED"
+                                        ? "#F44336" // 거절 - 빨강
+                                        : "inherit"
                                 : "inherit",
                           }}
                         >
                           {col.valueFormatter
                             ? col.valueFormatter(row[col.key])
-                            : row[col.key] ?? "-"}
+                            : (row[col.key] ?? "-")}
                         </TableCell>
                       ))}
                     </TableRow>

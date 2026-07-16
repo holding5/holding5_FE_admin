@@ -41,7 +41,7 @@ function SchoolSearchPopover({ open, anchorEl, onClose, onPick }) {
   const runSearch = async () => {
     setLoading(true);
     try {
-      const list = await searchSchools(keyword, 20);
+      const list = await searchSchools(keyword, 20, true);
       // UI에서 보기 좋게 키만 살짝 정리
       const mapped = list.map((r) => ({
         id: r.id,
@@ -306,7 +306,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
 
       // 중복 제거
       const teacherUserIds = Array.from(
-        new Set([...teacherIdsFromSelect, ...teacherIdsFromDreamin])
+        new Set([...teacherIdsFromSelect, ...teacherIdsFromDreamin]),
       );
 
       const body = {
@@ -326,7 +326,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
       const status = e?.response?.status;
       if (status === 409) {
         alert(
-          "이미 사용 중인 PIN이거나 등록 충돌이 발생했습니다. 다시 시도해 주세요."
+          "이미 사용 중인 PIN이거나 등록 충돌이 발생했습니다. 다시 시도해 주세요.",
         );
       } else {
         alert("등록 중 오류가 발생했습니다.");
@@ -535,7 +535,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
           </Stack>
 
           {/* 담당 선생님(선택) */}
-          <FormControl size="small" fullWidth disabled={!form.schoolId}>
+          {/* <FormControl size="small" fullWidth disabled={!form.schoolId}>
             <InputLabel id="teacher-select-label">
               담당 선생님 (선택)
             </InputLabel>
@@ -566,7 +566,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
             <Typography variant="caption" color="text.secondary">
               이 학교에 등록된 선생님 정보가 없습니다.
             </Typography>
-          )}
+          )} */}
 
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography variant="subtitle2" sx={{ minWidth: 120 }}>
@@ -591,7 +591,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
                   label={`${u.nickname ?? ""} (${u.name ?? "-"})`}
                   onDelete={() =>
                     setExtraDreamins((prev) =>
-                      prev.filter((x) => x.id !== u.id)
+                      prev.filter((x) => x.id !== u.id),
                     )
                   }
                 />

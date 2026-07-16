@@ -23,12 +23,18 @@ import Pagination from "@mui/material/Pagination";
 import { Clear, Search } from "@mui/icons-material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import useAdmins from "../hooks/useAdmin";
+import { formatPhone } from "../../utils/formatPhone";
 
 const columns = [
   { key: "__manage__", label: "관리", width: "3.5rem" },
   { key: "id", label: "번호", width: "4.5rem" },
   { key: "name", label: "이름", width: "8rem" },
-  { key: "phoneNumber", label: "전화", width: "10rem" },
+  {
+    key: "phoneNumber",
+    label: "전화",
+    width: "10rem",
+    valueFormatter: formatPhone,
+  },
   { key: "email", label: "ID(이메일)", width: "14rem" },
 ];
 
@@ -77,7 +83,7 @@ export default function AdminTable({ onPick }) {
   // 일부 백엔드가 totalPages=0 등 비정상 응답을 줄 때 안전 가드
   const safeTotalPages = Math.max(
     1,
-    totalPages || Math.ceil((totalElements || rows.length) / (size || 10)) || 1
+    totalPages || Math.ceil((totalElements || rows.length) / (size || 10)) || 1,
   );
 
   const clearKeyword = () => {
@@ -110,7 +116,7 @@ export default function AdminTable({ onPick }) {
       if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
       return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(
         7,
-        11
+        11,
       )}`;
     }
 
@@ -294,7 +300,7 @@ export default function AdminTable({ onPick }) {
                                 onPick?.({
                                   ...row,
                                   phoneNumber: autoFormatPhone(
-                                    row.phoneNumber || ""
+                                    row.phoneNumber || "",
                                   ),
                                 })
                               }
@@ -311,11 +317,11 @@ export default function AdminTable({ onPick }) {
                         <a
                           href={`tel:${String(row.phoneNumber).replace(
                             /[^0-9+]/g,
-                            ""
+                            "",
                           )}`}
                           style={{ color: "inherit", textDecoration: "none" }}
                         >
-                          {row.phoneNumber}
+                          {formatPhone(row.phoneNumber)}
                         </a>
                       );
                     }

@@ -138,12 +138,12 @@ const BoatDetail = ({ anchorEl, onClose, row }) => {
                       <TableCell align="center" sx={{ fontSize: 12 }}>
                         수신일시
                       </TableCell>
-                      <TableCell align="center" sx={{ fontSize: 12 }}>
+                      {/* <TableCell align="center" sx={{ fontSize: 12 }}>
                         응원여부
                       </TableCell>
                       <TableCell align="center" sx={{ fontSize: 12 }}>
                         만료여부
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -158,7 +158,7 @@ const BoatDetail = ({ anchorEl, onClose, row }) => {
                         <TableCell align="center" sx={{ fontSize: 12 }}>
                           {formatDateTime(j.receivedAt)}
                         </TableCell>
-                        <TableCell align="center" sx={{ fontSize: 12 }}>
+                        {/* <TableCell align="center" sx={{ fontSize: 12 }}>
                           <Chip
                             label={j.responded ? "응원" : "미응원"}
                             size="small"
@@ -171,7 +171,7 @@ const BoatDetail = ({ anchorEl, onClose, row }) => {
                             size="small"
                             color={j.expired ? "error" : "default"}
                           />
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>

@@ -1,181 +1,104 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import {
-  Box,
-  Typography,
-  Stack,
-  TextField,
-  Divider,
-  Paper,
-  MenuItem,
-  Button,
-  Grid,
-} from "@mui/material";
+import { Box, Typography, Stack, Divider, Paper, Button } from "@mui/material";
 import { useDreaminProfile } from "../hooks/useDreamins";
 import AdminModal from "./AdminModal";
+import { formatPhone } from "../../utils/formatPhone";
+
+// 라벨+값 단일 항목
+const InfoItem = ({ label, value }) => (
+  <Box sx={{ bgcolor: "grey.50", borderRadius: 1, p: 1.25 }}>
+    <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 0.25 }}>
+      {label}
+    </Typography>
+    <Typography sx={{ fontSize: 15, fontWeight: 500, color: "text.primary" }}>
+      {value || "-"}
+    </Typography>
+  </Box>
+);
 
 const DreamUserProfile = () => {
   const { id } = useParams();
-  const { form, setForm, histories, loading, refetch, rawStatus, rawRoles } =
+  const { form, histories, loading, refetch, rawStatus, rawRoles } =
     useDreaminProfile(id);
 
   const [adminAnchorEl, setAdminAnchorEl] = useState(null);
 
-  const handleAdminClick = (event) => {
-    setAdminAnchorEl(event.currentTarget);
-  };
-
-  const handleAdminClose = () => {
-    setAdminAnchorEl(null);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
   if (loading || !form) return <Box sx={{ p: 3 }}>불러오는 중...</Box>;
 
+  // 닉네임 이니셜 (첫 글자)
+  const initial = (form.nickname || form.name || "?").charAt(0);
+
   return (
-    <Paper sx={{ p: 3 }}>
-      <Stack spacing={2}>
-        <Grid container spacing={3}>
-          {/* 가로 전체 쓰는 항목 */}
-          <Grid item xs={12}>
-            <TextField
-              name="email"
-              label="이메일"
-              value={form.email}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
+    <Paper sx={{ p: 2.5, maxWidth: 1500, mx: "auto" }}>
+      {/* 상단 프로필 헤더 */}
+      <Box
+        sx={{
+          bgcolor: "#E6F1FB",
+          borderRadius: 2,
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: 52,
+            height: 52,
+            borderRadius: "50%",
+            bgcolor: "#185FA5",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 18,
+            fontWeight: 500,
+            color: "#E6F1FB",
+            flexShrink: 0,
+          }}
+        >
+          {initial}
+        </Box>
+        <Box>
+          <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#042C53" }}>
+            {form.nickname || "-"}
+          </Typography>
+          <Typography sx={{ fontSize: 15, color: "#185FA5" }}>
+            {form.email || "-"} · {formatPhone(form.phoneNumber) || "-"}
+          </Typography>
+        </Box>
+      </Box>
 
-          {/* 반 칸(2열) 배치 */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="nickname"
-              label="닉네임"
-              value={form.nickname}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="gender"
-              label="성별"
-              value={form.gender}
-              onChange={handleChange}
-              select
-              fullWidth
-              size="small"
-              margin="dense"
-            >
-              {["남", "여"].map((opt) => (
-                <MenuItem key={opt} value={opt}>
-                  {opt}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+      {/* 정보 그리드 */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 1,
+          mb: 2,
+        }}
+      >
+        <InfoItem label="이름" value={form.name} />
+        <InfoItem label="성별" value={form.gender} />
+        <InfoItem label="생년월일" value={form.birthdate} />
+        <InfoItem label="종교" value={form.religion} />
+        <InfoItem label="직업" value={form.job} />
 
-          {/* 3열 배치 예시: md=4 */}
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              name="name"
-              label="이름"
-              value={form.name}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              name="birthdate"
-              label="생년월일"
-              value={form.birthdate}
-              onChange={handleChange}
-              placeholder="YYYY-MM-DD"
-              fullWidth
-              size="small"
-              margin="dense"
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              name="phoneNumber"
-              label="전화번호"
-              value={form.phoneNumber}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
+        <InfoItem label="학교" value={form.school} />
+      </Box>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="school"
-              label="학교"
-              value={form.school}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="religion"
-              label="종교"
-              value={form.religion}
-              onChange={handleChange}
-              select
-              fullWidth
-              size="small"
-              margin="dense"
-            >
-              {["기독교", "불교", "천주교", "무교", "기타"].map((opt) => (
-                <MenuItem key={opt} value={opt}>
-                  {opt}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              name="job"
-              label="직업"
-              value={form.job}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-              margin="dense"
-            />
-          </Grid>
-        </Grid>
-      </Stack>
+      <Divider sx={{ my: 2 }} />
 
-      <Divider sx={{ my: 3 }} />
-
+      {/* 경력 변경 이력 */}
       <Typography variant="h6" gutterBottom>
         경력 변경 이력
       </Typography>
-      {/* 👇 이 상자 안에서만 스크롤 */}
       <Box
         sx={{
-          maxHeight: 200, // 원하는 높이로 조절
+          maxHeight: 400,
           overflowY: "auto",
-          pr: 1, // 스크롤바 공간만큼 우측 여백
-          // 선택: 얇은 스크롤바
+          pr: 1,
           "&::-webkit-scrollbar": { width: 6 },
           "&::-webkit-scrollbar-thumb": { bgcolor: "divider", borderRadius: 3 },
         }}
@@ -189,13 +112,13 @@ const DreamUserProfile = () => {
         </Stack>
       </Box>
 
-      <Divider sx={{ my: 3 }} />
+      <Divider sx={{ my: 2 }} />
 
-      <Stack direction="row" spacing={2} justifyContent="flex-end">
+      <Stack direction="row" justifyContent="flex-end">
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleAdminClick}
+          onClick={(e) => setAdminAnchorEl(e.currentTarget)}
         >
           행정관리
         </Button>
@@ -203,7 +126,7 @@ const DreamUserProfile = () => {
 
       <AdminModal
         anchorEl={adminAnchorEl}
-        onClose={handleAdminClose}
+        onClose={() => setAdminAnchorEl(null)}
         userId={id}
         currentStatus={rawStatus}
         currentRoles={rawRoles}

@@ -15,13 +15,13 @@ import {
   Tooltip,
   Typography,
   CircularProgress,
-  // 🔹 추가
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ReplayIcon from "@mui/icons-material/Replay";
-import { searchMembers } from "../hooks/useAdmin"; // ⬅️ 훅에서 API 사용
+import { searchMembers } from "../hooks/useAdmin";
+import { formatPhone } from "../../utils/formatPhone";
 
 /**
  * props
@@ -114,7 +114,7 @@ export default function AdminInputForm({
       if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
       return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(
         7,
-        11
+        11,
       )}`;
     }
 
@@ -244,7 +244,7 @@ export default function AdminInputForm({
             name: row?.name ?? prev.name,
             email: row?.email ?? prev.email,
             phoneNumber: autoFormatPhone(
-              row?.phoneNumber ?? prev.phoneNumber ?? ""
+              row?.phoneNumber ?? prev.phoneNumber ?? "",
             ),
           }));
           setOpenPicker(false);
@@ -314,7 +314,7 @@ function MemberPickerDialog({ open, onClose, onPick }) {
               <ListItemButton key={r.id} onClick={() => onPick?.(r)}>
                 <ListItemText
                   primary={`${r.name ?? "-"}  ·  ${r.email ?? "-"}`}
-                  secondary={r.phoneNumber ?? ""}
+                  secondary={formatPhone(r.phoneNumber) ?? ""}
                 />
               </ListItemButton>
             ))}

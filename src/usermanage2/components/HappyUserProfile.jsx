@@ -1,17 +1,20 @@
-// src/pages/components/HappyUserProfile.jsx
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import {
-  Box,
-  Typography,
-  Stack,
-  TextField,
-  Divider,
-  Paper,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Stack, Divider, Paper, Button } from "@mui/material";
 import { useHappyinProfile } from "../hooks/useHappyins";
 import AdminModal from "./AdminModal";
+import { formatPhone } from "../../utils/formatPhone";
+
+const InfoItem = ({ label, value }) => (
+  <Box sx={{ bgcolor: "grey.50", borderRadius: 1, p: 1.25 }}>
+    <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 0.25 }}>
+      {label}
+    </Typography>
+    <Typography sx={{ fontSize: 15, fontWeight: 500, color: "text.primary" }}>
+      {value || "-"}
+    </Typography>
+  </Box>
+);
 
 const HappyUserProfile = () => {
   const { id } = useParams();
@@ -20,128 +23,110 @@ const HappyUserProfile = () => {
 
   const [adminAnchorEl, setAdminAnchorEl] = useState(null);
 
-  const handleAdminClick = (event) => {
-    setAdminAnchorEl(event.currentTarget);
-  };
-
-  const handleAdminClose = () => {
-    setAdminAnchorEl(null);
-  };
-
   if (loading || !form) return <Box sx={{ p: 3 }}>불러오는 중...</Box>;
 
-  // 공통 readOnly 스타일
-  const readOnlyProps = {
-    InputProps: { readOnly: true },
-    size: "small",
-    margin: "dense",
-    fullWidth: true,
-  };
+  const initial = (form.nickname || form.name || "?").charAt(0);
 
   return (
-    <Paper sx={{ p: 3 }}>
-      {/* ===== 기본 정보 ===== */}
-      <Stack spacing={2}>
-        {/* 1행: 이름, 닉네임, 성별, 전화번호 */}
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="이름"
-            value={form.name ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="닉네임"
-            value={form.nickname ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="성별"
-            value={form.gender ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="생년월일"
-            value={form.birthdate ?? ""}
-            placeholder="YYYY-MM-DD"
-            {...readOnlyProps}
-            InputLabelProps={{ shrink: true }}
-            sx={{ maxWidth: 260 }}
-          />
-          <TextField
-            label="전화번호"
-            value={form.phoneNumber ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-        </Stack>
+    <Paper sx={{ p: 2.5, maxWidth: 1500, mx: "auto" }}>
+      {/* 상단 프로필 헤더 */}
+      <Box
+        sx={{
+          bgcolor: "#E6F1FB",
+          borderRadius: 2,
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: 52,
+            height: 52,
+            borderRadius: "50%",
+            bgcolor: "#185FA5",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 18,
+            fontWeight: 500,
+            color: "#E6F1FB",
+            flexShrink: 0,
+          }}
+        >
+          {initial}
+        </Box>
+        <Box>
+          <Typography sx={{ fontSize: 18, fontWeight: 500, color: "#042C53" }}>
+            {form.nickname || "-"}
+          </Typography>
+          <Typography sx={{ fontSize: 15, color: "#185FA5" }}>
+            {form.email || "-"} · {formatPhone(form.phoneNumber) || "-"}
+          </Typography>
+        </Box>
+      </Box>
 
-        {/* 2행: 이메일, 종교, 학교/직장, 직업 */}
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="이메일"
-            value={form.email ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="종교"
-            value={form.religion ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="학교/직장"
-            value={form.school ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="직업"
-            value={form.workface ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-        </Stack>
+      {/* 정보 그리드 */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 1,
+          mb: 2,
+        }}
+      >
+        <InfoItem label="이름" value={form.name} />
+        <InfoItem label="성별" value={form.gender} />
+        <InfoItem label="생년월일" value={form.birthdate} />
+        <InfoItem label="종교" value={form.religion} />
+        <InfoItem label="직업" value={form.workface} />
+        <InfoItem label="학교/직장" value={form.school} />
+        <InfoItem label="해피인 분류" value={form.serviceRole} />
+        {/* <InfoItem label="그룹 카테고리" value={form.groupCategory} /> */}
+        <Box sx={{ gridColumn: "span 1" }} />
+        <Box
+          sx={{
+            gridColumn: "span 3",
+            bgcolor: "grey.50",
+            borderRadius: 1,
+            p: 1.25,
+          }}
+        >
+          <Typography sx={{ fontSize: 13, color: "text.secondary", mb: 0.25 }}>
+            해피인 소개
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: 15,
+              fontWeight: 500,
+              color: "text.primary",
+              maxHeight: "4.8em", // 약 3줄
+              overflowY: "auto",
+              lineHeight: 1.6,
+              whiteSpace: "pre-wrap",
+              "&::-webkit-scrollbar": { width: 4 },
+              "&::-webkit-scrollbar-thumb": {
+                bgcolor: "divider",
+                borderRadius: 2,
+              },
+            }}
+          >
+            {form.greetingMessage || "-"}
+          </Typography>
+        </Box>
+      </Box>
 
-        {/* 3행: 역할, 그룹카테고리 */}
-        <Stack direction="row" spacing={2}>
-          <TextField
-            label="해피인 분류"
-            value={form.serviceRole ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            label="그룹 카테고리"
-            value={form.groupCategory ?? ""}
-            {...readOnlyProps}
-            sx={{ flex: 1 }}
-          />
-        </Stack>
+      <Divider sx={{ my: 2 }} />
 
-        <TextField
-          label="해피인 소개"
-          value={form.greetingMessage ?? ""}
-          {...readOnlyProps}
-          multiline
-          minRows={4} // 최소 3줄 정도
-          maxRows={6} // 선택: 너무 길면 스크롤
-          sx={{ width: "100%" }}
-        />
-      </Stack>
-
-      <Divider sx={{ my: 3 }} />
-
-      {/* ===== 이력 ===== */}
+      {/* 경력 변경 이력 */}
       <Typography variant="h6" gutterBottom>
         경력 변경 이력
       </Typography>
       <Box
         sx={{
-          maxHeight: 200,
+          maxHeight: 400,
           overflowY: "auto",
           pr: 1,
           "&::-webkit-scrollbar": { width: 6 },
@@ -157,14 +142,13 @@ const HappyUserProfile = () => {
         </Stack>
       </Box>
 
-      <Divider sx={{ my: 3 }} />
+      <Divider sx={{ my: 2 }} />
 
-      {/* ===== 행정 관리 버튼 ===== */}
-      <Stack direction="row" spacing={2} justifyContent="flex-end">
+      <Stack direction="row" justifyContent="flex-end">
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleAdminClick}
+          onClick={(e) => setAdminAnchorEl(e.currentTarget)}
         >
           행정관리
         </Button>
@@ -172,7 +156,7 @@ const HappyUserProfile = () => {
 
       <AdminModal
         anchorEl={adminAnchorEl}
-        onClose={handleAdminClose}
+        onClose={() => setAdminAnchorEl(null)}
         userId={id}
         currentStatus={rawStatus}
         currentRoles={rawRoles}

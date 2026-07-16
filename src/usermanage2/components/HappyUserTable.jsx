@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import DetailSearchBar from "./DetailSearchBar";
 import useHappyins from "../hooks/useHappyins";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatPhone } from "../../utils/formatPhone";
 
 const columns = [
   { key: "id", label: "번호", width: "50px" },
@@ -55,7 +56,12 @@ const columns = [
   { key: "nickname", label: "닉네임", width: "100px" },
   { key: "name", label: "이름", width: "100px" },
   { key: "createdAt", label: "가입일", width: "100px" },
-  { key: "phoneNumber", label: "전화번호", width: "150px" },
+  {
+    key: "phoneNumber",
+    label: "전화번호",
+    width: "150px",
+    valueFormatter: formatPhone,
+  },
   { key: "email", label: "이메일", width: "100px" },
   {
     key: "status",
@@ -396,14 +402,14 @@ export default function HappyUserTable({ filters = {} }) {
                               ? row[col.key] === "SUSPENDED"
                                 ? "orange" // 일시정지
                                 : row[col.key] === "BANNED"
-                                ? "red" // 영구정지
-                                : "inherit"
+                                  ? "red" // 영구정지
+                                  : "inherit"
                               : "inherit",
                         }}
                       >
                         {col.valueFormatter
                           ? col.valueFormatter(row[col.key])
-                          : row[col.key] ?? "-"}
+                          : (row[col.key] ?? "-")}
                       </TableCell>
                     ))}
                   </TableRow>

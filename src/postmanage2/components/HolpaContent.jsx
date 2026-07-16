@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { deleteHolpaPostContent } from "../hooks/useHolpaPostDetail";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatDateTime } from "../../utils/formatDate";
 
 const HolpaContent = ({ post }) => {
   const {
@@ -28,7 +29,7 @@ const HolpaContent = ({ post }) => {
   } = post;
 
   const [status, setStatus] = useState(
-    initialStatus ?? (initialActivated ? "ACTIVATED" : "SUSPENDED")
+    initialStatus ?? (initialActivated ? "ACTIVATED" : "SUSPENDED"),
   );
 
   if (!post) return null;
@@ -194,7 +195,7 @@ const HolpaContent = ({ post }) => {
       {/* 부가 정보 */}
       <Stack direction="row" spacing={4} mt={2} justifyContent={"flex-end"}>
         <Typography variant="caption">
-          작성일: {new Date(createdAt).toLocaleString()}
+          작성일: {formatDateTime(createdAt)}
         </Typography>
         <Typography variant="caption">좋아요: {likeCount}</Typography>
         <Typography variant="caption">신고: {reportCount}</Typography>

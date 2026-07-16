@@ -219,7 +219,14 @@ export default function OvercomeTable() {
                       <TableCell
                         key={col.key}
                         align="center"
-                        sx={{ border: "1px solid #ccc", fontSize: "12px" }}
+                        sx={{
+                          border: "1px solid #ccc",
+                          fontSize: "12px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: col.key === "content" ? "300px" : col.width,
+                        }}
                       >
                         {value}
                       </TableCell>

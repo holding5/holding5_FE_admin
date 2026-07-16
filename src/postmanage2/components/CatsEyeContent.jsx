@@ -11,18 +11,7 @@ import {
 } from "@mui/material";
 import { labelMapper } from "../../utils/LabelMapper";
 import { deleteCatsEyePost } from "../hooks/useCatsEyePostDetail";
-
-const formatDateTime = (value) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${y}-${m}-${d} ${hh}:${mm}`;
-};
+import { formatDateTime } from "../../utils/formatDate";
 
 const CatsEyeContent = ({ post }) => {
   const {
@@ -43,7 +32,7 @@ const CatsEyeContent = ({ post }) => {
 
   // 🔹 status 기준으로 상태 관리 (fallback: activated 여부로 추정)
   const [status, setStatus] = useState(
-    initialStatus ?? (activated === false ? "SUSPENDED" : "ACTIVATED")
+    initialStatus ?? (activated === false ? "SUSPENDED" : "ACTIVATED"),
   );
 
   if (!post) return null;
@@ -129,39 +118,14 @@ const CatsEyeContent = ({ post }) => {
 
       {/* 본문: 언제/누가/어떻게/왜/어디서/메시지 */}
       <Box mb={2}>
-        {content?.who && (
-          <Typography variant="body2" mb={0.5}>
-            <strong>누가:&nbsp;</strong> {content.who}
-          </Typography>
-        )}
-        {content?.when && (
-          <Typography variant="body2" mb={0.5}>
-            <strong>언제:&nbsp;</strong> {content.when}
-          </Typography>
-        )}
-        {content?.localContent && (
-          <Typography variant="body2" mb={0.5}>
-            <strong>어디서:&nbsp;</strong> {content.localContent}
-          </Typography>
-        )}
-        {content?.how && (
-          <Typography variant="body2" mb={0.5}>
-            <strong>어떻게:&nbsp;</strong> {content.how}
-          </Typography>
-        )}
-        {content?.why && (
-          <Typography variant="body2" mb={0.5}>
-            <strong>왜:&nbsp;</strong> {content.why}
-          </Typography>
-        )}
-
-        {content?.message && (
-          <Typography variant="body1" mt={1} whiteSpace="pre-line">
-            <strong>전하고 싶은 말</strong>
-            <br />
-            {content.message}
-          </Typography>
-        )}
+        <Typography variant="body1" whiteSpace="pre-line">
+          {content?.local_content ||
+            content?.localContent ||
+            content?.message ||
+            content?.how ||
+            content?.why ||
+            "-"}
+        </Typography>
       </Box>
 
       {/* 버튼  ✅ 활성 상태일 때만 노출 */}

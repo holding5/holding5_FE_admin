@@ -19,20 +19,7 @@ import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useHappyinPosts } from "../hooks/useHappyins";
 import { labelMapper } from "../../utils/LabelMapper";
-
-// 날짜 포맷 유틸
-const formatDateTime = (value) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${y}-${m}-${d} ${hh}:${mm}`;
-};
+import { formatDateTime } from "../../utils/formatDate";
 
 const columns = [
   { key: "id", label: "번호", width: "2rem" },
@@ -80,10 +67,10 @@ const columns = [
       return parts.join(", ");
     },
   },
-  { key: "holpaScore", label: "홀파스코어", width: "3rem" },
+
   { key: "reportCount", label: "신고 수", width: "3rem" },
 
-  { key: "authorNickname", label: "작성자", width: "5rem" },
+  { key: "authorNickname", label: "작성자", width: "4rem" },
 ];
 
 const sortableKeys = [""];
@@ -363,6 +350,11 @@ export default function HappyUserPosts() {
                           sx={{
                             border: "1px solid #ccc",
                             fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth:
+                              col.key === "content" ? "300px" : col.width,
                           }}
                         >
                           {col.valueFormatter

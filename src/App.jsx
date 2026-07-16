@@ -6,21 +6,6 @@ import { useAuth } from "./contexts/AuthContext";
 // 메인/공통
 import Main from "./usermanage/pages/Main";
 
-// 공지/추천
-import AnnouncementPage from "./postmanage/pages/AnnouncementPage";
-import AnnouncementList from "./postmanage/pages/AnnouncementList";
-import RecommendationPage from "./postmanage/pages/RecommendationPage";
-import RecommendationList from "./postmanage/pages/RecommendationList";
-
-// 메시지
-import Message from "./sendmessage/pages/Message";
-import MessageList from "./sendmessage/pages/MessageList";
-import MessageSend from "./sendmessage/pages/MessageSend";
-
-// 이벤트
-import Event from "./eventmanage/pages/Event";
-import EventList from "./eventmanage/pages/EventList";
-
 // 로그인
 import LoginPage from "./login/pages/LoginPage";
 
@@ -38,6 +23,7 @@ import BannedUserPage from "./usermanage2/pages/BannedUserPage";
 // 게시물 관리
 import Post from "./postmanage2/pages/Post";
 import CongratulatoryMessagePage from "./postmanage2/pages/CongratulatoryMessagePage";
+import NoticePage from "./noticemanage/pages/NoticePage";
 import HolpaPage from "./postmanage2/pages/HolpaPage";
 import HolpaDetailPage from "./postmanage2/pages/HolpaDetailPage";
 import CatsEyePage from "./postmanage2/pages/CatsEyePage";
@@ -53,6 +39,10 @@ import LifeMessagePage from "./postmanage2/pages/LifeMessagePage";
 import Boat from "./boat/pages/Boat";
 import BoatPage from "./boat/pages/BoatPage";
 
+// 미카엘 노트 관리
+import MichaelNote from "./michaelnote/pages/MichaelNote";
+import MichaelNotePage from "./michaelnote/pages/MichaelNotePage";
+
 // 학교 관리
 import School from "./schoolmanage/pages/School";
 import SchoolPolicePage from "./schoolmanage/pages/SchoolPolicePage";
@@ -65,6 +55,8 @@ import SystemOverviewPage from "./systemmanage/pages/SystemOverviewPage";
 import FnQPage from "./systemmanage/pages/FnQPage";
 import HelpersPage from "./systemmanage/pages/HelpersPage";
 import AdminPage from "./systemmanage/pages/AdminPage";
+import SuggestionPage from "./suggestionmanage/pages/SuggestionPage";
+import ContributorPage from "./contributormanage/pages/ContributorPage";
 
 /**
  * 로그인 체크용 래퍼
@@ -93,26 +85,6 @@ function App() {
 
         {/* 필요하면 대시보드용 메인 페이지도 보호된 경로로 남겨둠 */}
         <Route path="main" element={<Main />} />
-
-        {/* 공지/추천 */}
-        {/* <Route path="announcement" element={<AnnouncementPage />}>
-          <Route index element={<AnnouncementList />} />
-        </Route> */}
-
-        {/* <Route path="recommendation" element={<RecommendationPage />}>
-          <Route index element={<RecommendationList />} />
-        </Route> */}
-
-        {/* 메시지 */}
-        {/* <Route path="message-list" element={<Message />}>
-          <Route index element={<MessageList />} />
-          <Route path="send" element={<MessageSend />} />
-        </Route> */}
-
-        {/* 이벤트 */}
-        {/* <Route path="event-list" element={<Event />}>
-          <Route index element={<EventList />} />
-        </Route> */}
 
         {/* 회원 관리 */}
         <Route path="user" element={<User />}>
@@ -157,11 +129,17 @@ function App() {
             path="congratulatory"
             element={<CongratulatoryMessagePage />}
           />
+          <Route path="notice" element={<NoticePage />} />
         </Route>
 
-        {/* 학교 경찰서 / 학교 관리 */}
+        {/* 돛단배 관리 */}
         <Route path="boat" element={<Boat />}>
           <Route path="boat-list" element={<BoatPage />}></Route>
+        </Route>
+
+        {/* 미카엘 노트 관리 */}
+        <Route path="note" element={<MichaelNote />}>
+          <Route path="michaelnote" element={<MichaelNotePage />}></Route>
         </Route>
 
         {/* 학교 경찰서 / 학교 관리 */}
@@ -177,9 +155,9 @@ function App() {
         {/* 시스템 관리 */}
         <Route path="system" element={<System />}>
           <Route index element={<SystemOverviewPage />} />
-          {/* <Route path="fnq" element={<FnQPage />} />
-          <Route path="helpers" element={<HelpersPage />} /> */}
           <Route path="admin" element={<AdminPage />} />
+          <Route path="suggestion" element={<SuggestionPage />} />
+          <Route path="contributor" element={<ContributorPage />} />
         </Route>
       </Route>
 

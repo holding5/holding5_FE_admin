@@ -18,20 +18,7 @@ import { ArrowUpward, ArrowDownward, UnfoldMore } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDreaminPosts } from "../hooks/useDreamins";
 import { labelMapper } from "../../utils/LabelMapper";
-
-// 날짜 포맷 유틸
-const formatDateTime = (value) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${y}-${m}-${d} ${hh}:${mm}`;
-};
+import { formatDateTime } from "../../utils/formatDate";
 
 const columns = [
   { key: "id", label: "번호", width: "2rem" },
@@ -60,10 +47,10 @@ const columns = [
     width: "6rem",
     valueFormatter: formatDateTime,
   },
-  { key: "holpaScore", label: "홀파스코어", width: "3rem" },
+
   { key: "reportCount", label: "신고 수", width: "3rem" },
 
-  { key: "authorNickname", label: "작성자", width: "5rem" },
+  { key: "authorNickname", label: "작성자", width: "3rem" },
 ];
 
 const sortableKeys = ["createdAt"];
@@ -130,15 +117,15 @@ export default function DreamUserPosts() {
   // 옵션은 현재 rows 기준으로 동적 생성 (필요하면 하드코딩도 가능)
   const categoryOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.category).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
   const topicOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.topic).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
   const typeOptions = useMemo(
     () => Array.from(new Set(rows.map((r) => r.type).filter((v) => !!v))),
-    [rows]
+    [rows],
   );
 
   // 🔍 셀렉트로 클라이언트 필터링
@@ -150,7 +137,7 @@ export default function DreamUserPosts() {
         if (typeFilter && row.type !== typeFilter) return false;
         return true;
       }),
-    [rows, categoryFilter, topicFilter, typeFilter]
+    [rows, categoryFilter, topicFilter, typeFilter],
   );
 
   const handleSort = (key) => {
@@ -343,11 +330,16 @@ export default function DreamUserPosts() {
                           sx={{
                             border: "1px solid #ccc",
                             fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth:
+                              col.key === "content" ? "300px" : col.width,
                           }}
                         >
                           {col.valueFormatter
                             ? col.valueFormatter(row[col.key])
-                            : row[col.key] ?? "-"}
+                            : (row[col.key] ?? "-")}
                         </TableCell>
                       ))}
                     </TableRow>
