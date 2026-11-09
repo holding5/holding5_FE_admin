@@ -6,6 +6,7 @@ import {
 import MessageInputForm from "../components/MessageInputForm";
 import SelectGroup from "../components/SelectGroup";
 import SelectTarget from "../components/SelectTarget";
+import { sendAdminNotification, mapAudience } from "../../api/sendNotification";
 
 export default function MessageSend() {
   // 메시지 본문/첨부/링크
@@ -38,6 +39,7 @@ export default function MessageSend() {
   const [selectedIndividuals, setSelectedIndividuals] = useState([]); // ['userId1','userId2', ...]
 
   const [toast, setToast] = useState({ open: false, msg: "", severity: "success" });
+  const [sending, setSending] = useState(false);
 
   const payload = useMemo(() => ({
     message,
@@ -46,18 +48,52 @@ export default function MessageSend() {
   }), [message, filters, selectedIndividuals]);
 
   const handleSend = async () => {
-    // 간단 검증
-    if (!message.body?.trim() && message.files.length === 0 && message.audioBlobs.length === 0) {
-      setToast({ open: true, msg: "메시지 내용 또는 첨부를 입력해 주세요.", severity: "warning" });
+    // 알림(텍스트) 발송 검증 — 본문 필수
+    if (!message.body?.trim()) {
+      setToast({ open: true, msg: "알림 본문을 입력해 주세요.", severity: "warning" });
       return;
     }
     if (filters.schedule.enabled && !filters.schedule.at) {
       setToast({ open: true, msg: "예약 발송 시간을 선택해 주세요.", severity: "warning" });
       return;
     }
-    // TODO: API 연동
-    console.log("Submit payload:", payload);
-    setToast({ open: true, msg: "발송 요청을 처리했습니다.", severity: "success" });
+    // 현재 알림 발송은 제목/본문 텍스트 + 대상(전체/드림인/해피인/개별)만 지원.
+    // 첨부/예약발송은 추후 지원 예정 — 첨부가 있으면 안내만 하고 텍스트로 발송.
+    if (
+      (message.files?.length || 0) > 0 ||
+      (message.audioBlobs?.length || 0) > 0 ||
+      filters.schedule?.enabled
+    ) {
+      setToast({
+        open: true,
+        msg: "첨부/예약발송은 아직 지원되지 않아 텍스트 알림만 발송됩니다.",
+        severity: "info",
+      });
+    }
+
+    setSending(true);
+    try {
+      const res = await sendAdminNotification({
+        title: message.title,
+        body: message.body,
+        audience:
+          selectedIndividuals.length > 0 ? undefined : mapAudience(filters.audience),
+        userIds: selectedIndividuals,
+      });
+      setToast({
+        open: true,
+        msg: `알림 발송 완료 — 대상 ${res.targetCount}명, 푸시 ${res.pushSent}건`,
+        severity: "success",
+      });
+    } catch (e) {
+      setToast({
+        open: true,
+        msg: `발송 실패: ${e?.response?.data?.message || e.message || "알 수 없는 오류"}`,
+        severity: "error",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -93,8 +129,8 @@ export default function MessageSend() {
         <Button variant="outlined" onClick={() => console.log(payload)}>
           미리보기(콘솔)
         </Button>
-        <Button variant="contained" onClick={handleSend}>
-          {filters.schedule.enabled ? "예약 발송" : "즉시 발송"}
+        <Button variant="contained" onClick={handleSend} disabled={sending}>
+          {sending ? "발송 중…" : filters.schedule.enabled ? "예약 발송" : "즉시 발송"}
         </Button>
       </Stack>
 

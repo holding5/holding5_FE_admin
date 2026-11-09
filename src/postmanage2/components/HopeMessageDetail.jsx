@@ -8,8 +8,38 @@ import {
   CircularProgress,
   Divider,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+
+// 생명메시지 변환 시 지정하는 주제(카테고리)·종교. 생명메시지는 이 값으로 수신자를 매칭한다.
+// 값 ""(공통)은 body 에서 제외 → 백엔드에서 전체 대상으로 저장.
+const LIFE_CATEGORIES = [
+  { value: "", label: "공통(전체)" },
+  { value: "LIGHT_STORY", label: "가벼운 이야기" },
+  { value: "BULLYING", label: "왕따/학교폭력" },
+  { value: "ACADEMIC", label: "성적/학업문제" },
+  { value: "FRIENDS", label: "친구/이성문제" },
+  { value: "PARENTS", label: "부모님과 갈등" },
+  { value: "TEACHERS", label: "선생님과 갈등" },
+  { value: "ECONOMY", label: "가정형편/경제" },
+  { value: "APPEARANCE", label: "외모 문제" },
+  { value: "ETC", label: "기타문제" },
+];
+const RELIGIONS = [
+  { value: "", label: "무관(전체)" },
+  { value: "CHRISTIAN", label: "기독교" },
+  { value: "BUDDHIST", label: "불교" },
+  { value: "CATHOLIC", label: "천주교" },
+  { value: "NONE", label: "무교" },
+];
 import { useHopeMessageDetail } from "../hooks/useHopeMessages";
 import axiosInstance from "../../utils/axiosInstance";
 import { formatDateTime } from "../../utils/formatDate";
@@ -23,6 +53,11 @@ const HopeMessageDetail = ({ anchorEl, onClose, row, onActionDone }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+
+  // 생명메시지 변환 다이얼로그(주제/종교 선택)
+  const [convertOpen, setConvertOpen] = useState(false);
+  const [convertCategory, setConvertCategory] = useState("");
+  const [convertReligion, setConvertReligion] = useState("");
 
   // ✅ 상세 데이터 도착 시 세팅
   useEffect(() => {
@@ -65,13 +100,27 @@ const HopeMessageDetail = ({ anchorEl, onClose, row, onActionDone }) => {
       "승인 처리하시겠습니까?",
     );
 
-  const handleConvertToLife = () =>
-    handleAction(async () => {
+  // 변환 버튼 → 주제/종교 선택 다이얼로그 열기
+  const openConvertDialog = () => {
+    setConvertCategory("");
+    setConvertReligion("");
+    setConvertOpen(true);
+  };
+
+  // 다이얼로그 확정 → 선택한 주제/종교를 body 로 전달해 변환
+  const doConvertToLife = async () => {
+    setConvertOpen(false);
+    await handleAction(async () => {
+      const body = {};
+      if (convertCategory) body.category = convertCategory;
+      if (convertReligion) body.religion = convertReligion;
       const res = await axiosInstance.post(
         `/admin/messages/hope/${detail.id}/convert-to-life-message`,
+        body,
       );
       alert(`생명메시지(ID: ${res.data?.lifeMessageId})로 변환되었습니다.`);
-    }, "생명메시지로 변환하시겠습니까?\n기존 희망메시지는 비활성화됩니다.");
+    });
+  };
 
   // ✅ 상태별 버튼 비활성화 판단
   const isDeleted = detail?.status === "DEACTIVATED";
@@ -281,7 +330,7 @@ const HopeMessageDetail = ({ anchorEl, onClose, row, onActionDone }) => {
                 variant="contained"
                 color="secondary"
                 disabled={actionLoading || !isApproved || isLifeChanged}
-                onClick={handleConvertToLife}
+                onClick={openConvertDialog}
               >
                 생명메시지 변환
               </Button>
@@ -293,6 +342,53 @@ const HopeMessageDetail = ({ anchorEl, onClose, row, onActionDone }) => {
           </>
         )}
       </Box>
+
+      {/* 생명메시지 변환 — 주제(카테고리)/종교 선택 다이얼로그 */}
+      <Dialog open={convertOpen} onClose={() => setConvertOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>생명메시지로 변환</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            생명메시지는 선택한 주제·종교로 수신자를 매칭합니다. 지정하지 않으면 전체 대상으로
+            저장됩니다. (기존 희망메시지는 비활성화됩니다.)
+          </Typography>
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="convert-category-label">주제(카테고리)</InputLabel>
+            <Select
+              labelId="convert-category-label"
+              label="주제(카테고리)"
+              value={convertCategory}
+              onChange={(e) => setConvertCategory(e.target.value)}
+            >
+              {LIFE_CATEGORIES.map((c) => (
+                <MenuItem key={c.value || "none"} value={c.value}>
+                  {c.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel id="convert-religion-label">종교</InputLabel>
+            <Select
+              labelId="convert-religion-label"
+              label="종교"
+              value={convertReligion}
+              onChange={(e) => setConvertReligion(e.target.value)}
+            >
+              {RELIGIONS.map((r) => (
+                <MenuItem key={r.value || "none"} value={r.value}>
+                  {r.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConvertOpen(false)}>취소</Button>
+          <Button variant="contained" color="secondary" onClick={doConvertToLife}>
+            변환
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Popover>
   );
 };
