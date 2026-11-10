@@ -19,6 +19,12 @@ function isCanceled(error) {
 // ── 요청 인터셉터 (요청 로그 + 시간 측정)
 axiosInstance.interceptors.request.use((config) => {
   config.meta = { startedAt: Date.now() };
+  // 토큰은 localStorage 에서 직접 붙인다. (AuthContext 의 useEffect 보다 자식 화면의 첫 요청이 먼저 나가 401 나던 문제)
+  const token = localStorage.getItem("hf_admin_access_token");
+  if (token && !config.headers?.Authorization) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   const { method, url, params, data } = config;
   console.log(
     "[REQ]",
@@ -64,6 +70,15 @@ axiosInstance.interceptors.response.use(
     }
 
     console.error("[ERR]", status, method, url, message, payload);
+
+    // 토큰 만료/무효 → 저장된 인증 정보 삭제 후 로그인 화면으로 (로그인 요청 자체는 제외)
+    if (status === 401 && !url.includes("/auth/login")) {
+      localStorage.removeItem("hf_admin_access_token");
+      localStorage.removeItem("hf_admin_user");
+      if (!window.location.pathname.endsWith("/admin/login")) {
+        window.location.href = "/admin/login";
+      }
+    }
     return Promise.reject(err);
   }
 );
