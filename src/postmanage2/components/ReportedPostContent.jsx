@@ -13,6 +13,7 @@ import {
   deleteReportedPost,
 } from "../hooks/useReportedUserContents";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatDateTime } from "../../utils/formatDate";
 
 /**
  * @param {{
@@ -79,7 +80,7 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
 
   // --- 2) reportStatus 기반 신고 결과 배너 ---
   const hasOpenReports = (postReports || []).some(
-    (r) => r.reportStatus === "OPEN"
+    (r) => r.reportStatus === "OPEN" || r.reportStatus === "ACTIVATED" // 앱 신고는 ACTIVATED 로 저장됨
   );
   const hasDismissedReports = (postReports || []).some(
     (r) => r.reportStatus === "DISMISSED"
@@ -228,7 +229,7 @@ const ReportedPostContent = ({ post, postReports = [], highlightUserId }) => {
 
       <Stack direction="row" spacing={4} mt={2} justifyContent="flex-end">
         <Typography variant="caption">
-          작성일: {new Date(createdAt).toLocaleString()}
+          작성일: {formatDateTime(createdAt)}
         </Typography>
         <Typography variant="caption">좋아요: {likeCount}</Typography>
         <Typography variant="caption">신고: {reportCount}</Typography>

@@ -21,6 +21,7 @@ import {
   deleteReportedComment,
 } from "../hooks/useReportedUserContents";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatDateTime } from "../../utils/formatDate";
 
 /**
  * @param {{
@@ -151,7 +152,7 @@ const ReportedPostComments = ({
         const reports = reportsByCommentId.get(comment.id) || [];
 
         // 🔹 이 댓글에 대한 reportStatus 집계
-        const hasOpenReports = reports.some((r) => r.reportStatus === "OPEN");
+        const hasOpenReports = reports.some((r) => r.reportStatus === "OPEN" || r.reportStatus === "ACTIVATED"); // 앱 신고는 ACTIVATED
         const hasDismissedReports = reports.some(
           (r) => r.reportStatus === "DISMISSED"
         );
@@ -278,7 +279,7 @@ const ReportedPostComments = ({
               </Box>
 
               <Typography variant="caption" color="text.secondary" ml="auto">
-                {new Date(comment.createdAt).toLocaleString()}
+                {formatDateTime(comment.createdAt)}
               </Typography>
             </Stack>
 

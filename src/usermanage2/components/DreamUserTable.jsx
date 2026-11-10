@@ -69,7 +69,7 @@ const columns = [
     width: "100px",
     valueFormatter: (v) => labelMapper("ageGroupMap", v),
   },
-  { key: "reports", label: "신고건수", width: "50px" },
+  { key: "totalReportCount", label: "신고건수", width: "50px" }, // API 필드명(정렬은 서버 미지원)
 ];
 
 const sortableKeys = [
@@ -78,9 +78,7 @@ const sortableKeys = [
   "name",
   "createdAt",
   "status",
-  "reports",
-  "totalAccess",
-  "avgAccess",
+  // reports/totalAccess/avgAccess 는 User 엔티티 컬럼이 아니라 서버 정렬 시 500 → 정렬 대상에서 제외
 ];
 
 export default function DreamUserTable({ filters = {} }) {

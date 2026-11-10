@@ -50,7 +50,10 @@ const DetailSearchBar = ({ defaultValues = {}, onApply, onReset }) => {
   const [joinDateEnd, setJoinDateEnd] = useState(defaultValues.createdTo ?? "");
 
   // ageGroupMap 키("0","1","2") → BE ENUM(ELEMENTARY/MIDDLE/HIGH) 브릿지
-  const AGE_GROUP_BRIDGE = { 0: "ELEMENTARY", 1: "MIDDLE", 2: "HIGH" };
+  const AGE_GROUP_BRIDGE = {
+    0: "ELEMENTARY", 1: "MIDDLE", 2: "HIGH",
+    3: "TWENTIES", 4: "THIRTIES", 5: "FORTY_PLUS", // 20대 이상도 BE 지원(이전엔 누락돼 필터 무시)
+  };
 
   const compact = (obj) =>
     Object.fromEntries(

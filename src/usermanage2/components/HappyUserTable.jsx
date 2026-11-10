@@ -75,7 +75,7 @@ const columns = [
     width: "80px",
     valueFormatter: (v) => labelMapper("ageGroupMap", v),
   },
-  { key: "reports", label: "신고건수", width: "50px" },
+  { key: "totalReportCount", label: "신고건수", width: "50px" }, // API 필드명
 ];
 
 const sortableKeys = [

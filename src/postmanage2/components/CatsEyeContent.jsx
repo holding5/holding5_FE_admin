@@ -118,14 +118,25 @@ const CatsEyeContent = ({ post }) => {
 
       {/* 본문: 언제/누가/어떻게/왜/어디서/메시지 */}
       <Box mb={2}>
-        <Typography variant="body1" whiteSpace="pre-line">
-          {content?.local_content ||
-            content?.localContent ||
-            content?.message ||
-            content?.how ||
-            content?.why ||
-            "-"}
-        </Typography>
+        {/* 제보 항목을 모두 표시(이전엔 || 체인이라 첫 값 하나만 보였음) */}
+        {(() => {
+          const rows = [
+            ["언제", content?.when],
+            ["누가", content?.who],
+            ["어떻게", content?.how],
+            ["왜", content?.why],
+            ["의견", content?.opinion ?? content?.message],
+            ["지역사회 공유", content?.local_content ?? content?.localContent],
+          ].filter(([, v]) => v != null && String(v).trim() !== "");
+          if (rows.length === 0) {
+            return <Typography variant="body1">-</Typography>;
+          }
+          return rows.map(([label, v]) => (
+            <Typography key={label} variant="body1" whiteSpace="pre-line" mb={0.5}>
+              <b>{label}</b> : {String(v)}
+            </Typography>
+          ));
+        })()}
       </Box>
 
       {/* 버튼  ✅ 활성 상태일 때만 노출 */}

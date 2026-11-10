@@ -17,6 +17,7 @@ import ReportIcon from "@mui/icons-material/Report";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { deleteHolpaPostComment } from "../hooks/useHolpaPostDetail";
 import { labelMapper } from "../../utils/LabelMapper";
+import { formatDateTime } from "../../utils/formatDate";
 
 const HolpaComments = ({ comments = [] }) => {
   const [sortType, setSortType] = useState("latest");
@@ -141,7 +142,7 @@ const HolpaComments = ({ comments = [] }) => {
                 )}
               </Box>
               <Typography variant="caption" color="text.secondary" ml="auto">
-                {new Date(comment.createdAt).toLocaleString()}
+                {formatDateTime(comment.createdAt)}
               </Typography>
             </Stack>
 

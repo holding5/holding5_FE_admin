@@ -148,6 +148,16 @@ const AdminModal = ({
       JSON.stringify(payload, null, 2)
     );
 
+    // 정지·영구정지 등은 되돌리기 번거로우므로 실행 전 확인(기본 선택값이 '일시정지'라 한 번 클릭에 실행되던 문제)
+    const ACTION_LABEL = {
+      SUSPENDED: `일시정지(${payload.suspensionStartDate ?? ""} ~ ${payload.suspensionEndDate ?? ""})`,
+      BANNED: "영구정지",
+      DISCIPLINE_RELEASED: "징계 해지",
+      ROLE_CHANGED: `활동 변경(${payload.newServiceRole ?? ""})`,
+    };
+    const label = ACTION_LABEL[selectedValue] ?? selectedValue;
+    if (!window.confirm(`이 회원에게 '${label}' 조치를 실행할까요?`)) return;
+
     try {
       await submitAdminAction(userId, payload);
       alert("행정 조치가 완료되었습니다.");
