@@ -299,7 +299,7 @@ export async function searchMembers({
 export const searchDreamins = (q, page = 0, size = 10, onlyActive = true) =>
   searchMembers({ q, page, size, onlyActive, role: "DREAMIN" });
 
-/** PIN(영숫자 8자리) 미리 생성(저장은 안 함) */
+/** PIN(영숫자 6자리) 미리 생성(저장은 안 함) */
 export async function previewPin() {
   const { data } = await axiosInstance.post(
     "/admin/system/schools/pin/preview",
