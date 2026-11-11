@@ -292,7 +292,7 @@ export default function MemberSchoolRegisterDialog({ open, onClose }) {
   const validate = () => {
     const next = {};
     if (!form.schoolId) next.schoolName = "학교를 검색해 선택하세요.";
-    if (!pin || pin.length !== 6) next.pin = "6자리 PIN을 생성해 주세요.";
+    if (!pin) next.pin = "PIN을 생성해 주세요.";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
