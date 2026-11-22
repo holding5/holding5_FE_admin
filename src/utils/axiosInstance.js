@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   const { method, url, params, data } = config;
-  console.log(
+  if (import.meta.env.DEV) console.log(
     "[REQ]",
     (method || "GET").toUpperCase(),
     url,
@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
     const took = res.config?.meta?.startedAt
       ? `${Date.now() - res.config.meta.startedAt}ms`
       : "";
-    console.log("[RES]", res.status, res.config?.url, took, res.data);
+    if (import.meta.env.DEV) console.log("[RES]", res.status, res.config?.url, took, res.data);
     return res;
   },
   (err) => {
@@ -69,7 +69,9 @@ axiosInstance.interceptors.response.use(
       /* noop */
     }
 
-    console.error("[ERR]", status, method, url, message, payload);
+    // 운영에선 응답 본문(학생 개인정보·제보 원문) 없이 상태만
+    if (import.meta.env.DEV) console.error("[ERR]", status, method, url, message, payload);
+    else console.error("[ERR]", status, method, url);
 
     // 토큰 만료/무효 → 저장된 인증 정보 삭제 후 로그인 화면으로 (로그인 요청 자체는 제외)
     if (status === 401 && !url.includes("/auth/login")) {

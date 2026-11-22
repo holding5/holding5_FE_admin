@@ -113,6 +113,8 @@ const BannedUserTable = ({ itemsPerPage = 25 }) => {
   };
 
   const handleRelease = async () => {
+    if (!selectedIds.length) return alert("대상을 선택해 주세요.");
+    if (!window.confirm(`선택한 ${selectedIds.length}명의 영구정지를 해제합니다. 진행할까요?`)) return;
     try {
       await releaseBannedUsers(selectedIds);
       alert("영구정지 해제 완료");

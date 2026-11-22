@@ -71,6 +71,16 @@ export default function MessageSend() {
       });
     }
 
+    // 버튼 한 번에 전 회원 발송되지 않게 대상 확인
+    const targetLabel = selectedIndividuals.length > 0
+      ? `선택한 ${selectedIndividuals.length}명`
+      : ({ ALL: "전체 회원", DREAMIN: "드림인 전체", HAPPYIN: "해피인 전체" }[mapAudience(filters.audience)] || "전체 회원");
+    if (!window.confirm(`${targetLabel}에게 알림을 발송합니다.
+
+제목: ${message.title || "(없음)"}
+
+발송 후에는 취소할 수 없습니다. 진행할까요?`)) return;
+
     setSending(true);
     try {
       const res = await sendAdminNotification({

@@ -103,6 +103,8 @@ const PausedUserTable = ({ itemsPerPage = 25 }) => {
   };
 
   const handleRelease = async () => {
+    if (!selectedIds.length) return alert("대상을 선택해 주세요.");
+    if (!window.confirm(`선택한 ${selectedIds.length}명의 정지를 해지합니다. 진행할까요?`)) return;
     try {
       await releasePausedUsers(selectedIds);
       alert("정지해지 완료");
@@ -115,6 +117,9 @@ const PausedUserTable = ({ itemsPerPage = 25 }) => {
   };
 
   const handleBan = async () => {
+    if (!selectedIds.length) return alert("대상을 선택해 주세요.");
+    if (!window.confirm(`선택한 ${selectedIds.length}명을 영구정지합니다.
+앱 이용이 즉시 차단됩니다. 진행할까요?`)) return;
     try {
       await banPausedUsers(selectedIds);
       alert("영구정지 완료");
