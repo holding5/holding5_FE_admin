@@ -49,13 +49,8 @@ const msgYearMetrics = [
 ];
 
 const SystemOverviewPage = () => {
-  const [stats, setStats] = useState({
-    currentMembers: 12345,
-    todayNewMembers: 21,
-    todayOutMembers: 17,
-    todayVisitors: 30,
-    todayVisits: 50,
-  });
+  // 통계 API 연동 전 — 가짜 숫자 대신 비워 둔다(운영자가 실제 값으로 오해하지 않게)
+  const [stats, setStats] = useState({});
 
   const runSearch = (scope, { from, to }) => {
     console.log("search", scope, from?.toString(), to?.toString());
@@ -67,6 +62,9 @@ const SystemOverviewPage = () => {
       <Paper sx={{ p: 1, mt: 2, mx: "50px" }}>
         <Typography variant="subtitle1" sx={{ mb: 1 }}>
           시스템 현황 (System Overview)
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          통계 기능은 준비 중입니다.
         </Typography>
         <Divider sx={{ mb: 2 }} />
 

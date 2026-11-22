@@ -112,6 +112,8 @@ const NoticeFormDialog = ({ open, onClose, editId, onSaved }) => {
   const handleSave = async () => {
     if (!title.trim()) return alert("제목을 입력하세요.");
     if (!content.trim()) return alert("내용을 입력하세요.");
+    // 공지 작성은 예약 시각에 대상 회원 전체에게 푸시가 나간다 — 실수 발송 방지
+    if (!isEdit && !window.confirm("공지를 등록하면 대상 회원에게 푸시 알림이 발송됩니다.\n발송 후에는 취소할 수 없습니다. 등록할까요?")) return;
     try {
       if (isEdit) await updateNotice(editId, buildBody());
       else await createNotice(buildBody());

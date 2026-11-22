@@ -61,7 +61,6 @@ export default function LoginPage() {
         password: form.password,
       });
 
-      console.log("로그인 응답:", res.data);
 
       const { accessToken, tokenType, expiresIn } = res.data;
 
