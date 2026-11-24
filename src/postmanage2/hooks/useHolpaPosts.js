@@ -25,6 +25,7 @@ export default function useHolpaPosts(options = {}) {
       severity: item.severity,
       state: item.state,
       activated: item.activated ?? true,
+      sos: !!item.sos, // SOS(위기 신호) 표시용
     }),
   });
 }
