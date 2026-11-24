@@ -17,6 +17,7 @@ const HolpaContent = ({ post }) => {
     id,
     authorName,
     category,
+    sos,
     content,
     createdAt,
     likeCount,
@@ -87,6 +88,9 @@ const HolpaContent = ({ post }) => {
           color="primary"
           size="medium"
         />
+        {sos && (
+          <Chip label="🚨 SOS · 위기 신호 글" color="error" size="medium" />
+        )}
 
         {bannerText && (
           <Alert

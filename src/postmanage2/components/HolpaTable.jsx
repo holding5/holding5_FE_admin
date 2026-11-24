@@ -185,7 +185,8 @@ export default function HolpaTable() {
                 <TableRow
                   key={row.id}
                   hover
-                  sx={{ cursor: "pointer" }}
+                  // SOS(심각성·마음상태 모두 최고) 글은 위기 신호 — 목록에서 바로 보이게 붉은 배경
+                  sx={{ cursor: "pointer", ...(row.sos ? { backgroundColor: "#FEE2E2" } : {}) }}
                   onClick={() => nav(`detail/${row.id}`)}
                 >
                   {columns.map((col) => {
@@ -195,6 +196,7 @@ export default function HolpaTable() {
                     // 표시용 변환
                     if (col.key === "category") {
                       value = labelMapper("holpaPostCategory", row.category);
+                      if (row.sos) value = `🚨SOS · ${value}`;
                     }
                     if (col.key === "severity") {
                       value = labelMapper("severityMap", row.severity); // 1~5
