@@ -189,10 +189,10 @@ const LifeMessageInputForm = ({ onSuccess }) => {
       {/* 받을 학생: 주제·종교 */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Typography sx={{ minWidth: 90, fontWeight: 700 }}>받을 학생</Typography>
-        <TextField select size="small" label="고민 주제" value={category} onChange={(e) => setCategory(e.target.value)} sx={{ minWidth: 180 }}>
+        <TextField select size="small" label="고민 주제" SelectProps={{ displayEmpty: true }} InputLabelProps={{ shrink: true }} value={category} onChange={(e) => setCategory(e.target.value)} sx={{ minWidth: 180 }}>
           {TOPICS.map(([v, l]) => <MenuItem key={l} value={v}>{l}</MenuItem>)}
         </TextField>
-        <TextField select size="small" label="종교" value={religion} onChange={(e) => setReligion(e.target.value)} sx={{ minWidth: 140 }}>
+        <TextField select size="small" label="종교" SelectProps={{ displayEmpty: true }} InputLabelProps={{ shrink: true }} value={religion} onChange={(e) => setReligion(e.target.value)} sx={{ minWidth: 140 }}>
           {RELIGIONS.map(([v, l]) => <MenuItem key={l} value={v}>{l}</MenuItem>)}
         </TextField>
       </Stack>

@@ -14,6 +14,10 @@ import { useLifeMessageDetail } from "../hooks/useLifeMessages";
 import axiosInstance from "../../utils/axiosInstance";
 import { formatDateTime } from "../../utils/formatDate";
 
+const TOPIC_LABEL = { BULLYING: "왕따, 학교폭력", ACADEMIC: "성적, 학업문제", FRIENDS: "친구, 이성문제", PARENTS: "부모님과 갈등",
+  TEACHERS: "선생님과 갈등", ECONOMY: "가정형편, 경제", APPEARANCE: "외모문제", ETC: "기타문제" };
+const RELIGION_LABEL = { CHRISTIAN: "기독교", BUDDHIST: "불교", CATHOLIC: "천주교" };
+
 function formatBytes(bytes) {
   const b = Number(bytes);
   if (!Number.isFinite(b) || b <= 0) return "-";
@@ -149,6 +153,10 @@ const LifeMessageDetail = ({ anchorEl, onClose, row, onActionDone }) => {
                         : "default"
                   }
                 />
+              </Typography>
+              <Typography>
+                받을 학생:{" "}
+                <Chip size="small" variant="outlined" label={`${TOPIC_LABEL[detail.category] ?? "공통"} · ${RELIGION_LABEL[detail.religion] ?? "종교 상관없음"}`} />
               </Typography>
               <Typography>
                 종류: <b>{detail.messageType ?? "-"}</b>
