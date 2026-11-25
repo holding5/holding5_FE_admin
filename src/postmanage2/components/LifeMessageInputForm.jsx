@@ -8,7 +8,14 @@ import {
   Divider,
   Alert,
   CircularProgress,
+  TextField,
+  MenuItem,
 } from "@mui/material";
+
+// 기획서 [주제정책]·[종교정책]: 같은 주제(또는 공통)·같은 종교(또는 상관없음) 학생에게 전달. "" = 공통/상관없음
+const TOPICS = [["", "공통"], ["BULLYING", "왕따, 학교폭력"], ["ACADEMIC", "성적, 학업문제"], ["FRIENDS", "친구, 이성문제"],
+  ["PARENTS", "부모님과 갈등"], ["TEACHERS", "선생님과 갈등"], ["ECONOMY", "가정형편, 경제"], ["APPEARANCE", "외모문제"], ["ETC", "기타문제"]];
+const RELIGIONS = [["", "상관없음"], ["CHRISTIAN", "기독교"], ["BUDDHIST", "불교"], ["CATHOLIC", "천주교"]];
 
 import InputMentNotice from "../components/InputMentNotice";
 import MessageEditor from "../components/MessageEditor";
@@ -26,6 +33,8 @@ const LifeMessageInputForm = ({ onSuccess }) => {
 
   // ✅ title/content
   const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [religion, setReligion] = useState("");
   const [content, setContent] = useState("");
 
   // ✅ 현재 File 선택 상태(업로드 전)
@@ -84,6 +93,8 @@ const LifeMessageInputForm = ({ onSuccess }) => {
       title: title.trim(),
       content: content ?? "",
       mediaFiles: [],
+      category: category || null,
+      religion: religion || null,
     };
 
     if (isVoice) {
@@ -149,7 +160,7 @@ const LifeMessageInputForm = ({ onSuccess }) => {
 
       // ✅ 폼 초기화
       setSelectedHappyin(null);
-      setTitle("");
+      setTitle(""); setCategory(""); setReligion("");
       setContent("");
       setAudioFile(null);
       setThumbnailFile(null);
@@ -174,6 +185,17 @@ const LifeMessageInputForm = ({ onSuccess }) => {
       />
 
       <Divider sx={{ my: 2 }} />
+
+      {/* 받을 학생: 주제·종교 */}
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <Typography sx={{ minWidth: 90, fontWeight: 700 }}>받을 학생</Typography>
+        <TextField select size="small" label="고민 주제" value={category} onChange={(e) => setCategory(e.target.value)} sx={{ minWidth: 180 }}>
+          {TOPICS.map(([v, l]) => <MenuItem key={l} value={v}>{l}</MenuItem>)}
+        </TextField>
+        <TextField select size="small" label="종교" value={religion} onChange={(e) => setReligion(e.target.value)} sx={{ minWidth: 140 }}>
+          {RELIGIONS.map(([v, l]) => <MenuItem key={l} value={v}>{l}</MenuItem>)}
+        </TextField>
+      </Stack>
 
       {/* ✅ 메시지 종류 */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
