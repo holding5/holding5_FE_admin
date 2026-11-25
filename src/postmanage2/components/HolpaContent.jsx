@@ -9,15 +9,18 @@ import {
   Alert,
 } from "@mui/material";
 import { deleteHolpaPostContent } from "../hooks/useHolpaPostDetail";
+import { useNavigate } from "react-router-dom";
 import { labelMapper } from "../../utils/LabelMapper";
 import { formatDateTime } from "../../utils/formatDate";
 
 const HolpaContent = ({ post }) => {
+  const nav = useNavigate();
   const {
     id,
     authorName,
     category,
     sos,
+    userId,
     content,
     createdAt,
     likeCount,
@@ -113,6 +116,21 @@ const HolpaContent = ({ post }) => {
             {labelMapper("serviceRoleMap", userInfo?.serviceRole ?? "NONE")}{" "}
             &gt; {userInfo.ageGroup}
           </Typography>
+        )}
+        {/* SOS 등 위기 글 대응: 작성자 회원 상세(연락처·활동)로 바로 이동 */}
+        {userId && (
+          <Button
+            size="small"
+            variant={sos ? "contained" : "outlined"}
+            color={sos ? "error" : "primary"}
+            onClick={() =>
+              nav(
+                `/admin/user/${userInfo?.serviceRole === "DREAMIN" || !userInfo?.serviceRole ? "dream" : "happy"}/detail/${userId}`,
+              )
+            }
+          >
+            작성자 회원 정보 보기
+          </Button>
         )}
       </Stack>
 
